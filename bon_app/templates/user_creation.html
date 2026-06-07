@@ -1,0 +1,204 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Create Account - Toy Store</title>
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* static/css/register.css */
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f9d423, #ff4e50);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .form-card h2 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: #444;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #8a1a1a;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #ff4e50;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: #ff4e50;
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.9s;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #f9d423;
+            color: #333;
+        }
+
+        .login-link {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .login-link a {
+            color: #ff4e50;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        p {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: flex;
+            justify-content: left;
+        }
+
+        .label-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .errorlist {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .errorlist li {
+            background: #ff4e50;
+            color: #fff;
+            font-size: 0.74rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            margin-left: 0.5rem;
+            white-space: nowrap;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register-container">
+        <div class="form-card">
+            <h2>Create Your Account 🧸</h2>
+            <p class="subtitle">Join our Toy Store family today!</p>
+
+            <form method="post" class="register-form">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <div class="form-group">
+                    <div class="label-wrapper">
+                        <label for="id_username">Username</label>
+                        {{ form.username.errors }}
+                    </div>
+                    {{ form.username }}
+                </div>
+
+                <div class="form-group">
+                    <div class="label-wrapper">
+                        <label for="id_email">Email</label>
+                        {{ form.email.errors }}
+                    </div>
+                    {{ form.email }}
+                </div>
+
+                <div class="form-group">
+                    <div class="label-wrapper">
+                        <label for="id_password1">Password</label>
+                        {{ form.password.errors }}
+                    </div>
+                    {{ form.password }}
+                </div>
+
+                <div class="form-group">
+                    <div class="label-wrapper">
+                        <label for="id_password2">Confirm Password</label>
+                        {{ form.confirm_password.errors }}
+                    </div>
+                    {{ form.confirm_password }}
+                </div>
+
+                <button type="submit" class="btn-primary">Sign Up</button>
+            </form>
+
+            <p class="login-link">
+                Already have an account? <a href="{% url 'logged' %}">Log in</a>
+            </p>
+        </div>
+    </div>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all error messages (Django usually wraps them in <ul class="errorlist">)
+        const errorMessages = document.querySelectorAll(" .errorlist li");
+
+        errorMessages.forEach(function (error) {
+            // Set a timeout to hide each error after 5 seconds
+            setTimeout(function () {
+                error.style.opacity = "0";                  // fade out
+                setTimeout(() => error.remove(), 1000);     // remove from DOM after fade
+            }, 3000); // 5 seconds
+        });
+    });
+</script>
+
+</html>

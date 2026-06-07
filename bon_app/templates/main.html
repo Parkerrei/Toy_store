@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toy Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: black;
+            color: white;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px;
+        }
+
+        .product {
+            border-radius: 4px;
+            height: 200px;
+            border: 1px solid #1c6905a2;
+            padding: 18px;
+            margin: 10px;
+            display: inline-block;
+            width: 120px;
+            text-align: center;
+            margin-left: 40px;
+        }
+
+        .product a {
+            border-radius: 5px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 3px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .product button {
+            border-radius: 5px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .product button:hover {
+            background: #45a049;
+        }
+
+        /* Sidebar styles */
+        .side-container {
+            border: 1px solid black;
+            position: fixed;
+            top: 50px;
+            left: -300px;
+            /* hidden by default */
+            width: 250px;
+            height: 100%;
+            background: #f9f9f9;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+            transition: left 1s ease-in-out;
+            padding: 20px;
+        }
+
+        a {
+            border: 1px solid black;
+            margin: 6px 6px;
+            padding: 5px;
+            display: inline-flex;
+            text-decoration: none;
+        }
+
+        .side-container.open {
+            left: 0;
+            transition: left 1s ease-in-out;
+            /* slide in */
+        }
+
+        .toggle-btn {
+            border-radius: 10px;
+            position: fixed;
+            top: 50px;
+            left: 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: cursive;
+        }
+
+        aside {
+            margin-top: 50px;
+        }
+
+        .item-cont {
+            flex-wrap: wrap;
+
+            /* align-items: stretch; */
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+
+        img {
+            width: 100px;
+            height: 100px;
+
+        }
+
+
+
+        #two {
+            padding: 0;
+            margin: 0;
+
+        }
+    </style>
+</head>
+
+<body>
+    <button class="toggle-btn" onclick="toggleSidebar()">👀</button>
+    <div class="side-container" id="sidebar">
+        <aside>
+            <a href="{% url 'log_out' %}">logout</a>
+
+            <a href="{% url 'kitty' %}">hello kitty</a>
+            <a href="{% url 'plushies' %}">small plushies</a>
+            <a href="{% url 'keychain' %}">keychain</a>
+            <a href="{% url 'mofusand' %}">mofusand</a>
+            <a href="{% url 'miffy' %}">miffy</a>
+            <a href="{% url 'cinnamonrol'%}">cinnamonrol</a>
+            <a href="{% url 'photo_holder' %}">photo card holder</a>
+        </aside>
+    </div>
+    {% load static %}
+    <h1>Welcome to Cherri Bon Bon</h1>
+    {% if user %}
+    <h4 style="text-align: center;color: maroon;">
+        welcome {{ user }}
+    </h4>
+    {% endif %}
+
+    <div class="item-cont">
+        <div class="product">
+            <img src="{% static 'images/OIP (1).webp' %}" alt="test image">
+            <p>₹499</p>
+            <input type="hidden" name="" id="my_csrf" value="{{ csrf_token }}">
+            <button class="add-to-cart-btn" value="h-kitty" id="one">add to cart</button>
+            <a href="{% url 'buy' %}">buy now</a>
+        </div>
+
+        <div class="product">
+            <img src="{% static 'images/OIP (2).webp' %}" alt="test image">
+            <p>₹499</p>
+            <button class="add-to-cart-btn" value="spiderman">Add to Cart</button>
+            <a href="{% url 'buy' %}">buy now</a>
+        </div>
+
+        <div class="product">
+            <img src="{% static 'images/OIP (3).webp' %}" alt="test image">
+            <p>₹499</p>
+            <button class="add-to-cart-btn" value="cin" type="submit">Add to Cart</button>
+            <a href="{% url 'buy' %}">buy now</a>
+        </div>
+
+        <div class="product">
+            <img src="{% static 'images/OIP (4).webp' %}" alt="test image">
+            <p>₹499</p>
+            <button class="add-to-cart-btn" value="cloud" type="submit">Add to Cart</button>
+            <a href="{% url 'buy' %}">buy now</a>
+        </div>
+
+        <div class="product">
+            <img src="{% static 'images/OIP (5).webp' %}" alt="test image">
+            <p>₹499</p>
+            <button class="add-to-cart-btn" type="submit" value="party">Add to Cart</button>
+            <a href="{% url 'buy' %}">buy now</a>
+        </div>
+
+        <div class="product">
+            <img src="{% static 'images/OIP (6).webp' %}" alt="test image">
+            <p>₹499</p>
+            <button class="add-to-cart-btn" type="submit" value="don">Add to Cart</button>
+            <a href="{% url 'buy' %}">buy now</a>
+        </div>
+
+        <div class="product">
+            <img src="{% static 'images/OIP (6).webp' %}" alt="test image">
+            <p>₹499</p>
+            <button class="add-to-cart-btn" type="submit" value="cartoon">Add to Cart</button>
+            <a href="{% url 'buy' %}">buy now</a>
+        </div>
+
+        <div class="product">
+            <img src="{% static 'images/OIP (5).webp' %}" alt="test image">
+            <p>₹499</p>
+            <button class="add-to-cart-btn" type="submit" value="rain-kitty">Add to Cart</button>
+            <a href="{% url 'buy' %}">buy now</a>
+        </div>
+</body>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+    }
+    
+    document.querySelectorAll('.add-to-cart-btn').forEach((element) => {
+        element.addEventListener('click', (btn) => {
+            const toy_value = btn.target.value
+            const token = document.getElementById('my_csrf').value
+            fetch(`/all_cart_items/${toy_value}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': token,
+                    'content-type': 'application/json',
+                }
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        btn.target.innerText = '✔'
+                        alert(data.success)
+                    } else {
+                        alert(data.error)
+                    }
+                }).catch((error) => {
+                    alert('error:' + error)
+                })
+        })
+    });
+
+
+</script>
+
+</html>

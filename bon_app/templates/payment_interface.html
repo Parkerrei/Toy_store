@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <a href="{% url 'main' %}">store</a>
+
+    <!-- GPay Button -->
+    <button id="gpay-button">Pay with GPay</button>
+
+    <!-- PhonePe Button -->
+    <button id="phonepe-button">Pay with PhonePe</button>
+
+    <!-- COD Button -->
+    <button id="cod-button">Cash on Delivery</button>
+    <!-- templates/payments/checkout.html -->
+    <button id="rzp-button1">Pay with Razorpay</button>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</body>
+
+<script>
+    var baseOptions = {
+        "key": "{{ razorpay_key_id }}",
+        "amount": "{{ order.amount }}",
+        "currency": "INR",
+        "name": "Melu Store",
+        "description": "Test Transaction",
+        "order_id": "{{ order.id }}",
+        "handler": function (response) {
+            alert("Payment successful: " + response.razorpay_payment_id);
+        },
+        "prefill": {
+            "name": "Customer Name",
+            "email": "customer@example.com",
+            "contact": "9999999999"
+        },
+        "theme": {
+            "color": "maroon"
+        }
+    };
+    // GPay button
+    document.getElementById('gpay-button').onclick = function (e) {
+        var gpayOptions = Object.assign({}, baseOptions, {
+            "method": { "upi": true },   // enable UPI
+            "prefill": { "method": "upi", "upi_app": "gpay" } // preselect GPay
+        });
+        var rzp1 = new Razorpay(gpayOptions);
+        rzp1.open();
+        e.preventDefault();
+    };
+
+    // PhonePe button
+    document.getElementById('phonepe-button').onclick = function (e) {
+        var phonepeOptions = Object.assign({}, baseOptions, {
+            "method": { "upi": true },
+            "prefill": { "method": "upi", "upi_app": "phonepe" }
+        });
+        var rzp2 = new Razorpay(phonepeOptions);
+        rzp2.open();
+        e.preventDefault();
+    };
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+    // COD button (no Razorpay, just your backend logic)
+    document.getElementById('cod-button').onclick = function (e) {
+        alert("Order placed with Cash on Delivery!");
+    };
+
+</script>
+
+</html>
