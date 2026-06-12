@@ -7,7 +7,6 @@ from django.conf import settings
 from .forms import OrderForm
 from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.utils.encoding import iri_to_uri
 from django.http import JsonResponse
 
 # from .cart import Session_Cart

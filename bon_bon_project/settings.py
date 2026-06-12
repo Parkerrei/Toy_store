@@ -10,32 +10,28 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-from logging import config
+# from logging import config
 from pathlib import Path
 import os 
 from decouple import config 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID')
-# RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')
-
-RAZORPAY_KEY_ID='rzp_test_RR3wUShtuRm0jd'
-RAZORPAY_KEY_SECRET='uc7eUJsDaFgbXIeYOYAInF2e'
+RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID' )
+RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-
-
+SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -46,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bon_app',
-    'storages',
 ]
 
 MIDDLEWARE = [
