@@ -10,12 +10,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+from logging import config
 from pathlib import Path
 import os 
-from decouple import config
+from decouple import config 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID')
+# RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')
+
+RAZORPAY_KEY_ID='rzp_test_RR3wUShtuRm0jd'
+RAZORPAY_KEY_SECRET='uc7eUJsDaFgbXIeYOYAInF2e'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -23,8 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 
 
-# SECURITY WARNING: don't run with debu
-# g turned on in production!
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -121,21 +127,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
  
-RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID')
-RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')
 
-# AWS S3 settings 
-# AWS_ACCESS_KEY_ID = 'your access key here'
-# AWS_SECRET_ACCESS_KEY = 'your secret key here'
-# AWS_STORAGE_BUCKET_NAME = 'plushie-store-images'
-# AWS_S3_REGION_NAME = 'ap-south-1'  # Example: Mumbai region
-# AWS_QUERYSTRING_AUTH = False  # Prevents signed URLs for public files
 
-# Static and media files
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/'
-# URL to redirect users to for login when using `login_required`
 LOGIN_URL = '/logged'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
