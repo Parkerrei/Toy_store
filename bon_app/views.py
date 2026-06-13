@@ -8,6 +8,7 @@ from .forms import OrderForm
 from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
+from .models import Category,Product
 
 # from .cart import Session_Cart
 # Create your views here.
@@ -56,8 +57,10 @@ def main(request):
             # Save order or send email here
             return render(request, "main.html", {"form": OrderForm(), "success": True})
     else:
-        form = OrderForm()           
-        return render(request, "main.html", {"form": form})
+        form = OrderForm()          
+        context = Category.objects.prefetch_related('products').all() 
+        return render(request, "main.html", {"form": form,'context':context})
+    return render(request,'main.html',{'form':form})
 
 # payments/views.py
 

@@ -18,41 +18,6 @@
             padding: 10px;
         }
 
-        .product {
-            border-radius: 4px;
-            height: 200px;
-            border: 1px solid #1c6905a2;
-            padding: 18px;
-            margin: 10px;
-            display: inline-block;
-            width: 120px;
-            text-align: center;
-            margin-left: 40px;
-        }
-
-        .product a {
-            border-radius: 5px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 3px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .product button {
-            border-radius: 5px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 8px;
-            cursor: pointer;
-        }
-
-        .product button:hover {
-            background: #45a049;
-        }
-
         /* Sidebar styles */
         .side-container {
             border: 1px solid black;
@@ -68,64 +33,49 @@
             padding: 20px;
         }
 
-        a {
-            border: 1px solid black;
-            margin: 6px 6px;
-            padding: 5px;
-            display: inline-flex;
-            text-decoration: none;
-        }
-
-        .side-container.open {
-            left: 0;
-            transition: left 1s ease-in-out;
-            /* slide in */
-        }
-
-        .toggle-btn {
-            border-radius: 10px;
-            position: fixed;
-            top: 50px;
-            left: 20px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
         h1 {
             text-align: center;
-            font-family: cursive;
         }
 
-        aside {
-            margin-top: 50px;
-        }
-
-        .item-cont {
-            flex-wrap: wrap;
-
-            /* align-items: stretch; */
+        .open {
             display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
+            position: fixed;
+            top: 10%;
+            left: 0;
         }
 
-        img {
+        #parent-category-container {
+            display: flex;
+            gap: 20px;
+            padding: 14px;
+            flex-wrap: wrap;
+        }
+
+        /* Use a class selector here instead of an ID */
+        .category-container {
+            width: 45%;
+            border: 1px solid rgb(255, 255, 255);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .product-images-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .product-item {
+            text-align: center;
+        }
+
+        .toy-image {
             width: 100px;
+            /* Adjust size as needed */
             height: 100px;
-
-        }
-
-
-
-        #two {
-            padding: 0;
-            margin: 0;
-
+            object-fit: cover;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -135,7 +85,6 @@
     <div class="side-container" id="sidebar">
         <aside>
             <a href="{% url 'log_out' %}">logout</a>
-
             <a href="{% url 'kitty' %}">hello kitty</a>
             <a href="{% url 'plushies' %}">small plushies</a>
             <a href="{% url 'keychain' %}">keychain</a>
@@ -145,102 +94,66 @@
             <a href="{% url 'photo_holder' %}">photo card holder</a>
         </aside>
     </div>
+
     {% load static %}
     <h1>Welcome to Cherri Bon Bon</h1>
+
     {% if user %}
-    <h4 style="text-align: center;color: maroon;">
+    <h4 style="text-align: center;color: rgb(255, 255, 255);">
         welcome {{ user }}
     </h4>
     {% endif %}
-
-    <div class="item-cont">
-        <div class="product">
-            <img src="{% static 'images/OIP (1).webp' %}" alt="test image">
-            <p>₹499</p>
-            <input type="hidden" name="" id="my_csrf" value="{{ csrf_token }}">
-            <button class="add-to-cart-btn" value="h-kitty" id="one">add to cart</button>
-            <a href="{% url 'buy' %}">buy now</a>
+    <div id="parent-category-container">
+        {% for category in context %}
+        <div class="category-container">
+            {{category.name}}
+            <div class="product-images-grid">
+                {% for product in category.products.all %}
+                <div class="product-item">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ category.name }}">
+                    {% endif %}
+                    <p>{{product.name}} - {{product.price}}</p>
+                </div>
+                {% empty %}
+                <p>no product in this category </p>
+                {% endfor %}
+            </div>
         </div>
+        {% endfor %}
+    </div>
 
-        <div class="product">
-            <img src="{% static 'images/OIP (2).webp' %}" alt="test image">
-            <p>₹499</p>
-            <button class="add-to-cart-btn" value="spiderman">Add to Cart</button>
-            <a href="{% url 'buy' %}">buy now</a>
-        </div>
-
-        <div class="product">
-            <img src="{% static 'images/OIP (3).webp' %}" alt="test image">
-            <p>₹499</p>
-            <button class="add-to-cart-btn" value="cin" type="submit">Add to Cart</button>
-            <a href="{% url 'buy' %}">buy now</a>
-        </div>
-
-        <div class="product">
-            <img src="{% static 'images/OIP (4).webp' %}" alt="test image">
-            <p>₹499</p>
-            <button class="add-to-cart-btn" value="cloud" type="submit">Add to Cart</button>
-            <a href="{% url 'buy' %}">buy now</a>
-        </div>
-
-        <div class="product">
-            <img src="{% static 'images/OIP (5).webp' %}" alt="test image">
-            <p>₹499</p>
-            <button class="add-to-cart-btn" type="submit" value="party">Add to Cart</button>
-            <a href="{% url 'buy' %}">buy now</a>
-        </div>
-
-        <div class="product">
-            <img src="{% static 'images/OIP (6).webp' %}" alt="test image">
-            <p>₹499</p>
-            <button class="add-to-cart-btn" type="submit" value="don">Add to Cart</button>
-            <a href="{% url 'buy' %}">buy now</a>
-        </div>
-
-        <div class="product">
-            <img src="{% static 'images/OIP (6).webp' %}" alt="test image">
-            <p>₹499</p>
-            <button class="add-to-cart-btn" type="submit" value="cartoon">Add to Cart</button>
-            <a href="{% url 'buy' %}">buy now</a>
-        </div>
-
-        <div class="product">
-            <img src="{% static 'images/OIP (5).webp' %}" alt="test image">
-            <p>₹499</p>
-            <button class="add-to-cart-btn" type="submit" value="rain-kitty">Add to Cart</button>
-            <a href="{% url 'buy' %}">buy now</a>
-        </div>
 </body>
 
 <script>
     function toggleSidebar() {
         document.getElementById("sidebar").classList.toggle("open");
     }
-    
-    document.querySelectorAll('.add-to-cart-btn').forEach((element) => {
-        element.addEventListener('click', (btn) => {
-            const toy_value = btn.target.value
-            const token = document.getElementById('my_csrf').value
-            fetch(`/all_cart_items/${toy_value}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': token,
-                    'content-type': 'application/json',
-                }
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.success) {
-                        btn.target.innerText = '✔'
-                        alert(data.success)
-                    } else {
-                        alert(data.error)
-                    }
-                }).catch((error) => {
-                    alert('error:' + error)
-                })
-        })
-    });
+
+    // document.querySelectorAll('.add-to-cart-btn').forEach((element) => {
+    //     element.addEventListener('click', (btn) => {
+    //         const toy_value = btn.target.value
+    //         const token = document.getElementById('my_csrf').value
+    //         fetch(`/all_cart_items/${toy_value}/`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'X-CSRFToken': token,
+    //                 'content-type': 'application/json',
+    //             }
+    //         })
+    //             .then((response) => response.json())
+    //             .then((data) => {
+    //                 if (data.success) {
+    //                     btn.target.innerText = '✔'
+    //                     alert(data.success)
+    //                 } else {
+    //                     alert(data.error)
+    //                 }
+    //             }).catch((error) => {
+    //                 alert('error:' + error)
+    //             })
+    //     })
+    // });
 
 
 </script>
