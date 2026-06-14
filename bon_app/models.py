@@ -1,5 +1,6 @@
 # Create your models here.
 # payments/models.py
+
 from django.utils.text import slugify
 from django.db import models
 
@@ -8,7 +9,6 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, default="pending")
     created_at = models.DateTimeField(auto_now_add=True)
-
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -22,7 +22,6 @@ class Category(models.Model):
     
     def __str__(self):
         return self.name
-
 
 class Product(models.Model):
     image = models.ImageField(upload_to='media/')

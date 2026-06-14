@@ -4,158 +4,366 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toy Store</title>
+    <title>Cherri Bon Bon | Toy Store</title>
     <style>
+        :root {
+            --bg-color: #0f0f12;
+            --card-bg: #1a1a24;
+            --sidebar-bg: #16161f;
+            --accent-color: #ff4a75;
+            --text-color: #ffffff;
+            --text-muted: #a0a0b0;
+            --border-color: #2a2a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: black;
-            color: white;
-        }
-
-        button {
-            margin: 5px;
-            padding: 10px;
-        }
-
-        /* Sidebar styles */
-        .side-container {
-            border: 1px solid black;
-            position: fixed;
-            top: 50px;
-            left: -300px;
-            /* hidden by default */
-            width: 250px;
-            height: 100%;
-            background: #f9f9f9;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
-            transition: left 1s ease-in-out;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
             padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin: 40px 0;
         }
 
         h1 {
-            text-align: center;
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 10px;
         }
 
-        .open {
-            display: flex;
+        .welcome-msg {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* Modernized Sidebar Toggle Button */
+        .toggle-btn {
             position: fixed;
-            top: 10%;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 74, 117, 0.4);
+            font-size: 1.1rem;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.05);
+            background-color: #e03860;
+        }
+
+        /* Dark Theme Professional Sidebar */
+        .side-container {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100%;
+            background: var(--sidebar-bg);
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+            transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 90px 24px 24px 24px;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .side-container.open {
             left: 0;
         }
 
+        .side-container aside {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .side-container aside a {
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .side-container aside a:hover {
+            background-color: var(--card-bg);
+            color: var(--accent-color);
+            padding-left: 20px;
+        }
+
+        /* Dynamic Grid Layout for Categories */
         #parent-category-container {
-            display: flex;
-            gap: 20px;
-            padding: 14px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px;
         }
 
-        /* Use a class selector here instead of an ID */
         .category-container {
-            width: 45%;
-            border: 1px solid rgb(255, 255, 255);
-            padding: 20px;
-            box-sizing: border-box;
+            background-color: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         }
 
-        .product-images-grid {
+        .category-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            text-transform: capitalize;
+        }
+
+        /* Flex Container for Products within Categories */
+        .products-grid {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 10px;
+            flex-direction: column;
+            gap: 16px;
         }
 
         .product-item {
-            text-align: center;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .toy-image {
-            width: 100px;
-            /* Adjust size as needed */
-            height: 100px;
+        .product-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .add-to-cart-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #e03860;
+        }
+
+        /* Modernized Image Handling with Zoom State */
+        .img-wrapper {
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: var(--bg-color);
+            cursor: zoom-in;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            border-radius: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .img-wrapper:hover .product-img {
+            transform: scale(1.1);
+        }
+
+        .product-info {
+            flex-grow: 1;
+        }
+
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .product-price {
+            color: var(--accent-color);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .empty-msg {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* Modern Image Zoom Lightbox Overlay */
+        .zoom-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 14, 0.9);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            cursor: zoom-out;
+        }
+
+        .zoom-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+
+
+        .zoom-overlay img {
+            max-width: 95%;
+            /* larger */
+            max-height: 90%;
+            /* taller */
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7);
+            transform: scale(0.9);
+            transition: transform 0.4s ease;
+        }
+
+        .zoom-overlay.active img {
+            transform: scale(1.1);
+            /* slightly bigger for clarity */
+        }
+
+        #parent-category-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            /* mobile default */
+            gap: 20px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        @media (min-width: 768px) {
+            #parent-category-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 25px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            #parent-category-container {
+                grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+                gap: 30px;
+                max-width: 1400px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <button class="toggle-btn" onclick="toggleSidebar()">👀</button>
+
+    <button class="toggle-btn" onclick="toggleSidebar()" aria-label="Toggle navigation menu">☰ Menu</button>
+
     <div class="side-container" id="sidebar">
-        <aside>
-            <a href="{% url 'log_out' %}">logout</a>
-            <a href="{% url 'kitty' %}">hello kitty</a>
-            <a href="{% url 'plushies' %}">small plushies</a>
-            <a href="{% url 'keychain' %}">keychain</a>
-            <a href="{% url 'mofusand' %}">mofusand</a>
-            <a href="{% url 'miffy' %}">miffy</a>
-            <a href="{% url 'cinnamonrol'%}">cinnamonrol</a>
-            <a href="{% url 'photo_holder' %}">photo card holder</a>
-        </aside>
+        <nav>
+            <aside>
+                <a href="{% url 'log_out' %}" style="color: #ff6b6b;">Logout</a>
+                <a href="{% url 'kitty' %}">Hello Kitty</a>
+                <a href="{% url 'plushies' %}">Small Plushies</a>
+                <a href="{% url 'keychain' %}">Keychain</a>
+                <a href="{% url 'mofusand' %}">Mofusand</a>
+                <a href="{% url 'miffy' %}">Miffy</a>
+                <a href="{% url 'cinnamonrol'%}">Cinnamonroll</a>
+                <a href="{% url 'photo_holder' %}">Photo Card Holder</a>
+            </aside>
+        </nav>
     </div>
 
     {% load static %}
-    <h1>Welcome to Cherri Bon Bon</h1>
+    <header>
+        <h1>Cherri Bon Bon</h1>
+        {% if user %}
+        <h4 class="welcome-msg">Welcome, {{ user }}</h4>
+        {% endif %}
+    </header>
 
-    {% if user %}
-    <h4 style="text-align: center;color: rgb(255, 255, 255);">
-        welcome {{ user }}
-    </h4>
-    {% endif %}
-    <div id="parent-category-container">
-        {% for category in context %}
+    <main id="parent-category-container">
+        {% for cat in category %}
         <div class="category-container">
-            {{category.name}}
-            <div class="product-images-grid">
-                {% for product in category.products.all %}
+            <h2 class="category-title">{{ cat.name }}</h2>
+
+            <div class="products-grid">
+                {% for product in cat.products.all %}
                 <div class="product-item">
                     {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ category.name }}">
+                    <div class="img-wrapper" onclick="zoomImage(this)">
+                        <img class="product-img" src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy"
+                            width="80" height="80">
+                    </div>
                     {% endif %}
-                    <p>{{product.name}} - {{product.price}}</p>
+                    <div class="product-info">
+                        <p class="product-name">{{ product.name }}</p>
+                        <p class="product-price">{{ product.price }}</p>
+                        <button class="add-to-cart-btn">Add to Cart</button>
+                    </div>
                 </div>
                 {% empty %}
-                <p>no product in this category </p>
+                <p class="empty-msg">No products in this category</p>
                 {% endfor %}
             </div>
         </div>
         {% endfor %}
+    </main>
+
+    <!-- Modern Image Zoom Lightbox Element -->
+    <div class="zoom-overlay" id="zoomOverlay" onclick="closeZoom()">
+        <img id="zoomedImage" src="" alt="Zoomed view">
     </div>
 
-</body>
+    <script>
+        // Sidebar Toggle Logic
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("open");
+        }
 
-<script>
-    function toggleSidebar() {
-        document.getElementById("sidebar").classList.toggle("open");
-    }
+        // Close sidebar if user clicks outside of it
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.querySelector('.toggle-btn');
+            if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target) && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
 
-    // document.querySelectorAll('.add-to-cart-btn').forEach((element) => {
-    //     element.addEventListener('click', (btn) => {
-    //         const toy_value = btn.target.value
-    //         const token = document.getElementById('my_csrf').value
-    //         fetch(`/all_cart_items/${toy_value}/`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'X-CSRFToken': token,
-    //                 'content-type': 'application/json',
-    //             }
-    //         })
-    //             .then((response) => response.json())
-    //             .then((data) => {
-    //                 if (data.success) {
-    //                     btn.target.innerText = '✔'
-    //                     alert(data.success)
-    //                 } else {
-    //                     alert(data.error)
-    //                 }
-    //             }).catch((error) => {
-    //                 alert('error:' + error)
-    //             })
-    //     })
-    // });
+        function zoomImage(wrapperElement) {
+            const thumbnail = wrapperElement.querySelector('img');
+            const overlay = document.getElementById('zoomOverlay');
+            const zoomedImage = document.getElementById('zoomedImage');
 
+            zoomedImage.src = thumbnail.src;
+            zoomedImage.alt = thumbnail.alt;
+            overlay.classList.add('active');
+        }
 
-</script>
+        function closeZoom() {
+            document.getElementById('zoomOverlay').classList.remove('active');
+        }
 
-</html>
+    </script>
