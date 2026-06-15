@@ -58,7 +58,7 @@ def main(request):
             return render(request, "main.html", {"form": OrderForm(), "success": True})
     else:
         form = OrderForm()          
-        category =Category.objects.prefetch_related('products')
+        category = Category.objects.prefetch_related('products')
         return render(request, "main.html", {"form": form,'category':category})
     return render(request,'main.html',{'form':form})
 
@@ -90,7 +90,8 @@ def plushies(request):
     return render(request,"plushies.html")
 
 def kitty(request):
-    return render(request,"kitty.html")
+    category = Product.objects.select_related('category').all()
+    return render(request,"kitty.html",{'category':category})
 
 def mofusand(request):
     return render(request,"mofusand.html")

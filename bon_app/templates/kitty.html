@@ -9,10 +9,9 @@
 
 <body>
     {% load static %}
-    <img src="{% static 'hello_kitty/download (1).jfif' %}" alt="">
-    <img src="{% static 'hello_kitty/download .jfif' %}" alt="">
-    <img src="{% static 'hello_kitty/download (1).jfif' %}" alt="">
-    <img src="{% static 'hello_kitty/th.jfif' %}" alt="">
+    {% for cat in category %}
+    {{cat.name}}
+    {% endfor %}
 </body>
 
 </html>

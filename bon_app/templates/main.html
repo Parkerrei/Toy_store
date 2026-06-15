@@ -58,7 +58,7 @@
             padding: 12px 16px;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 74, 117, 0.4);
+            box-shadow: 1px 1px 14px 1px rgba(112, 88, 95, 0.4);
             font-size: 1.1rem;
             transition: transform 0.2s, background-color 0.2s;
         }
@@ -137,13 +137,14 @@
         /* Flex Container for Products within Categories */
         .products-grid {
             display: flex;
-            flex-direction: column;
-            gap: 16px;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 40px;
         }
 
         .product-item {
             position: relative;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.8s, box-shadow 0.2s;
         }
 
         .product-item:hover {
@@ -169,10 +170,10 @@
 
         /* Modernized Image Handling with Zoom State */
         .img-wrapper {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             flex-shrink: 0;
-            overflow: hidden;
+            /* overflow: hidden; */
             border-radius: 8px;
             background-color: var(--bg-color);
             cursor: zoom-in;
@@ -182,7 +183,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease-in;
         }
 
         .img-wrapper:hover .product-img {
@@ -285,7 +286,7 @@
         <nav>
             <aside>
                 <a href="{% url 'log_out' %}" style="color: #ff6b6b;">Logout</a>
-                <a href="{% url 'kitty' %}">Hello Kitty</a>
+                <a href="{% url 'kitty' %}">anime pens</a>
                 <a href="{% url 'plushies' %}">Small Plushies</a>
                 <a href="{% url 'keychain' %}">Keychain</a>
                 <a href="{% url 'mofusand' %}">Mofusand</a>
@@ -306,28 +307,35 @@
 
     <main id="parent-category-container">
         {% for cat in category %}
+
         <div class="category-container">
             <h2 class="category-title">{{ cat.name }}</h2>
-
             <div class="products-grid">
                 {% for product in cat.products.all %}
+
                 <div class="product-item">
                     {% if product.image %}
+
+
                     <div class="img-wrapper" onclick="zoomImage(this)">
-                        <img class="product-img" src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy"
-                            width="80" height="80">
+                        <img class="product-img" src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
                     </div>
+
                     {% endif %}
+
                     <div class="product-info">
                         <p class="product-name">{{ product.name }}</p>
                         <p class="product-price">{{ product.price }}</p>
                         <button class="add-to-cart-btn">Add to Cart</button>
+                        <button class="add-to-cart-btn">Buy</button>
                     </div>
                 </div>
+
                 {% empty %}
                 <p class="empty-msg">No products in this category</p>
                 {% endfor %}
             </div>
+
         </div>
         {% endfor %}
     </main>
