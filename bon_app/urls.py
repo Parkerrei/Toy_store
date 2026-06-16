@@ -1,18 +1,21 @@
 from django.urls import path
-from .views import user,user_log_in,main,buy,plushies,photo_holder,mofusand,miffy,cinnamonrol,kitty,keychain,log_out,all_cart_items
+from .views import user,sanrio_stickers,sanrio_spoon_set,pencil_pouch,user_log_in,main,buy,doormats,mofusand,neck_pillow,cry_baby,melamine_plates,big_scrun,anime_pens,jelly_bunny,log_out,all_cart_items
 urlpatterns = [
                 path('',user,name='user'),
                 path('logged/',user_log_in,name='logged'),
                 path('main/',main,name='main'),
                 path('buy/',buy,name='buy'),
-                path('plushies/',plushies,name='plushies'),
-                path('photo_holder/',photo_holder,name='photo_holder'),
+                path('doormats/',doormats,name='doormats'),
                 path('mofusand/',mofusand,name='mofusand'),
-                path('miffy/',miffy,name='miffy'),
-                path('keychain/',keychain,name='keychain'),
-                path('cinnamonrol/',cinnamonrol,name='cinnamonrol'),
-                path('kitty/',kitty,name='kitty'),
+                path('cry_baby/',cry_baby,name='cry_baby'),
+                path('melamine_plates/',melamine_plates,name='melamine_plates'),
+                path('jelly_bunny/',jelly_bunny,name='jelly_bunny'),
+                path('big_scrun/',big_scrun,name='big_scrun'),
+                path('anime_pens/',anime_pens,name='anime_pens'),
                 path('log_out/',log_out,name='log_out'),
                 path('all_cart_items/<str:toy_value>/',all_cart_items,name='all_cart_items'),
-
+                path('neck_pillow/',neck_pillow,name='neck_pillow'),
+                path('pencil_pouch/',pencil_pouch,name='pencil_pouch'),
+                path('sanrio_spoon_set/',sanrio_spoon_set,name='sanrio_spoon_set'),
+                path('sanrio_stickers/',sanrio_stickers,name='sanrio_stickers'),
 ]

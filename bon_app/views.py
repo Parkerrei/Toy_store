@@ -86,28 +86,51 @@ def buy(request):
     return render(request, "payment_interface.html", context)
     # return render(request, "payment_interface.html")
 
-def plushies(request):
-    return render(request,"plushies.html")
+def doormats(request):
+    category = Category.objects.prefetch_related('products').filter(id=4).first()
+    return render(request,"doormats.html",{'category':category})
 
-def kitty(request):
-    category = Product.objects.select_related('category').all()
-    return render(request,"kitty.html",{'category':category})
+def anime_pens(request):
+    category = Category.objects.prefetch_related('products').filter(id=1).first()
+    return render(request,"anime_pens.html",{'category':category})
+
+def cry_baby(request):
+    category = Category.objects.prefetch_related('products').filter(id=3).first()
+    return render(request,"cry_baby.html",{'category':category})
+
+def melamine_plates(request):
+    category = Category.objects.prefetch_related('products').filter(id=6).first()
+    return render(request,"melamine_plates.html",{'category':category})
 
 def mofusand(request):
-    return render(request,"mofusand.html")
+    category = Category.objects.prefetch_related('products').filter(id=7).first() 
+    return render(request,"mofusand.html",{'category':category})
 
-def miffy(request):
-    return render(request,"miffy.html")
+def jelly_bunny(request):
+    category = Category.objects.prefetch_related('products').filter(id=5).first() 
+    return render(request,"jelly_bunny.html",{'category':category})
 
-def photo_holder(request):
-    return render(request,"photo_holder.html")
+def big_scrun(request):
+    category = Category.objects.prefetch_related('products').filter(id=2).first()
+    return render(request,"big_scrun.html",{'category':category})
 
-def keychain(request):
-    return render(request,"keychain.html")
+def neck_pillow(request):
+    category = Category.objects.prefetch_related('products').filter(id=8).first()
+    return render(request,"neck_pillow.html",{'category':category})
 
-def cinnamonrol(request):
-    return render(request,"cinnamonrol.html")
-    
+def pencil_pouch(request):
+    category = Category.objects.prefetch_related('products').filter(id=9).first()
+    return render(request,"pencil_pouch.html",{'category':category})
+
+
+def sanrio_spoon_set(request):
+    category = Category.objects.prefetch_related('products').filter(id=10).first()
+    return render(request,"sanrio_spoon_set.html",{'category':category})
+
+def sanrio_stickers(request):
+    category = Category.objects.prefetch_related('products').filter(id=11).first()
+    return render(request,"sanrio_stickers.html",{'category':category})
+
 def log_out(request):
     # print('before logout:',list(request.session.items()))
     logout(request)
