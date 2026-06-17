@@ -58,8 +58,8 @@ def main(request):
             return render(request, "main.html", {"form": OrderForm(), "success": True})
     else:
         form = OrderForm()          
-        category = Category.objects.prefetch_related('products')
-        return render(request, "main.html", {"form": form,'category':category})
+        all_product = Product.objects.all() 
+        return render(request, "main.html", {"form": form,'all_product':all_product})
     return render(request,'main.html',{'form':form})
 
 # payments/views.py
