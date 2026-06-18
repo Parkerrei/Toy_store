@@ -137,8 +137,11 @@ def log_out(request):
     # print('after logout:',list(request.session.items()))
     return redirect('logged')
 
-def all_cart_items(request,toy_value):
-    if request.method == 'POST':    
-        print(toy_value)
-        return JsonResponse({'success':'cart_added'},status=200)
-    return JsonResponse({'error':'method not allwed'},status=405)
+def all_cart_items(request,id):
+    if request.method == 'POST':
+        item = Product.objects.filter(id=id)    
+        user = request.user
+        print(f'this is {user}')
+        print(item)
+        return JsonResponse({'success':'connection established'},status=200)
+    return JsonResponse({'error':'cannot connect'},status=405)
