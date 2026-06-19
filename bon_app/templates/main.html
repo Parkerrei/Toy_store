@@ -236,6 +236,14 @@
 
         }
 
+        #profile {
+            color: rgb(170, 170, 240);
+        }
+
+        #cart {
+            color: rgb(164, 164, 230);
+        }
+
         @media (min-width: 768px) {
             #parent-category-container {
                 flex-direction: row;
@@ -272,6 +280,8 @@
     <div class="side-container" id="sidebar">
         <nav>
             <aside>
+                <a id="profile" href="#">profile</a>
+                <a id="cart" href="#">your Cart</a>
                 <a href="{% url 'log_out' %}" style="color: #ff6b6b;">Logout</a>
                 <a href="{% url 'anime_pens' %}">Anime_Pens</a>
                 <a href="{% url 'doormats' %}">Doormats</a>

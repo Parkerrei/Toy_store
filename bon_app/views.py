@@ -139,9 +139,19 @@ def log_out(request):
 
 def all_cart_items(request,id):
     if request.method == 'POST':
-        item = Product.objects.filter(id=id)    
-        user = request.user
-        print(f'this is {user}')
-        print(item)
-        return JsonResponse({'success':'connection established'},status=200)
-    return JsonResponse({'error':'cannot connect'},status=405)
+        
+        if 'cart' not in request.session:
+            request.session['cart'] = {}
+        
+        string_id = str(id)
+        cart = request.session['cart']
+        
+        if string_id not in request.session['cart']:
+            cart[string_id] = 1
+        else:
+            cart[string_id] += 1
+        
+        request.session.modified = True
+        print(f'items are :{dict(request.session.items())}')
+        return JsonResponse({'success':'item added to cart'},status=200)
+    return JsonResponse({'error':'Ooops something wrong...'},status=405)
