@@ -78,11 +78,12 @@ def buy(request):
                                      receipt=order_receipt,
                                      notes=notes,
                                      payment_capture='1'))
+    
     context = {
-       
         'razorpay_key_id':settings.RAZORPAY_KEY_ID,
         'order':order
     }
+    
     return render(request, "payment_interface.html", context)
     # return render(request, "payment_interface.html")
 
@@ -121,7 +122,6 @@ def neck_pillow(request):
 def pencil_pouch(request):
     category = Category.objects.prefetch_related('products').filter(id=9).first()
     return render(request,"pencil_pouch.html",{'category':category})
-
 
 def sanrio_spoon_set(request):
     category = Category.objects.prefetch_related('products').filter(id=10).first()

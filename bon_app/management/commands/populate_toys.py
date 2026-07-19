@@ -6,6 +6,7 @@ from django.utils.text import slugify
 from bon_app.models import Category,Product
 import uuid
 from django.db import transaction
+
 class Command(BaseCommand):
     help = 'Populates the database with toy products' 
     

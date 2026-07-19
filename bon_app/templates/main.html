@@ -16,13 +16,14 @@
             --border-color: #2a2a3a;
         }
 
-        * {
+        /* * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-        }
+        } */
 
         body {
+           scroll-behavior: smooth;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -106,11 +107,6 @@
             padding-left: 20px;
         }
 
-        .product-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
         .add-to-cart-btn {
             background: var(--accent-color);
             color: white;
@@ -137,12 +133,8 @@
             border-radius: 8px;
             background-color: var(--bg-color);
             cursor: zoom-in;
-
             /* Center the image horizontally and vertically */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto;
+            margin: 40px 40px;
             /* Centers the wrapper itself if it has extra space */
         }
 
@@ -155,24 +147,23 @@
         }
 
         .product-item {
+            display: flex;
+            flex-direction: row;
             border: 1px solid rgb(37, 36, 36);
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 10, 10, 0.1);
-
         }
 
-        .img-wrapper:hover .product-img {
+        .product-img:hover {
             transform: scale(1.1);
         }
 
         .product-info {
-
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
             flex-direction: column;
             align-items: center;
-
             flex-grow: 1;
         }
 
@@ -233,7 +224,6 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-
         }
 
         #profile {
@@ -262,26 +252,33 @@
             #parent-category-container {
                 justify-content: flex-start;
                 gap: 30px;
-
             }
 
             .product-item {
                 flex: 1 1 calc(33.333% - 30px);
                 max-width: calc(33.333% - 30px);
             }
-        }
+
+            #banner-img {
+                width:100vw;
+            }
+
+            .full-width-banner {
+                width: 100%;
+                height: 300px; 
+                object-position: center;
+            }
+
     </style>
 </head>
 
 <body>
-
     <button class="toggle-btn" onclick="toggleSidebar()" aria-label="Toggle navigation menu">☰ Menu</button>
-
     <div class="side-container" id="sidebar">
         <nav>
             <aside>
                 <a id="profile" href="#">profile</a>
-                <a id="cart" href="#">your Cart</a>
+                <a id="cart" href="{% url 'all_cart_items' %}">your Cart</a>
                 <a href="{% url 'log_out' %}" style="color: #ff6b6b;">Logout</a>
                 <a href="{% url 'anime_pens' %}">Anime_Pens</a>
                 <a href="{% url 'doormats' %}">Doormats</a>
@@ -297,9 +294,12 @@
             </aside>
         </nav>
     </div>
+
     {% load static %}
     <header>
-        <h1>Cherri Bon Bon</h1>
+        <div id="banner-img">
+            <img id="banner" class="full-width-banner" src="{% static 'New folder/mario.jpg' %}" alt="">
+        </div>
         {% if user %}
         <h4 class="welcome-msg">Welcome, {{ user }}</h4>
         {% endif %}
@@ -307,12 +307,15 @@
 
     <main id="parent-category-container">
         {% for item in all_product %}
+
         <div class="product-item">
             {% if item.image %}
+
             <div class="img-wrapper" onclick="zoomImage(this)">
                 <img class="product-img" src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">
             </div>
             {% endif %}
+
             <div class="product-info">
                 <p class="product-name">{{ item.name }}</p>
                 <p class="product-price">{{ item.price }}</p>

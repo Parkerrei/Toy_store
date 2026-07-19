@@ -18,4 +18,5 @@ urlpatterns = [
                 path('pencil_pouch/',pencil_pouch,name='pencil_pouch'),
                 path('sanrio_spoon_set/',sanrio_spoon_set,name='sanrio_spoon_set'),
                 path('sanrio_stickers/',sanrio_stickers,name='sanrio_stickers'),
+                path('all_cart_items/',all_cart_items,name='all_cart_items'),
 ]
