@@ -154,4 +154,5 @@ def all_cart_items(request,id):
         request.session.modified = True
         print(f'items are :{dict(request.session.items())}')
         return JsonResponse({'success':'item added to cart'},status=200)
-    return JsonResponse({'error':'Ooops something wrong...'},status=405)
+    
+    return render(request,'all_cart.html',{context=''})

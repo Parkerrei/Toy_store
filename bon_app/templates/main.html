@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cherri Bon Bon | Toy Store</title>
@@ -16,14 +17,11 @@
             --border-color: #2a2a3a;
         }
 
-        /* * {
+        * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        } */
+        }
 
         body {
-           scroll-behavior: smooth;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -36,11 +34,11 @@
             margin: 40px 0;
         }
 
-        h1 {
+        /* h1 {
             font-size: 2.5rem;
             color: var(--accent-color);
             margin-bottom: 10px;
-        }
+        } */
 
         .welcome-msg {
             color: var(--text-muted);
@@ -258,28 +256,50 @@
                 flex: 1 1 calc(33.333% - 30px);
                 max-width: calc(33.333% - 30px);
             }
+        }
 
-            #banner-img {
-                width:100vw;
-            }
+        #banner-img {
+            width: auto;
+            min-width: auto;
+        }
 
-            .full-width-banner {
-                width: 100%;
-                height: 300px; 
-                object-position: center;
-            }
+        .full-width-banner {
+            width: 100%;
 
+            /* 1. Force the image to scale naturally without stretching */
+            height: auto;
+
+            /* 2. Cap the height so it never gets too massive on big monitors */
+            max-height: 350px;
+
+            /* 3. Keep it tall enough so it never gets too small on tiny phones */
+            min-height: 100px;
+
+            /* 4. Crop the edges gracefully ONLY when hitting the max/min limits */
+            object-fit: cover;
+            object-position: center center;
+            display: block;
+        }
+
+        h1 {
+            background-image: url("{% static 'New folder/download (1).webp' %}");
+            background-position: center;
+            background-size: cover;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
     </style>
 </head>
 
 <body>
-    <button class="toggle-btn" onclick="toggleSidebar()" aria-label="Toggle navigation menu">☰ Menu</button>
+    <button class="toggle-btn" onclick="toggleSidebar()" aria-label="Toggle navigation menu"> ☰ Menu</button>
     <div class="side-container" id="sidebar">
         <nav>
             <aside>
                 <a id="profile" href="#">profile</a>
                 <a id="cart" href="{% url 'all_cart_items' %}">your Cart</a>
-                <a href="{% url 'log_out' %}" style="color: #ff6b6b;">Logout</a>
+                <a href="{% url 'log_out' %}" style="color: #f51f1f;">Logout</a>
                 <a href="{% url 'anime_pens' %}">Anime_Pens</a>
                 <a href="{% url 'doormats' %}">Doormats</a>
                 <a href="{% url 'jelly_bunny' %}"> Jelly_Bunny</a>
@@ -295,11 +315,10 @@
         </nav>
     </div>
 
-    {% load static %}
+
     <header>
-        <div id="banner-img">
-            <img id="banner" class="full-width-banner" src="{% static 'New folder/mario.jpg' %}" alt="">
-        </div>
+
+        <h1>Cheri Bon Bon</h1>
         {% if user %}
         <h4 class="welcome-msg">Welcome, {{ user }}</h4>
         {% endif %}
@@ -388,11 +407,11 @@
             }
         });
 
+
         function zoomImage(wrapperElement) {
             const thumbnail = wrapperElement.querySelector('img');
             const overlay = document.getElementById('zoomOverlay');
             const zoomedImage = document.getElementById('zoomedImage');
-
             zoomedImage.src = thumbnail.src;
             zoomedImage.alt = thumbnail.alt;
             overlay.classList.add('active');
@@ -401,6 +420,5 @@
         function closeZoom() {
             document.getElementById('zoomOverlay').classList.remove('active');
         }
-
 
     </script>

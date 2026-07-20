@@ -3,6 +3,7 @@
 
 from django.utils.text import slugify
 from django.db import models
+from django.contrib import User
 
 class Payment(models.Model):
     order_id = models.CharField(max_length=100)
@@ -32,3 +33,7 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+class user_cart(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+      
