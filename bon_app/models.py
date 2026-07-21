@@ -3,7 +3,8 @@
 
 from django.utils.text import slugify
 from django.db import models
-from django.contrib import User
+from django.contrib.auth.models import User
+from .models import Product
 
 class Payment(models.Model):
     order_id = models.CharField(max_length=100)
@@ -35,5 +36,25 @@ class Product(models.Model):
         return self.name
 
 class user_cart(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-      
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"cart for {self.user.username}"
+    
+    def get_total_cost(self):
+        return sum(item.get.subtotal() for item in self.items.all())
+    
+class cart_item(models.Model):
+    cart = models.ForeignKey(user_cart,on_delete= models.CASCADE,related_name = 'items')
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    quantity = models.PositiveBigIntegerField(default=1)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.quantity} x {self.product.name}"
+
+    #calculate the price of item base on quantity 
+    def get_subtotal(self):
+        return self.product.price * self.quantity

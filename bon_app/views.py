@@ -150,9 +150,7 @@ def all_cart_items(request,id):
             cart[string_id] = 1
         else:
             cart[string_id] += 1
-        
+         
         request.session.modified = True
-        print(f'items are :{dict(request.session.items())}')
         return JsonResponse({'success':'item added to cart'},status=200)
-    
-    return render(request,'all_cart.html',{context=''})
+    return JsonResponse({'error':'oops something went wrong'},status=404)
