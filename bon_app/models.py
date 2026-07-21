@@ -4,7 +4,7 @@
 from django.utils.text import slugify
 from django.db import models
 from django.contrib.auth.models import User
-from .models import Product
+
 
 class Payment(models.Model):
     order_id = models.CharField(max_length=100)
@@ -37,7 +37,7 @@ class Product(models.Model):
 
     
 class cart_item(models.Model):
-    user_cart = models.ForeignKey(User,on_delete= models.CASCADE)
+    user_cart = models.ForeignKey(User,on_delete= models.CASCADE,related_name = 'cart_items')
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     quantity = models.PositiveBigIntegerField(default=1)
     added_at = models.DateTimeField(auto_now_add=True)

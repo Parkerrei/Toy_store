@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.models import User
 from .forms import UserForm,logged_in
 from django.contrib.auth import authenticate,login,logout
@@ -8,7 +8,7 @@ from .forms import OrderForm
 from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
-from .models import Category,Product
+from .models import Category,Product,cart_item
 
 # from .cart import Session_Cart
 # Create your views here.
@@ -137,20 +137,47 @@ def log_out(request):
     # print('after logout:',list(request.session.items()))
     return redirect('logged')
 
-def all_cart_items(request,id):
+
+
+@login_required # Ensures anonymous users are sent to login page
+def all_cart_items(request, id):
     if request.method == 'POST':
+        # 1. Safely find the toy being added
+        toy = get_object_or_404(Product, id=id)
         
-        if 'cart' not in request.session:
-            request.session['cart'] = {}
+        # 2. Check if this toy is already in the user's cart
+        cart_item, created = cart_item.objects.get_or_create(
+            user=request.user,
+            product=toy,
+            defaults={'quantity': 1} # If it doesn't exist, create it with 1
+        )
         
-        string_id = str(id)
-        cart = request.session['cart']
+        # 3. If it already exists, increase the quantity by 1
+        if not created:
+            cart_item.quantity += 1
+            cart_item.save()
+            
+        # 4. Fetch all cart items belonging to this user to show on the page
+        user_items = cart_item.objects.filter(user=request.user)
         
-        if string_id not in request.session['cart']:
-            cart[string_id] = 1
-        else:
-            cart[string_id] += 1
-         
-        request.session.modified = True
-        return JsonResponse({'success':'item added to cart'},status=200)
-    return JsonResponse({'error':'oops something went wrong'},status=404)
+        # 5. Calculate total order price dynamically
+        total_price = sum(item.get_subtotal() for item in user_items)
+        
+        context = {
+            'cart_items': user_items,
+            'total_price': total_price
+        }
+        
+        # 6. Render your template page
+        return render(request, 'user_cart.html', context)
+    return redirect('main') # Redirect if someone tries a GET request
+    
+def user_cart_items(request):
+    user_items = cart_item.objects.filter(user=request.user)
+    total_price = sum(item.get_subtotal() for item in user_items) 
+
+    context = {
+        'cart_items':user_items,
+        'total_price':total_price
+    }
+    return render(request,'all_cart.html',context)
