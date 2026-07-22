@@ -35,8 +35,8 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-    
-class cart_item(models.Model):
+        
+class Cart_item(models.Model):
     user_cart = models.ForeignKey(User,on_delete= models.CASCADE,related_name = 'cart_items')
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     quantity = models.PositiveBigIntegerField(default=1)

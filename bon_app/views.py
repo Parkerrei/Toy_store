@@ -8,7 +8,7 @@ from .forms import OrderForm
 from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
-from .models import Category,Product,cart_item
+from .models import Category,Product,Cart_item
 
 # from .cart import Session_Cart
 # Create your views here.
@@ -144,7 +144,7 @@ def all_cart_items(request, id):
     if request.method == 'POST':
         # 1. Safely find the toy being added
         toy = get_object_or_404(Product, id=id)
-        
+                
         # 2. Check if this toy is already in the user's cart
         cart_item, created = cart_item.objects.get_or_create(
             user=request.user,
@@ -173,7 +173,7 @@ def all_cart_items(request, id):
     return redirect('main') # Redirect if someone tries a GET request
     
 def user_cart_items(request):
-    user_items = cart_item.objects.filter(user=request.user)
+    user_items  = cart_item.objects.filter(user=request.user)
     total_price = sum(item.get_subtotal() for item in user_items) 
 
     context = {
