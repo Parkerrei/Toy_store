@@ -139,40 +139,45 @@ def log_out(request):
 
 
 
-@login_required # Ensures anonymous users are sent to login page
-def all_cart_items(request, id):
-    if request.method == 'POST':
-        # 1. Safely find the toy being added
-        toy = get_object_or_404(Product, id=id)
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from django.http import JsonResponse
+from .models import Product, Cart_item
+
+@login_required 
+def add_to_cart(request, id):
+    # Only allow POST requests for changes
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid request method. Only POST is allowed.'}, status=405)
         
-                
-        # 2. Check if this toy is already in the user's cart
-        cart_item, created = Cart_item.objects.get_or_create(
-            user_cart = request.user,
-            product   = toy,
-            defaults  = {'quantity': 1} # If it doesn't exist, create it with 1
-        )
- 
-        # 3. If it already exists, increase the quantity by 1
-        if not created:
-            cart_item.quantity += 1
-            cart_item.save()
-            
-        # 4. Fetch all cart items belonging to this user to show on the page
-        user_items = Cart_item.objects.filter(product=Product)
-        
-        # 5. Calculate total order price dynamically
-        total_price = sum(item.get_subtotal() for item in user_items)
-        
-        context = {
-            'cart_items': user_items,
-            'total_price': total_price
-        }
-        
-        # 6. Render your template page
-        return render(request, 'user_cart.html', context)
-    return redirect('main') # Redirect if someone tries a GET request
+    # 1. Safely find the product
+    toy = get_object_or_404(Product, id=id)
     
+    # 2. Get or create the cart item
+    cart_item, created = Cart_item.objects.get_or_create(
+        user_cart=request.user,
+        product=toy,
+        defaults={'quantity': 1}
+    )
+
+    # 3. If it already exists, increment the quantity
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+ 
+    # 4. Fetch all items for this user to calculate totals
+    user_items = Cart_item.objects.filter(user_cart=request.user)
+    total_price = sum(item.get_subtotal() for item in user_items)
+    total_count = sum(item.quantity for item in user_items)
+    
+    # 5. Return JSON data to update your frontend dynamically
+    return JsonResponse({
+        'success': 'Item added successfully',
+        'cart_total_price': float(total_price),
+        'cart_total_count': total_count,
+        'item_quantity': cart_item.quantity
+    })
+
 def user_cart_items(request):
     user_items  = Cart_item.objects.filter(user=request.user)
     total_price = sum(item.get_subtotal() for item in user_items) 
