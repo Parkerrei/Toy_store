@@ -144,21 +144,22 @@ def all_cart_items(request, id):
     if request.method == 'POST':
         # 1. Safely find the toy being added
         toy = get_object_or_404(Product, id=id)
+        
                 
         # 2. Check if this toy is already in the user's cart
-        cart_item, created = cart_item.objects.get_or_create(
-            user=request.user,
-            product=toy,
-            defaults={'quantity': 1} # If it doesn't exist, create it with 1
+        cart_item, created = Cart_item.objects.get_or_create(
+            user_cart = request.user,
+            product   = toy,
+            defaults  = {'quantity': 1} # If it doesn't exist, create it with 1
         )
-        
+ 
         # 3. If it already exists, increase the quantity by 1
         if not created:
             cart_item.quantity += 1
             cart_item.save()
             
         # 4. Fetch all cart items belonging to this user to show on the page
-        user_items = cart_item.objects.filter(user=request.user)
+        user_items = Cart_item.objects.filter(product=Product)
         
         # 5. Calculate total order price dynamically
         total_price = sum(item.get_subtotal() for item in user_items)
@@ -173,7 +174,7 @@ def all_cart_items(request, id):
     return redirect('main') # Redirect if someone tries a GET request
     
 def user_cart_items(request):
-    user_items  = cart_item.objects.filter(user=request.user)
+    user_items  = Cart_item.objects.filter(user=request.user)
     total_price = sum(item.get_subtotal() for item in user_items) 
 
     context = {
