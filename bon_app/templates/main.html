@@ -368,7 +368,7 @@
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
                     const id = btn.dataset.id;
-                    fetch(`/all_cart_items/${id}/`, {
+                    fetch(`/add_to_cart/${id}/`, {
                         method: 'POST',
                         headers: {
                             'X-CSRFToken': token,

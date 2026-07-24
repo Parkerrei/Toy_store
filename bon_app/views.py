@@ -155,9 +155,9 @@ def add_to_cart(request, id):
     
     # 2. Get or create the cart item
     cart_item, created = Cart_item.objects.get_or_create(
-        user_cart=request.user,
-        product=toy,
-        defaults={'quantity': 1}
+        user_cart = request.user,
+        product  = toy,
+        defaults = {'quantity': 1}
     )
 
     # 3. If it already exists, increment the quantity
@@ -166,7 +166,7 @@ def add_to_cart(request, id):
         cart_item.save()
  
     # 4. Fetch all items for this user to calculate totals
-    user_items = Cart_item.objects.filter(user_cart=request.user)
+    user_items  = Cart_item.objects.filter(user_cart=request.user)
     total_price = sum(item.get_subtotal() for item in user_items)
     total_count = sum(item.quantity for item in user_items)
     
@@ -179,11 +179,11 @@ def add_to_cart(request, id):
     })
 
 def user_cart_items(request):
-    user_items  = Cart_item.objects.filter(user=request.user)
+    user_items  = Cart_item.objects.filter(user_cart=request.user)
     total_price = sum(item.get_subtotal() for item in user_items) 
-
+   
     context = {
         'cart_items':user_items,
         'total_price':total_price
-    }
+    } 
     return render(request,'all_cart.html',context)

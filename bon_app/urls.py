@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import user,sanrio_stickers,sanrio_spoon_set,pencil_pouch,user_log_in,main,buy,doormats,mofusand,neck_pillow,cry_baby,melamine_plates,big_scrun,anime_pens,jelly_bunny,log_out,all_cart_items,user_cart_items
+from .views import user,sanrio_stickers,sanrio_spoon_set,pencil_pouch,user_log_in,main,buy,doormats,mofusand,neck_pillow,cry_baby,melamine_plates,big_scrun,anime_pens,jelly_bunny,log_out,add_to_cart,user_cart_items
 urlpatterns = [
                 path('',user,name='user'),
                 path('logged/',user_log_in,name='logged'),
@@ -13,11 +13,11 @@ urlpatterns = [
                 path('big_scrun/',big_scrun,name='big_scrun'),
                 path('anime_pens/',anime_pens,name='anime_pens'),
                 path('log_out/',log_out,name='log_out'),
-                path('all_cart_items/<int:id>/',all_cart_items,name='all_cart_items'),
                 path('neck_pillow/',neck_pillow,name='neck_pillow'),
                 path('pencil_pouch/',pencil_pouch,name='pencil_pouch'),
                 path('sanrio_spoon_set/',sanrio_spoon_set,name='sanrio_spoon_set'),
                 path('sanrio_stickers/',sanrio_stickers,name='sanrio_stickers'),
+                path('add_to_cart/<int:id>/',add_to_cart,name='add_to_cart'),
                 path('user_cart_items/',user_cart_items,name='user_cart_items')
                 
 ]

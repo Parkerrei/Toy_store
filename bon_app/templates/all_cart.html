@@ -4,15 +4,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Your Shopping Cart</title>
+    <style>
+        /* Centers your main wrapper box directly on the browser screen */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f9f9f9;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* The master container box */
+        .cart-container {
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            /* Keeps the box from stretching too wide on laptops */
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            /* Smooth rounded corners look more modern */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            /* Adds a soft drop shadow */
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Each item card gets its own nice spacing row inside the box */
+        .cart-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        /* Constrains image sizes so they look proportional instead of massive */
+        .cart-item img {
+            max-width: 150px;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .cart-item h3 {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .total-section {
+            margin-top: 20px;
+            color: #2e7d32;
+            /* Gives the final bill number a professional green hue */
+        }
+    </style>
 </head>
 
 <body>
-    {% for detail in context %}
-    <p>your cart</p>
-    {{detail.user}}
-    {{detail.value}}
-    {% endfor %}
+    <div class="cart-container">
+    <header>
+        <h1>Cherri Bon Bon</h1>
+        <nav>
+            <a href="{% url 'main' %}">Home</a>
+            <a href="#">Cart</a>
+            <a href="#">Profile</a>
+        </nav>
+    </header>
+        <!-- FIX 1: Title moved OUTSIDE the loop so it only prints once at the top -->
+        <h1>Your Shopping Cart</h1>
+        <p>Logged in as: <b>{{ request.user.username }}</b></p>
+        <hr>
+
+        {% for detail in cart_items %}
+        <!-- FIX 2: Grouped item elements inside an item div block -->
+        <div class="cart-item">
+            <h3>{{ detail.product.name }}</h3>
+            <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
+            <p>Qty: {{ detail.quantity }}</p>
+            <h5>Subtotal: ₹ {{ detail.get_subtotal }}</h5>
+        </div>
+        {% empty %}
+        <p style="color: #666; padding: 20px;">Your cart is completely empty.</p>
+        {% endfor %}
+
+        <!-- Total bill sits perfectly at the base -->
+        <div class="total-section">
+            <h2>Grand Total: ₹ {{ total_price }}</h2>
+        </div>
+    </div>
+
 </body>
 
 </html>
