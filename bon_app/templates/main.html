@@ -289,6 +289,19 @@
             background-clip: text;
             color: transparent;
         }
+
+        .buy-btn {
+            width: 80px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            transition: background-color 0.2s;
+        }
     </style>
 </head>
 
@@ -342,7 +355,7 @@
                     {% csrf_token %}
                     <button class="add-to-cart-btn" data-id="{{ item.id }}">Add to Cart</button>
                 </form>
-                <button class="add-to-cart-btn">Buy</button>
+                <button class="buy-btn" data-id="{{ item.id }}">Buy</button>
             </div>
         </div>
         {% empty %}
@@ -357,7 +370,16 @@
     <input type="hidden" name="csrf" value="{{csrf_token}}" id="token">
 
     <script>
-
+        document.addEventListener('DomContentLoaded', () => {
+            const button = document.querySelectorAll('.buy-btn')
+            const token = document.getElementById('token').value;
+            button.forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const id = btn.dataset.id;
+                })
+            })
+        })
         // fetch to add items to cart 
         document.addEventListener('DOMContentLoaded', () => {
 

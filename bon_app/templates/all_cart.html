@@ -61,14 +61,14 @@
 
 <body>
     <div class="cart-container">
-    <header>
-        <h1>Cherri Bon Bon</h1>
-        <nav>
-            <a href="{% url 'main' %}">Home</a>
-            <a href="#">Cart</a>
-            <a href="#">Profile</a>
-        </nav>
-    </header>
+        <header>
+            <h1>Cherri Bon Bon</h1>
+            <nav>
+                <a href="{% url 'main' %}">Home</a>
+                <a href="#">Cart</a>
+                <a href="#">Profile</a>
+            </nav>
+        </header>
         <!-- FIX 1: Title moved OUTSIDE the loop so it only prints once at the top -->
         <h1>Your Shopping Cart</h1>
         <p>Logged in as: <b>{{ request.user.username }}</b></p>
