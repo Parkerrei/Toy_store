@@ -330,7 +330,6 @@
 
 
     <header>
-
         <h1>Cheri Bon Bon</h1>
         {% if user %}
         <h4 class="welcome-msg">Welcome, {{ user }}</h4>
@@ -367,19 +366,44 @@
     <div class="zoom-overlay" id="zoomOverlay" onclick="closeZoom()">
         <img id="zoomedImage" src="" alt="Zoomed view">
     </div>
-    <input type="hidden" name="csrf" value="{{csrf_token}}" id="token">
+
+    <input type="hidden" value="{{csrf_token}}" id="token">
 
     <script>
-        document.addEventListener('DomContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
             const button = document.querySelectorAll('.buy-btn')
             const token = document.getElementById('token').value;
             button.forEach((btn) => {
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
                     const id = btn.dataset.id;
-                })
-            })
-        })
+                    fetch(`/buy/${id}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': token,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then((response) => response.json())
+
+                    if (!response.ok) {
+                        throw new Error(`server status ${response.status}: Failed to process purchase.`)
+                    }
+                    return response.json()
+
+                        .then((data) => {
+                            if (data.success) {
+                                alert(data.success)
+                            } else {
+                                alert(data.error)
+                            }
+                        }).catch((error) => {
+                            alert('error:' + error)
+                        });
+                });
+            });
+        });
+
         // fetch to add items to cart 
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -428,7 +452,6 @@
                 sidebar.classList.remove('open');
             }
         });
-
 
         function zoomImage(wrapperElement) {
             const thumbnail = wrapperElement.querySelector('img');

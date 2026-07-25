@@ -64,29 +64,30 @@ def main(request):
 
 # payments/views.py
 
-client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 client.timeout = 200
 
 def buy(request):
-    order_amount = 50000  # amount in paise (₹500)
-    order_currency = 'INR'
-    order_receipt = 'order_rcptid_11'
-    notes = {'Shipping address': 'Imphal, Manipur'}
+    if request.method == 'POST':
+        order_amount   = 50000  # amount in paise (₹500)
+        order_currency = 'INR'
+        order_receipt  = 'order_rcptid_11'
+        notes          = {'Shipping address': 'Imphal, Manipur'}
 
-    order = client.order.create(dict(amount=order_amount,
-                                     currency=order_currency,
-                                     receipt=order_receipt,
-                                     notes=notes,
-                                     payment_capture='1'))
+        order          = client.order.create(dict(amount         = order_amount,
+                                        currency                 = order_currency,
+                                        receipt                  = order_receipt,
+                                        notes                    = notes,
+                                        payment_capture          = '1'))
+        
+        context = {
+            'razorpay_key_id':settings.RAZORPAY_KEY_ID,
+            'order':order
+        }
+        
+        return JsonResponse({'success':'transaction successful'},status=200)
+    return JsonResponse({'error':'method not allowed'},status=404)
     
-    context = {
-        'razorpay_key_id':settings.RAZORPAY_KEY_ID,
-        'order':order
-    }
-    
-    return render(request, "payment_interface.html", context)
-    # return render(request, "payment_interface.html")
-
 def doormats(request):
     category = Category.objects.prefetch_related('products').filter(id=4).first()
     return render(request,"doormats.html",{'category':category})
@@ -139,10 +140,6 @@ def log_out(request):
 
 
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect
-from django.http import JsonResponse
-from .models import Product, Cart_item
 
 @login_required 
 def add_to_cart(request, id):
