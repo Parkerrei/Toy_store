@@ -76,7 +76,7 @@ def buy(request, id):
         
         if toy.stock > 0:
             # Let's use your model method here to make the price dynamic for each toy!
-            order_amount   = toy.price_in_paise() 
+            order_amount   = toy.calculate() 
             order_currency = 'INR'
             order_receipt  = f'receipt_order_{toy.id}'
             notes          = {'Shipping address': 'Imphal, Manipur'}
