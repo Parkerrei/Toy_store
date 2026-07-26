@@ -384,19 +384,21 @@
                             'Content-Type': 'application/json'
                         }
                     })
-                        .then((response) => response.json())
-
-                    if (!response.ok) {
-                        throw new Error(`server status ${response.status}: Failed to process purchase.`)
-                    }
-                    return response.json()
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error(`server status ${response.status}: Failed to process purchase.`)
+                            }
+                            return response.json()
+                        })
 
                         .then((data) => {
                             if (data.success) {
-                                alert(data.success)
-                            } else {
-                                alert(data.error)
+                                alert(data.success);
                             }
+                            else {
+                                alert(data.error);
+                            }
+
                         }).catch((error) => {
                             alert('error:' + error)
                         });
@@ -421,17 +423,22 @@
                             'Content-Type': 'application/json'
                         }
                     })
-                        .then(response => response.json())
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`unable to fetch: ${response.status}`)
+                            }
+                            return response.json();
+                        })
                         .then(data => {
                             if (data.success) {
-                                alert(data.success)
+                                alert(data.success);
                             } else {
-                                alert(data.error)
+                                alert(data.error);
                             }
                         })
                         .catch(error => {
                             alert('error:' + error)
-                        })
+                        });
                 });
             });
 

@@ -67,26 +67,35 @@ def main(request):
 client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 client.timeout = 200
 
-def buy(request):
+def buy(request,id):
     if request.method == 'POST':
-        order_amount   = 50000  # amount in paise (₹500)
-        order_currency = 'INR'
-        order_receipt  = 'order_rcptid_11'
-        notes          = {'Shipping address': 'Imphal, Manipur'}
-
-        order          = client.order.create(dict(amount         = order_amount,
-                                        currency                 = order_currency,
-                                        receipt                  = order_receipt,
-                                        notes                    = notes,
-                                        payment_capture          = '1'))
+        try:
+            toy = Product.objects.get(id=id)
+        except Product.DoesNotExist:
+            return JsonResponse({'error':'item doesnot exist!'},status=404)
         
+        if toy.stock > 0:
+            order_amount   = 50000  # amount in paise (₹500)
+            order_currency = 'INR'
+            order_receipt  = 'order_rcptid_11'
+            notes          = {'Shipping address': 'Imphal, Manipur'}
+
+            order          = client.order.create(dict(amount         = order_amount,
+                                            currency                 = order_currency,
+                                            receipt                  = order_receipt,
+                                            notes                    = notes,
+                                            payment_capture          = '1'
+                                            ))
+        else:
+            return JsonResponse({'error':'out of stock'},status=400)
+
         context = {
             'razorpay_key_id':settings.RAZORPAY_KEY_ID,
             'order':order
         }
         
-        return JsonResponse({'success':'transaction successful'},status=200)
-    return JsonResponse({'error':'method not allowed'},status=404)
+        return JsonResponse({'success':'wait for the transaction'},status=200)
+    return JsonResponse({'error':'method not allowed'},status=405,)
     
 def doormats(request):
     category = Category.objects.prefetch_related('products').filter(id=4).first()

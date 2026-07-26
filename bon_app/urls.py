@@ -1,10 +1,11 @@
 from django.urls import path
 from .views import user,sanrio_stickers,sanrio_spoon_set,pencil_pouch,user_log_in,main,buy,doormats,mofusand,neck_pillow,cry_baby,melamine_plates,big_scrun,anime_pens,jelly_bunny,log_out,add_to_cart,user_cart_items
+
 urlpatterns = [
                 path('',user,name='user'),
                 path('logged/',user_log_in,name='logged'),
                 path('main/',main,name='main'),
-                path('buy/',buy,name='buy'),
+                path('buy/<int:id>/',buy,name='buy'),
                 path('doormats/',doormats,name='doormats'),
                 path('mofusand/',mofusand,name='mofusand'),
                 path('cry_baby/',cry_baby,name='cry_baby'),
