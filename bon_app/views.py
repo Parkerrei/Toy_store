@@ -67,17 +67,18 @@ def main(request):
 client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 client.timeout = 200
 
-def buy(request,id):
+def buy(request, id):
     if request.method == 'POST':
         try:
             toy = Product.objects.get(id=id)
         except Product.DoesNotExist:
-            return JsonResponse({'error':'item doesnot exist!'},status=404)
+            return JsonResponse({'error': 'item doesnot exist!'}, status=404)
         
         if toy.stock > 0:
-            order_amount   = 50000  # amount in paise (₹500)
+            # Let's use your model method here to make the price dynamic for each toy!
+            order_amount   = toy.price_in_paise() 
             order_currency = 'INR'
-            order_receipt  = 'order_rcptid_11'
+            order_receipt  = f'receipt_order_{toy.id}'
             notes          = {'Shipping address': 'Imphal, Manipur'}
 
             order          = client.order.create(dict(amount         = order_amount,
@@ -87,15 +88,19 @@ def buy(request,id):
                                             payment_capture          = '1'
                                             ))
         else:
-            return JsonResponse({'error':'out of stock'},status=400)
-
-        context = {
-            'razorpay_key_id':settings.RAZORPAY_KEY_ID,
-            'order':order
-        }
+            return JsonResponse({'error': 'out of stock'}, status=400)
         
-        return JsonResponse({'success':'wait for the transaction'},status=200)
-    return JsonResponse({'error':'method not allowed'},status=405,)
+        # FIXED: Pass all the Razorpay data inside the JsonResponse so JS can read it
+        return JsonResponse({
+            'message': 'Order created successfully. Launching checkout...',
+            'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+            'order_id': order['id'],       # Extract the secure ID string from Razorpay's dictionary
+            'amount': order['amount'],     # Extract the amount
+            'currency': order['currency']  # Extract the currency
+        }, status=200)
+
+    return JsonResponse({'error': 'method not allowed'}, status=405)
+
     
 def doormats(request):
     category = Category.objects.prefetch_related('products').filter(id=4).first()
