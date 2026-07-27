@@ -25,17 +25,21 @@ class Category(models.Model):
         return self.name
 
 class Product(models.Model):
-    image = models.ImageField(upload_to='media/')
+    image    = models.ImageField(upload_to='media/')
     category = models.ForeignKey(Category,on_delete=models.CASCADE,related_name='products')
-    name = models.CharField(max_length=100)
-    stock = models.IntegerField(default=0)
-    price = models.IntegerField()
-
+    name     = models.CharField(max_length=100)
+    stock    = models.PositiveIntegerField(default=0)
+    price    = models.PositiveIntegerField()
+                    
     def __str__(self):
         return self.name
 
     def calculate(self):
-        return self.stock * self.price
+        for i in self.stock:
+            return i * self.price
+
+    def round_to_paise(self):
+        return self.price * 100
         
 
 class Cart_item(models.Model):
