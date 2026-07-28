@@ -101,24 +101,6 @@ def buy(request, id):
 
     return JsonResponse({'error': 'method not allowed'}, status=405)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def doormats(request):
     category = Category.objects.prefetch_related('products').filter(id=4).first()
     return render(request,"doormats.html",{'category':category})
@@ -179,7 +161,11 @@ def add_to_cart(request, id):
         return JsonResponse({'error': 'Invalid request method. Only POST is allowed.'}, status=405)
         
     # 1. Safely find the product
-    toy = get_object_or_404(Product, id=id)
+    try:
+        toy = Product.objects.get(id=id)
+    except Product.DoesNotExist:
+        return JsonResponse({'error':'item not found '},status=404)
+    
     
     # 2. Get or create the cart item
     cart_item, created = Cart_item.objects.get_or_create(
