@@ -104,13 +104,28 @@ client.timeout = 200
 def buy(request,id):
     if request.method == 'POST':
         try:
-            get_object_or_404
-            toy = Product.objects.get(id=id) 
+            toy = Product.objects.get(id=id)
         except Product.DoesNotExist:
-            return JsonResponse({'error':'out of stock'},status  = 404)
-        
-        return JsonResponse({'success':'we got the item'},status = 200)
-    return JsonResponse({'error':'method not allowed'},status    = 405)
+            return JsonResponse({'error':'item not found!'},status=404)
+        if toy.stock > 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def doormats(request):
     category = Category.objects.prefetch_related('products').filter(id=4).first()

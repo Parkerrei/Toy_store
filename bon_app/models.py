@@ -35,8 +35,7 @@ class Product(models.Model):
         return self.name
 
     def calculate(self):
-        for i in self.stock:
-            return i * self.price
+        return self.stock * self.price
 
     def round_to_paise(self):
         return self.price * 100
