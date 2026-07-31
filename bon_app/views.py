@@ -82,9 +82,9 @@ def buy(request, id):
             order = client.order.create({
                 "amount":toy.round_to_paise(),
                 "currency":"INR",
-                "paymennt_capture":1,
-                "notes":"notes",
-                "receipt":"receipt",
+                "payment_capture":1,
+                "notes":{"item_name":toy.name},
+                "receipt":f"order :{toy.id}",
             })
             with transaction.atomic():
                 frozen_toy = Product.objects.select_for_update().get(id=id)
@@ -103,7 +103,7 @@ def buy(request, id):
         except Exception as e:
             print(f'error : {e}')
             return JsonResponse({'error':'something went wrong'},status=500)
-
+    return JsonResponse({'error':'method not allowed'},status=405)
 
 
 
