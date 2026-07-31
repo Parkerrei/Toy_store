@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
 from .models import Category,Product,Cart_item
+from django.db import transaction
 
 # from .cart import Session_Cart
 # Create your views here.
@@ -70,36 +71,56 @@ client.timeout = 200
 def buy(request, id):
     if request.method == 'POST':
         try:
-            toy = Product.objects.get(id=id)
-        except Product.DoesNotExist:
-            return JsonResponse({'error': 'item doesnot exist!'}, status=404)
-        
-        if toy.stock > 0:
-            # Let's use your model method here to make the price dynamic for each toy!
-            order_amount   = toy.calculate() 
-            order_currency = 'INR'
-            order_receipt  = f'receipt_order_{toy.id}'
-            notes          = {'Shipping address': 'Imphal, Manipur'}
+            try:
+                toy = Product.objects.get(id=id)
+            except Product.DoesNotExist:
+                return JsonResponse({'error':'product doeesnoot exist'},status=404)
 
-            order          = client.order.create(dict(amount         = order_amount,
-                                            currency                 = order_currency,
-                                            receipt                  = order_receipt,
-                                            notes                    = notes,
-                                            payment_capture          = '1'
-                                            ))
-        else:
-            return JsonResponse({'error': 'out of stock'}, status=400)
-        
-        # FIXED: Pass all the Razorpay data inside the JsonResponse so JS can read it
-        return JsonResponse({
-            'message': 'Order created successfully. Launching checkout...',
-            'razorpay_key_id': settings.RAZORPAY_KEY_ID,
-            'order_id': order['id'],       # Extract the secure ID string from Razorpay's dictionary
-            'amount': order['amount'],     # Extract the amount
-            'currency': order['currency']  # Extract the currency
-        }, status=200)
+            if toy.stock <= 0:
+                return JsonResponse({'error':'out of stock'},status=400)
 
-    return JsonResponse({'error': 'method not allowed'}, status=405)
+            order = client.order.create({
+                "amount":toy.round_to_paise(),
+                "currency":"INR",
+                "paymennt_capture":1,
+                "notes":"notes",
+                "receipt":"receipt",
+            })
+            with transaction.atomic():
+                frozen_toy = Product.objects.select_for_update().get(id=id)
+                if frozen_toy.stock > 0:
+                    frozen_toy.stock -= 1
+                    frozen_toy.save()
+                else:
+                    return JsonResponse({'error':'item went out of stock during processing'},status=400)
+            return JsonResponse({
+                'message':'order created successfully',
+                'razorpay_key_id':settings.RAZORPAY_KEY_ID,
+                'order_id':order['id'],
+                'amount':order['amount'],
+                'currency':order['currency']
+            },status=200)
+        except Exception as e:
+            print(f'error : {e}')
+            return JsonResponse({'error':'something went wrong'},status=500)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def doormats(request):
     category = Category.objects.prefetch_related('products').filter(id=4).first()

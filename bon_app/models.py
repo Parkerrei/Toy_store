@@ -25,17 +25,17 @@ class Category(models.Model):
         return self.name
 
 class Product(models.Model):
-    image    = models.ImageField(upload_to='media/')
+    image    = models.ImageField(upload_to='products/')
     category = models.ForeignKey(Category,on_delete=models.CASCADE,related_name='products')
     name     = models.CharField(max_length=100)
     stock    = models.PositiveIntegerField(default=0)
     price    = models.PositiveIntegerField()
+    # slug     = models.SlugField(unique=True,blank=True)
 
-
-    def save(self,*args,**kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args,**kwargs)
+    # def save(self,*args,**kwargs):
+    #     if not self.slug:
+    #         self.slug = slugify(self.name)
+    #     super().save(*args,**kwargs)
         
     def __str__(self):
         return self.name
