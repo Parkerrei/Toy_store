@@ -69,41 +69,44 @@ client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORP
 client.timeout = 200
 
 def buy(request, id):
-    if request.method == 'POST':
-        try:
+        if request.method == 'POST':
             try:
-                toy = Product.objects.get(id=id)
-            except Product.DoesNotExist:
-                return JsonResponse({'error':'product doeesnoot exist'},status=404)
+                try:
+                    toy = Product.objects.get(id=id)
+                except Product.DoesNotExist:
+                    return JsonResponse({'error':'product doeesnoot exist'},status=404)
 
-            if toy.stock <= 0:
-                return JsonResponse({'error':'out of stock'},status=400)
+                if toy.stock <= 0:
+                    return JsonResponse({'error':'out of stock'},status=400)
 
-            order = client.order.create({
-                "amount":toy.round_to_paise(),
-                "currency":"INR",
-                "payment_capture":1,
-                "notes":{"item_name":toy.name},
-                "receipt":f"order :{toy.id}",
-            })
-            with transaction.atomic():
-                frozen_toy = Product.objects.select_for_update().get(id=id)
-                if frozen_toy.stock > 0:
-                    frozen_toy.stock -= 1
-                    frozen_toy.save()
-                else:
-                    return JsonResponse({'error':'item went out of stock during processing'},status=400)
-            return JsonResponse({
-                'message':'order created successfully',
-                'razorpay_key_id':settings.RAZORPAY_KEY_ID,
-                'order_id':order['id'],
-                'amount':order['amount'],
-                'currency':order['currency']
-            },status=200)
-        except Exception as e:
-            print(f'error : {e}')
-            return JsonResponse({'error':'something went wrong'},status=500)
-    return JsonResponse({'error':'method not allowed'},status=405)
+                order = client.order.create({
+                    "amount":toy.round_to_paise(),
+                    "currency":"INR",
+                    "payment_capture":1,
+                    "notes":{"item_name":toy.name},
+                    "receipt":f"order :{toy.id}",
+                })
+
+                with transaction.atomic():
+                    frozen_toy = Product.objects.select_for_update().get(id=id)
+                    if frozen_toy.stock > 0:
+                        frozen_toy.stock -= 1
+                        frozen_toy.save()
+                    else:
+                        return JsonResponse({'error':'item went out of stock during processing'},status=400)
+
+                return JsonResponse({
+                    'message':'order created successfully',
+                    'razorpay_key_id':settings.RAZORPAY_KEY_ID,
+                    'order_id':order['id'],
+                    'amount':order['amount'],
+                    'currency':order['currency']
+                },status=200)
+            
+            except Exception as e:
+                print(f'error : {e}')
+                return JsonResponse({'error':'something went wrong'},status=500)
+        return JsonResponse({'error':'method not allowed'},status=405)
 
 
 
