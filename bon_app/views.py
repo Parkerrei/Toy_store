@@ -101,7 +101,7 @@ def buy(request, id):
                     'order_id':order['id'],
                     'amount':order['amount'],
                     'currency':order['currency']
-                },status=200)
+                } ,status=200)
             
             except Exception as e:
                 print(f'error : {e}')
