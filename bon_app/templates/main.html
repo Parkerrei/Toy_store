@@ -22,7 +22,7 @@
         }
 
         body {
-            
+
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -220,7 +220,7 @@
 
         /* ✅ FIX: Default grid is single column */
         #parent-category-container {
-            
+
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -283,7 +283,7 @@
             display: block;
         }
 
-      
+
         .buy-btn {
             width: 80px;
             background-color: var(--accent-color);
@@ -362,7 +362,7 @@
 
     <input type="hidden" value="{{csrf_token}}" id="token">
 
-    <script>
+    <script src="https://www.razorpay.com">
         document.addEventListener('DOMContentLoaded', () => {
             const button = document.querySelectorAll('.buy-btn')
             const token = document.getElementById('token').value;
@@ -385,11 +385,32 @@
                         })
 
                         .then((data) => {
-                            if (data.success) {
-                                alert(data.success);
+                            if (data.order_id) {
+                                const options = {
+                                    "razorpay_key_id": data.razorpay_key_id,
+                                    "amount": data.amount,
+                                    "currency": data.currency,
+                                    "name": "cheri bon_bon",
+                                    "description": "thanks visit again",
+                                    "order_id": data.order_id,
+
+                                    //this handler function runs automatically  when payment is successful//
+                                    "handler": function (razorpayResponse) {
+                                        verifypaymentonbackend(razorpayResponse);
+                                    },
+
+                                    "theme": {
+                                        "color": "#3399cc"
+                                    }
+                                }
+
+                                //initialize and open the razorpay pop up box over your page//
+                                const rzp1 = new Razorpay(options);
+                                rzp1.open();
                             }
+
                             else {
-                                alert(data.error);
+                                alert(data.error || "an unknown error occurred!");
                             }
 
                         }).catch((error) => {
@@ -399,6 +420,31 @@
             });
         });
 
+        // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION 
+        function verifypaymentonbackend(razorpaydata) {
+            const token = document.getElementById('token').value;
+            fetch('/signature_check/', {
+                'method': POST,
+                'headers': {
+                    'X-CSRFToken': token,
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    raster_order_id: razorpaydata.razorpay_key_id,
+                    raster_payment_id: razorpaydata.razorpay_payment_id,
+                    raster_signature: razorpaydata.razorpay_signature
+                })
+                    .then((response) => response.json())
+                    .then((result) => {
+                        if (result.status === 'success') {
+                            alert('payment successful .Your toy order is confirmed');
+                            window.location.reload();
+                        } else {
+                            alert('payment verification failed:' + result.error)
+                        };
+                    })
+            });
+        }
         // fetch to add items to cart 
         document.addEventListener('DOMContentLoaded', () => {
 

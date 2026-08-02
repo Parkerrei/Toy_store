@@ -10,7 +10,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
 from .models import Category,Product,Cart_item
 from django.db import transaction
-
+import json
 # from .cart import Session_Cart
 # Create your views here.
 
@@ -71,52 +71,96 @@ client.timeout = 200
 def buy(request, id):
         if request.method == 'POST':
             try:
-                try:
-                    toy = Product.objects.get(id=id)
-                except Product.DoesNotExist:
-                    return JsonResponse({'error':'product doeesnoot exist'},status=404)
+                with transaction.atomic:
+                    try:
+                         toy = Product.objects.select_for_update.get(id=id)
+                    except Product.DoesNotExist:
+                        return JsonResponse({'error':'item doesnot exist!'},status=404)
+                    if toy.stock <= 0:
+                        return JsonResponse({'error':'out of stock'},status=403)
 
-                if toy.stock <= 0:
-                    return JsonResponse({'error':'out of stock'},status=400)
+                    toy.stock -= 1
+                    toy.stock.save()
 
-                order = client.order.create({
-                    "amount":toy.round_to_paise(),
-                    "currency":"INR",
-                    "payment_capture":1,
-                    "notes":{"item_name":toy.name},
-                    "receipt":f"order :{toy.id}",
-                })
+                    order = client.order.create({
+                        'amount':toy.round_to_paise(),
+                        'currency':'INR',
+                        'receipt':f'rcpt_{toy.id}',
+                        'payment_capture':True,
 
-                with transaction.atomic():
-                    frozen_toy = Product.objects.select_for_update().get(id=id)
-                    if frozen_toy.stock > 0:
-                        frozen_toy.stock -= 1
-                        frozen_toy.save()
-                    else:
-                        return JsonResponse({'error':'item went out of stock during processing'},status=400)
-
-                return JsonResponse({
-                    'message':'order created successfully',
-                    'razorpay_key_id':settings.RAZORPAY_KEY_ID,
-                    'order_id':order['id'],
-                    'amount':order['amount'],
-                    'currency':order['currency']
-                } ,status=200)
-            
+                        'notes':{
+                        'username':request.user.username,
+                        'email':request.user.email,
+                        'item_name':toy.name,
+                        'item_id':str(toy.id)
+                        },
+                    })
+                    
+                    # out of the atomic block everything succeeded perfectly
+                    return JsonResponse({
+                        'message':'your order confirmed',
+                        'razorpay_key_id':settings.RAZORPAY_KEY_ID,
+                        'order_id':order['id'],
+                        'currency':order['currency'],
+                        'amount':order['amount']
+                    },status=200)
+                
             except Exception as e:
-                print(f'error : {e}')
                 return JsonResponse({'error':'something went wrong'},status=500)
         return JsonResponse({'error':'method not allowed'},status=405)
 
+                        
 
+client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+def signature_check(request):
+    if request.method == 'POST':
+        try:
 
+            #parse the json body payload send by your frontend
+            body_data = json.loads(request.body)
 
+            #extract the payment tokens provided by the razorpay popup widget
+            razorpay_order_id = body_data.get('raster_order_id')
+            razorpay_payment_id = body_data.get('raster_payment_id')
+            razorpay_signature = body_data.get('raster_signature')
 
+            #validation fallback ;ensure no tokens are missing 
+            if not all ([razorpay_order_id,razorpay_payment_id,razorpay_signature]):
+                return JsonResponse({'status':'failed','error':'missing payment tokens'},status=400)
 
+            #construct the verification payload dictionary matching razorpay's exact expectations
+            params_dict = {
+                'razorpay_order_id':razorpay_order_id,
+                'razorpay_payment_id':razorpay_payment_id,
+                'razorpay_signature':razorpay_signature,
+            }
 
+            #execute the cryptographic verification check [1]
+            #if the signature is forged ,fake or manipulated this method automatically raises an exception [1]
+            client.utility.verify_payment_signature(params_dict)
 
+            # PRODUCTION STEP : Your payment is 100% verified genuine here 
+            # you can now update your database logs safely.
+            # example :
+            # order :order.objects.get(razorpay_order_id = razorpay_order_id)
+            # order.is_paid = True
+            # order.razorpay_payment_id = razorpayment_id
+            # order.save() 
+            
+            return JsonResponse({'status':'success',
+                                 'message':'payment signature verified successfuly'},status=200)
+        except razorpay.errors.SignatureVerificationerror:
+            # triggered if a maliciour users alters tokens or tries to spoof a success purchase [1]
+            return JsonResponse({'status':'failed',
+                                 'error':'cryptographic signature verification failed.Transaction rejected'},status=400)
 
+        except json.JSONDecodeError:
+            return JsonResponse({'status':'failed','error':'invalid json data payload'},status=400)
 
+        except Exception as e:
+            # catch all fallback for database  connection issues or general code hiccups
+            print(f'Signature check eror {e}')
+            return JsonResponse({'status':'failed','error':'An internal processing error occured'},status=500)
 
 
 
