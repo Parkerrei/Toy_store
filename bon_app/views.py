@@ -71,40 +71,54 @@ client.timeout = 200
 def buy(request, id):
     if request.method != 'POST':
         return JsonResponse({'error':'something went wrong'},status=405)
-try:
-    with transaction.atomic():
-        try:
-            toy_to_buy = Product.objects.get(id=id)
-        except Product.DoesNotExist:
-            return JsonResponse({'error':'item not found'},status=404)
+    try:
+        with transaction.atomic():
+            try:
+                toy_to_buy = Product.objects.select_for_update().get(id=id)
+            except Product.DoesNotExist:
+                return JsonResponse({'error':'item not found'},status=404)
 
-        if toy_to_buy.stock <= 0:
-            return JsonResponse({'error':'out of stock'},status=409)
+            if toy_to_buy.stock <= 0:
+                return JsonResponse({'error':'out of stock'},status=409)
 
+            toy_to_buy.stock -= 1
+            toy_to_buy.save()
+
+    except Exception as e:
+        return JsonResponse({'error':'something went wrong'},status=500)
+
+    try:
         order = client.order.create(data={
             'amount':toy_to_buy.round_to_paise(),
             'currency':'INR',
-            'notes':{
-                'email':request.
-                'user':toy_to_buy.user.username,
-                'user_id':,
-                'item_id':toy_to_buy.
-            }
+            'notes':{                            
+                'email':request.user.email,
+                'user':request.user.username,
+                'item':toy_to_buy.name,
+                'item_id':str(toy_to_buy.id),
+            },
+            'receipt':f'rcpt_{toy_to_buy.id}',
         })
-        
 
+    except Exception as e:
+        try:
+            with transaction.atomic():
+                toy_to_buy = Product.objects.select_for_update().get(id=id)
+                toy_to_buy.stock += 1
+                toy_to_buy.save()
+        except Exception as e:
+            pass
+        return JsonResponse({'error':'server down '},status=500)
+    
+    return JsonResponse({
+        'razorpay_key_id':settings.RAZORPAY_KEY_ID,
+        'amount':order['amount'],
+        'currency':order['currency'],
+        'notes':order['notes'],
+        'order_id':order['id'],
+        'receipt':order['receipt']
+    })
                         
-
-
-
-
-
-
-
-
-
-
-
 
 
 
