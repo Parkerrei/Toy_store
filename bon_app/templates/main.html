@@ -362,7 +362,7 @@
 
     <input type="hidden" value="{{csrf_token}}" id="token">
 
-    <script src="https://www.razorpay.com">
+    <script src="https://razorpay.com">
         document.addEventListener('DOMContentLoaded', () => {
             const button = document.querySelectorAll('.buy-btn')
             const token = document.getElementById('token').value;
@@ -384,15 +384,15 @@
                             return response.json()
                         })
 
-                        .then((data) => {
-                            if (data.order_id) {
+                        .then((order) => {
+                            if (order) {
                                 const options = {
-                                    "razorpay_key_id": data.razorpay_key_id,
-                                    "amount": data.amount,
-                                    "currency": data.currency,
+                                    "razorpay_key_id":order.razorpay_key_id,
+                                    "amount": order.amount,
+                                    "currency": order.currency,
                                     "name": "cheri bon_bon",
                                     "description": "thanks visit again",
-                                    "order_id": data.order_id,
+                                    "order_id": order.order_id,
 
                                     //this handler function runs automatically  when payment is successful//
                                     "handler": function (razorpayResponse) {
