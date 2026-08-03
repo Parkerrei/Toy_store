@@ -112,56 +112,6 @@ def buy(request, id):
                         
 
 client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-def signature_check(request):
-    if request.method == 'POST':
-        try:
-
-            #parse the json body payload send by your frontend
-            body_data = json.loads(request.body)
-
-            #extract the payment tokens provided by the razorpay popup widget
-            razorpay_order_id = body_data.get('raster_order_id')
-            razorpay_payment_id = body_data.get('raster_payment_id')
-            razorpay_signature = body_data.get('raster_signature')
-
-            #validation fallback ;ensure no tokens are missing 
-            if not all ([razorpay_order_id,razorpay_payment_id,razorpay_signature]):
-                return JsonResponse({'status':'failed','error':'missing payment tokens'},status=400)
-
-            #construct the verification payload dictionary matching razorpay's exact expectations
-            params_dict = {
-                'razorpay_order_id':razorpay_order_id,
-                'razorpay_payment_id':razorpay_payment_id,
-                'razorpay_signature':razorpay_signature,
-            }
-
-            #execute the cryptographic verification check [1]
-            #if the signature is forged ,fake or manipulated this method automatically raises an exception [1]
-            client.utility.verify_payment_signature(params_dict)
-
-            # PRODUCTION STEP : Your payment is 100% verified genuine here 
-            # you can now update your database logs safely.
-            # example :
-            # order :order.objects.get(razorpay_order_id = razorpay_order_id)
-            # order.is_paid = True
-            # order.razorpay_payment_id = razorpayment_id
-            # order.save() 
-            
-            return JsonResponse({'status':'success',
-                                 'message':'payment signature verified successfuly'},status=200)
-        except razorpay.errors.SignatureVerificationerror:
-            # triggered if a maliciour users alters tokens or tries to spoof a success purchase [1]
-            return JsonResponse({'status':'failed',
-                                 'error':'cryptographic signature verification failed.Transaction rejected'},status=400)
-
-        except json.JSONDecodeError:
-            return JsonResponse({'status':'failed','error':'invalid json data payload'},status=400)
-
-        except Exception as e:
-            # catch all fallback for database  connection issues or general code hiccups
-            print(f'Signature check eror {e}')
-            return JsonResponse({'status':'failed','error':'An internal processing error occured'},status=500)
-
 
 
 
