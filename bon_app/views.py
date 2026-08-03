@@ -69,49 +69,46 @@ client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORP
 client.timeout = 200
 
 def buy(request, id):
-        if request.method == 'POST':
-            try:
-                with transaction.atomic:
-                    try:
-                         toy = Product.objects.select_for_update.get(id=id)
-                    except Product.DoesNotExist:
-                        return JsonResponse({'error':'item doesnot exist!'},status=404)
-                    if toy.stock <= 0:
-                        return JsonResponse({'error':'out of stock'},status=403)
+    if request.method != 'POST':
+        return JsonResponse({'error':'something went wrong'},status=405)
+try:
+    with transaction.atomic():
+        try:
+            toy_to_buy = Product.objects.get(id=id)
+        except Product.DoesNotExist:
+            return JsonResponse({'error':'item not found'},status=404)
 
-                    toy.stock -= 1
-                    toy.stock.save()
+        if toy_to_buy.stock <= 0:
+            return JsonResponse({'error':'out of stock'},status=409)
 
-                    order = client.order.create({
-                        'amount':toy.round_to_paise(),
-                        'currency':'INR',
-                        'receipt':f'rcpt_{toy.id}',
-                        'payment_capture':True,
-
-                        'notes':{
-                        'username':request.user.username,
-                        'email':request.user.email,
-                        'item_name':toy.name,
-                        'item_id':str(toy.id)
-                        },
-                    })
-                    
-                    # out of the atomic block everything succeeded perfectly
-                    return JsonResponse({
-                        'message':'your order confirmed',
-                        'razorpay_key_id':settings.RAZORPAY_KEY_ID,
-                        'order_id':order['id'],
-                        'currency':order['currency'],
-                        'amount':order['amount']
-                    },status=200)
-                
-            except Exception as e:
-                return JsonResponse({'error':'something went wrong'},status=500)
-        return JsonResponse({'error':'method not allowed'},status=405)
+        order = client.order.create(data={
+            'amount':toy_to_buy.round_to_paise(),
+            'currency':'INR',
+            'notes':{
+                'email':request.
+                'user':toy_to_buy.user.username,
+                'user_id':,
+                'item_id':toy_to_buy.
+            }
+        })
+        
 
                         
 
-client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
