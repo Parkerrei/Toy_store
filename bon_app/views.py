@@ -118,6 +118,7 @@ def buy(request, id):
         'order_id':order['id'],
         'receipt':order['receipt']
     })
+
                         
 
 

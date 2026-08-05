@@ -338,7 +338,7 @@
             <div class="img-wrapper" onclick="zoomImage(this)">
                 <img class="product-img" src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">
             </div>
-            {% endif %} 
+            {% endif %}
 
             <div class="product-info">
                 <p class="product-name">{{ item.name }}</p>
@@ -399,7 +399,7 @@
 
                                     //this handler function runs automatically  when payment is successful//
                                     "handler": function (razorpayResponse) {
-                                        verifypaymentonbackend(razorpayResponse);
+                                        paymentVerification(razorpayResponse);
                                     },
 
                                     "theme": {
@@ -419,37 +419,54 @@
                         }).catch((error) => {
                             alert(`ooops ${error}`)
                         });
+
+                    if (btn.innerText === 'Processing') {
+                        btn.disabled = false
+                        btn.innerText = originalText
+                    }
                 });
             });
         });
 
         // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION 
-        function verifypaymentonbackend(razorpaydata) {
-            const token = document.getElementById('token').value;
-            fetch('/signature_check/', {
-                'method': POST,
-                'headers': {
-                    'X-CSRFToken': token,
-                    'Content-type': 'application/json'
+        function paymentVerification(razorpayResponse) {
+            const id = document.getElementById('token').value
+            fetch('signature_check/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': id,
+                    'Content-Type': 'application/json'
                 },
-
-                body: JSON.stringify({
-                    raster_order_id: razorpaydata.razorpay_key_id,
-                    raster_payment_id: razorpaydata.razorpay_payment_id,
-                    raster_signature: razorpaydata.razorpay_signature
-                })
-
-                    .then((response) => response.json())
-                    .then((result) => {
-                        if (result.status === 'success') {
-                            alert('payment successful .Your toy order is confirmed');
-                            window.location.reload();
-                        } else {
-                            alert('payment verification failed:' + result.error)
-                        };
-                    })
-            });
+                body: JSON.stringify(razorpayResponse)
+            }
+            ).then((response) => {
+                if (!response.ok) {
+                    throw new Error(`something wrong  ${response.status}`)
+                }
+                return response.json();
+            })
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // fetch to add items to cart 
         document.addEventListener('DOMContentLoaded', () => {
 
