@@ -40,13 +40,7 @@ class Product(models.Model):
     def round_to_paise(self):
         return self.price * 100
 
-    # slug     = models.SlugField(unique=True,blank=True)
-
-    # def save(self,*args,**kwargs):
-    #     if not self.slug:
-    #         self.slug = slugify(self.name)
-    #     super().save(*args,**kwargs)
-        
+    
 class Cart_item(models.Model):
     user_cart = models.ForeignKey(User,on_delete= models.CASCADE,related_name = 'cart_items')
     product   = models.ForeignKey(Product,on_delete=models.CASCADE)
