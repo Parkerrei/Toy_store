@@ -119,6 +119,29 @@ def buy(request, id):
         'receipt':order['receipt']
     })
 
+def signature_check(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            order_id = data.get('razorpay_order_id')
+            signature = data.get('razorpay_signature')
+            payment_id = data.get('razorpay_payment_id')
+
+            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
+            params_dict = {
+                'razorpay_order_id':order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature':signature
+            }
+
+            client.utility.verify_payment_signature(params_dict)
+            return JsonResponse({'success':'payment successful'},status=200)
+        except Exception as e:
+            return JsonResponse({f'error':'something went wrong'})
+    return JsonResponse({'error':'method not allowed'},status=405)
+
+
                         
 
 

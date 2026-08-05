@@ -439,11 +439,21 @@
                 },
                 body: JSON.stringify(razorpayResponse)
             }
+
             ).then((response) => {
                 if (!response.ok) {
                     throw new Error(`something wrong  ${response.status}`)
                 }
                 return response.json();
+                
+            }).then((data) => {
+                if (data.success) {
+                    alert(success)
+                } else {
+                    alert(data.error)
+                }
+            }).catch(error => {
+                alert('error' + error)
             })
         }
 
