@@ -219,7 +219,6 @@ def add_to_cart(request, id):
     except Product.DoesNotExist:
         return JsonResponse({'error':'item not found '},status=404)
     
-    
     # 2. Get or create the cart item
     cart_item, created = Cart_item.objects.get_or_create(
         user_cart = request.user,

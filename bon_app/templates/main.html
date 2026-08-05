@@ -343,10 +343,9 @@
             <div class="product-info">
                 <p class="product-name">{{ item.name }}</p>
                 <p class="product-price">{{ item.price }}</p>
-                <form method="post">
-                    {% csrf_token %}
-                    <button class="add-to-cart-btn" data-id="{{ item.id }}">Add to Cart</button>
-                </form>
+
+                <button class="add-to-cart-btn" data-id="{{ item.id }}">Add to Cart</button>
+
                 <button class="buy-btn" data-id="{{ item.id }}">Buy</button>
             </div>
         </div>
@@ -445,7 +444,7 @@
                     throw new Error(`something wrong  ${response.status}`)
                 }
                 return response.json();
-                
+
             }).then((data) => {
                 if (data.success) {
                     alert(success)
@@ -456,26 +455,6 @@
                 alert('error' + error)
             })
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         // fetch to add items to cart 
         document.addEventListener('DOMContentLoaded', () => {
@@ -514,8 +493,6 @@
             });
 
         });
-
-
 
         // Sidebar Toggle Logic
         function toggleSidebar() {

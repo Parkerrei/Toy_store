@@ -31,7 +31,7 @@ class Product(models.Model):
     stock    = models.PositiveIntegerField(default=0)
     price    = models.PositiveIntegerField()
 
-    def __str__(self):
+    def __str__(self): 
         return self.name
 
     def calculate(self):
@@ -39,7 +39,6 @@ class Product(models.Model):
 
     def round_to_paise(self):
         return self.price * 100
-
     
 class Cart_item(models.Model):
     user_cart = models.ForeignKey(User,on_delete= models.CASCADE,related_name = 'cart_items')
