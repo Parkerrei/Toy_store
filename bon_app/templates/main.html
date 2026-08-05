@@ -429,11 +429,13 @@
                     'X-CSRFToken': token,
                     'Content-type': 'application/json'
                 },
+
                 body: JSON.stringify({
                     raster_order_id: razorpaydata.razorpay_key_id,
                     raster_payment_id: razorpaydata.razorpay_payment_id,
                     raster_signature: razorpaydata.razorpay_signature
                 })
+                
                     .then((response) => response.json())
                     .then((result) => {
                         if (result.status === 'success') {
