@@ -338,7 +338,7 @@
             <div class="img-wrapper" onclick="zoomImage(this)">
                 <img class="product-img" src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">
             </div>
-            {% endif %}
+            {% endif %} 
 
             <div class="product-info">
                 <p class="product-name">{{ item.name }}</p>
@@ -369,6 +369,9 @@
             button.forEach((btn) => {
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
+                    btn.disabled = true
+                    btn.originalText = btn.innerText;
+                    btn.innerText = 'Processing...'
                     const id = btn.dataset.id;
                     fetch(`/buy/${id}/`, {
                         method: 'POST',
@@ -384,15 +387,15 @@
                             return response.json()
                         })
 
-                        .then((order) => {
-                            if (order) {
+                        .then((order_data) => {
+                            if (order_data) {
                                 const options = {
-                                    "razorpay_key_id":order.razorpay_key_id,
-                                    "amount": order.amount,
-                                    "currency": order.currency,
+                                    "key": order_data.razorpay_key_id,
+                                    "amount": order_data.amount,
+                                    "currency": order_data.currency,
                                     "name": "cheri bon_bon",
                                     "description": "thanks visit again",
-                                    "order_id": order.order_id,
+                                    "order_id": order_data.order_id,
 
                                     //this handler function runs automatically  when payment is successful//
                                     "handler": function (razorpayResponse) {
@@ -410,7 +413,7 @@
                             }
 
                             else {
-                                alert(data.error || "an unknown error occurred!");
+                                alert(order_data.error || "an unknown error occurred!");
                             }
 
                         }).catch((error) => {
@@ -435,7 +438,7 @@
                     raster_payment_id: razorpaydata.razorpay_payment_id,
                     raster_signature: razorpaydata.razorpay_signature
                 })
-                
+
                     .then((response) => response.json())
                     .then((result) => {
                         if (result.status === 'success') {

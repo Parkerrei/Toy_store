@@ -111,7 +111,7 @@ def buy(request, id):
         return JsonResponse({'error':'server down '},status=500)
     
     return JsonResponse({
-        'razorpay_key_id':settings.RAZORPAY_KEY_ID,
+        'key':settings.RAZORPAY_KEY_ID,
         'amount':order['amount'],
         'currency':order['currency'],
         'notes':order['notes'],
