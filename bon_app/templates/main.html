@@ -23,7 +23,6 @@
         }
 
         body {
-
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -361,8 +360,8 @@
     </div>
 
     <input type="hidden" value="{{csrf_token}}" id="token">
-
-    <script src="https://razorpay.com">
+    <script src="https://razorpay.com"></script>
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             const button = document.querySelectorAll('.buy-btn')
             const token = document.getElementById('token').value;
