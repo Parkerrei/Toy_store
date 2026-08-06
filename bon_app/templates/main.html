@@ -368,9 +368,7 @@
             button.forEach((btn) => {
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    btn.disabled = true
-                    btn.originalText = btn.innerText;
-                    btn.innerText = 'Processing...'
+                   
                     const id = btn.dataset.id;
                     fetch(`/buy/${id}/`, {
                         method: 'POST',
@@ -419,15 +417,12 @@
                             alert(`ooops ${error}`)
                         });
 
-                    if (btn.innerText === 'Processing') {
-                        btn.disabled = false
-                        btn.innerText = originalText
-                    }
+                   
                 });
             });
         });
 
-        // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION 
+        // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
         function paymentVerification(razorpayResponse) {
             const id = document.getElementById('token').value
             fetch('signature_check/', {
