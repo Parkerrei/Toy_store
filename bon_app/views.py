@@ -106,7 +106,7 @@ def buy(request, id):
                 toy_to_buy.stock += 1
                 toy_to_buy.save()
         except Exception as e:
-            pass
+            print(str(e))
         return JsonResponse({'error':'server down '},status=500)
     
     return JsonResponse({
@@ -190,8 +190,6 @@ def log_out(request):
     logout(request)
     # print('after logout:',list(request.session.items()))
     return redirect('logged')
-
-
 
 
 @login_required 
