@@ -218,17 +218,9 @@ def add_to_cart(request, id):
         cart_item.quantity += 1
         cart_item.save()
  
-    # 4. Fetch all items for this user to calculate totals
-    user_items  = Cart_item.objects.filter(user_cart=request.user)
-    total_price = sum(item.get_subtotal() for item in user_items)
-    total_count = sum(item.quantity for item in user_items)
-    
     # 5. Return JSON data to update your frontend dynamically
     return JsonResponse({
-        'success': 'Item added successfully',
-        'cart_total_price': float(total_price),
-        'cart_total_count': total_count,
-        'item_quantity': cart_item.quantity
+        'success': 'Item added successfully'
     })
 
 def user_cart_items(request):

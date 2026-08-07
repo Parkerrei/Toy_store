@@ -353,7 +353,7 @@
         <p class="empty-msg">No products </p>
         {% endfor %}
     </main>
-
+                                                                                                                                                                             
     <!-- Modern Image Zoom Lightbox Element -->
     <div class="zoom-overlay" id="zoomOverlay" onclick="closeZoom()">
         <img id="zoomedImage" src="" alt="Zoomed view">
@@ -368,7 +368,7 @@
             button.forEach((btn) => {
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
-                   
+                                                         
                     const id = btn.dataset.id;
                     fetch(`/buy/${id}/`, {
                         method: 'POST',
