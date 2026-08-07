@@ -379,7 +379,7 @@
                     })
                         .then((response) => {
                             if (!response.ok) {
-                                throw new Error(`server status ${response.status}: Failed to process purchase.`)
+                                throw new Error(`server status ${response.status}: Failed to process purchase.!!`)
                             }
                             return response.json()
                         })
@@ -416,8 +416,7 @@
                         }).catch((error) => {
                             alert(`ooops ${error}`)
                         });
-
-                   
+                 
                 });
             });
         });

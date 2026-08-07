@@ -62,7 +62,6 @@ def main(request):
         all_product = Product.objects.all() 
         return render(request, "main.html", {"form": form,'all_product':all_product})
     return render(request,'main.html',{'form':form})
-
 # payments/views.py
 
 client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
@@ -70,8 +69,8 @@ client.timeout = 200
 
 def buy(request, id):
     if request.method != 'POST':
-        return JsonResponse({'error':'something went wrong'},status=405)
-    try:
+        return JsonResponse({'error':'method not allowed'},status=405)
+    try: 
         with transaction.atomic():
             try:
                 toy_to_buy = Product.objects.select_for_update().get(id=id)
@@ -140,18 +139,6 @@ def signature_check(request):
         except Exception as e:
             return JsonResponse({f'error':'something went wrong'})
     return JsonResponse({'error':'method not allowed'},status=405)
-
-
-                        
-
-
-
-
-
-
-
-
-
 
 
 def doormats(request):
