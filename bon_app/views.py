@@ -69,22 +69,22 @@ client.timeout = 200
 
 def buy(request, id):
     if request.method != 'POST':
-        return JsonResponse({'error':'method not allowed'},status=405)
+        return JsonResponse({'Error':'method not allowed'},status=405)
     try: 
         with transaction.atomic():
             try:
                 toy_to_buy = Product.objects.select_for_update().get(id=id)
             except Product.DoesNotExist:
-                return JsonResponse({'error':'item not found'},status=404)
+                return JsonResponse({'Error':'item not found'},status=404)
 
             if toy_to_buy.stock <= 0:
-                return JsonResponse({'error':'out of stock'},status=409)
+                return JsonResponse({'Error':'out of stock'},status=409)
 
             toy_to_buy.stock -= 1
             toy_to_buy.save()
 
     except Exception as e:
-        return JsonResponse({'error':'something went wrong'},status=500)
+        return JsonResponse({'Error':'something went wrong'},status=500)
 
     try:
         order = client.order.create(data={
