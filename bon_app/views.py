@@ -66,57 +66,81 @@ def main(request):
 
 client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 client.timeout = 200
+import logging
+
+logger = logging.getLogger(__name__)
+from django.db import transaction
+from django.http import JsonResponse
+import logging
+
+logger = logging.getLogger(__name__)
 
 def buy(request, id):
     if request.method != 'POST':
-        return JsonResponse({'Error':'method not allowed'},status=405)
-    try: 
+        return JsonResponse({'Error': 'Method not allowed'}, status=405)
+
+    # Phase 1: Verify and Secure Stock safely
+    try:
         with transaction.atomic():
             try:
                 toy_to_buy = Product.objects.select_for_update().get(id=id)
             except Product.DoesNotExist:
-                return JsonResponse({'Error':'item not found'},status=404)
+                return JsonResponse({'Error': 'Item not found'}, status=404)
 
             if toy_to_buy.stock <= 0:
-                return JsonResponse({'Error':'out of stock'},status=409)
+                return JsonResponse({'Error': 'Out of stock'}, status=409)
 
             toy_to_buy.stock -= 1
             toy_to_buy.save()
+            
+            # Cache values needed for the API call before leaving transaction context
+            amount_paise = toy_to_buy.round_to_paise()
+            item_name = toy_to_buy.name
+            item_id_str = str(toy_to_buy.id)
 
-    except Exception as e:
-        return JsonResponse({'Error':'something went wrong'},status=500)
+    except Exception as db_err:
+        logger.error(f"Database error during stock deduction: {db_err}")
+        return JsonResponse({'Error': 'Database transaction failed'}, status=500)
 
+    # Phase 2: Create Razorpay Order outside database lock
     try:
         order = client.order.create(data={
-            'amount':toy_to_buy.round_to_paise(),
-            'currency':'INR',
-            'notes':{                            
-                'email':request.user.email,
-                'user':request.user.username,
-                'item':toy_to_buy.name,
-                'item_id':str(toy_to_buy.id),
+            'amount': amount_paise,
+            'currency': 'INR',
+            'notes': {
+                'email': request.user.email,
+                'user': request.user.username,
+                'item': item_name,
+                'item_id': item_id_str,
             },
-            'receipt':f'rcpt_{toy_to_buy.id}',
+            'receipt': f'rcpt_{item_id_str}',
         })
-
-    except Exception as e:
+    except Exception as api_err:
+        # Log the exact Razorpay API failure to your terminal console
+        logger.error(f"Razorpay API failure: {api_err}")
+        
+        # Phase 3: Rollback stock cleanly if API failed
         try:
             with transaction.atomic():
-                toy_to_buy = Product.objects.select_for_update().get(id=id)
-                toy_to_buy.stock += 1
-                toy_to_buy.save()
-        except Exception as e:
-            print(str(e))
-        return JsonResponse({'error':'server down '},status=500)
-    
+                # Avoid select_for_update here to prevent deadlocks during failure recovery
+                product_rollback = Product.objects.get(id=id)
+                product_rollback.stock += 1
+                product_rollback.save()
+        except Exception as rollback_err:
+            logger.critical(f"CRITICAL: Stock rollback failed for product {id}: {rollback_err}")
+            
+        return JsonResponse({'error': f'Payment gateway initialization failed: {str(api_err)}'}, status=500)
+
+    # Phase 4: Return success data
     return JsonResponse({
-        'key':settings.RAZORPAY_KEY_ID,
-        'amount':order['amount'],
-        'currency':order['currency'],
-        'notes':order['notes'],
-        'order_id':order['id'],
-        'receipt':order['receipt']
+        'key': settings.RAZORPAY_KEY_ID,
+        'amount': order['amount'],
+        'currency': order['currency'],
+        'notes': order['notes'],
+        'order_id': order['id'],
+        'receipt': order['receipt']
     })
+
                             
 def signature_check(request):
     if request.method == 'POST':
