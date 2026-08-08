@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -353,7 +354,7 @@
         <p class="empty-msg">No products </p>
         {% endfor %}
     </main>
-                                                                                                                                                                             
+
     <!-- Modern Image Zoom Lightbox Element -->
     <div class="zoom-overlay" id="zoomOverlay" onclick="closeZoom()">
         <img id="zoomedImage" src="" alt="Zoomed view">
@@ -361,14 +362,13 @@
 
     <input type="hidden" value="{{csrf_token}}" id="token">
     <script src="https://razorpay.com"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+
+    <script>  document.addEventListener('DOMContentLoaded', () => {
             const button = document.querySelectorAll('.buy-btn')
             const token = document.getElementById('token').value;
             button.forEach((btn) => {
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
-                                                         
                     const id = btn.dataset.id;
                     fetch(`/buy/${id}/`, {
                         method: 'POST',
@@ -416,7 +416,7 @@
                         }).catch((error) => {
                             alert(`ooops ${error}`)
                         });
-                 
+
                 });
             });
         });
@@ -441,15 +441,14 @@
 
             }).then((data) => {
                 if (data.success) {
-                    alert(success)
+                    alert(success);
                 } else {
-                    alert(data.error)
+                    alert(data.error);
                 }
             }).catch(error => {
                 alert('error' + error)
             })
         }
-
         // fetch to add items to cart 
         document.addEventListener('DOMContentLoaded', () => {
 

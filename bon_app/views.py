@@ -117,6 +117,8 @@ def buy(request, id):
         'order_id':order['id'],
         'receipt':order['receipt']
     })
+                            
+
 
 def signature_check(request):
     if request.method == 'POST':
