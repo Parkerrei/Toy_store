@@ -363,7 +363,36 @@
     <input type="hidden" value="{{csrf_token}}" id="token">
     <script src="https://razorpay.com"></script>
 
-    <script>  document.addEventListener('DOMContentLoaded', () => {
+    <script>
+        // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
+        function paymentVerification(razorpayResponse) {
+            const id = document.getElementById('token').value
+            fetch('signature_check/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': id,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(razorpayResponse)
+            }
+
+            ).then((response) => {
+                if (!response.ok) {
+                    throw new Error(`something wrong  ${response.status}`)
+                }
+                return response.json();
+
+            }).then((data) => {
+                if (data.success) {
+                    alert(success);
+                } else {
+                    alert(data.error);
+                }
+            }).catch(error => {
+                alert('error' + error)
+            })
+        }
+        document.addEventListener('DOMContentLoaded', () => {
             const button = document.querySelectorAll('.buy-btn')
             const token = document.getElementById('token').value;
             button.forEach((btn) => {
@@ -421,34 +450,7 @@
             });
         });
 
-        // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
-        function paymentVerification(razorpayResponse) {
-            const id = document.getElementById('token').value
-            fetch('signature_check/', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': id,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(razorpayResponse)
-            }
 
-            ).then((response) => {
-                if (!response.ok) {
-                    throw new Error(`something wrong  ${response.status}`)
-                }
-                return response.json();
-
-            }).then((data) => {
-                if (data.success) {
-                    alert(success);
-                } else {
-                    alert(data.error);
-                }
-            }).catch(error => {
-                alert('error' + error)
-            })
-        }
         // fetch to add items to cart 
         document.addEventListener('DOMContentLoaded', () => {
 

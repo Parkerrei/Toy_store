@@ -118,8 +118,6 @@ def buy(request, id):
         'receipt':order['receipt']
     })
                             
-
-
 def signature_check(request):
     if request.method == 'POST':
         try:
