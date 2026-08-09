@@ -98,6 +98,7 @@ def buy(request, id):
         logger.error(f"Database error during stock deduction: {db_err}")
         return JsonResponse({'Error': 'Database transaction failed'}, status=500)
 
+
     # Phase 2: Create Razorpay Order outside database lock
     try:
         order = client.order.create(data={
