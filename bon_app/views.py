@@ -81,7 +81,7 @@ def buy(request, id):
             try:
                 toy_to_buy = Product.objects.select_for_update().get(id=id)
             except Product.DoesNotExist:
-                return JsonResponse({'Error': 'Item not found'}, status=404)
+                return JsonResponse({'Error':'Item not found'}, status=404)
 
             if toy_to_buy.stock <= 0:
                 return JsonResponse({'Error': 'Out of stock'}, status=409)

@@ -139,7 +139,7 @@
             <h2>Welcome Back 🎠</h2>
             <p class="subtitle">Log in to your Toy Store account</p>
 
-            <form method="post" class="register-form">
+            <form method="post" class="register-form" id="login-form">
                 {% csrf_token %}
                 {% if form.non_field_errors %}
                 <div class='error'>
@@ -157,7 +157,7 @@
                     {{ form.password }}
                 </div>
                 <input type="hidden" name="next" id="id_next" value="{{ next|default:''}}">
-                <button type="submit" class="btn-primary">Log In</button>
+                <button id="log-btn" type="submit" class="btn-primary">Log In</button>
             </form>
             <p class="login-link">
                 New here? <a href="{% url 'user' %}">Create an account</a>
@@ -172,7 +172,13 @@
             element.style.display = 'none';
         }, 3000);
     }
+    btn = document.getElementById('log-btn')
+    form = document.getElementById('login-form')
 
+    form.addEventListener('submit', () => {
+        btn.disabled = true
+        btn.innerText = 'processing ...'
+    })
 
 </script>
 
