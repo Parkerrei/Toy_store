@@ -11,6 +11,9 @@ from django.http import JsonResponse
 from .models import Category,Product,Cart_item
 from django.db import transaction
 import json
+import logging
+
+
 # from .cart import Session_Cart
 # Create your views here.
 
@@ -66,15 +69,8 @@ def main(request):
 
 client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 client.timeout = 200
-import logging
 
 logger = logging.getLogger(__name__)
-from django.db import transaction
-from django.http import JsonResponse
-import logging
-
-logger = logging.getLogger(__name__)
-
 def buy(request, id):
     if request.method != 'POST':
         return JsonResponse({'Error': 'Method not allowed'}, status=405)
@@ -140,8 +136,7 @@ def buy(request, id):
         'order_id': order['id'],
         'receipt': order['receipt']
     })
-
-                            
+  
 def signature_check(request):
     if request.method == 'POST':
         try:
