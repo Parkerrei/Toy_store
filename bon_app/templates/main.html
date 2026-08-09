@@ -424,8 +424,8 @@
                                     "order_id": order_data.order_id,
 
                                     //this handler function runs automatically  when payment is successful//
-                                    "handler": function (razorpayResponse) {
-                                        paymentVerification(razorpayResponse);
+                                    "handler": function (response) {
+                                        alert(`payment successful:${response.razorpay_key_id}`);
                                     },
 
                                     "theme": {
@@ -453,7 +453,6 @@
 
         // fetch to add items to cart 
         document.addEventListener('DOMContentLoaded', () => {
-
             const cart_btns = document.querySelectorAll('.add-to-cart-btn');
             const token = document.getElementById('token').value;
 
