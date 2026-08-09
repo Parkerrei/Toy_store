@@ -118,6 +118,7 @@
             animation: fadeIn 0.3s ease;
         }
 
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -158,7 +159,6 @@
                 <input type="hidden" name="next" id="id_next" value="{{ next|default:''}}">
                 <button type="submit" class="btn-primary">Log In</button>
             </form>
-
             <p class="login-link">
                 New here? <a href="{% url 'user' %}">Create an account</a>
             </p>
@@ -172,6 +172,8 @@
             element.style.display = 'none';
         }, 3000);
     }
+
+
 </script>
 
 </html>
