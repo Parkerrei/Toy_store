@@ -69,8 +69,8 @@ def main(request):
 
 client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 client.timeout = 200
-
 logger = logging.getLogger(__name__)
+
 def buy(request, id):
     if request.method != 'POST':
         return JsonResponse({'Error': 'Method not allowed'}, status=405)
