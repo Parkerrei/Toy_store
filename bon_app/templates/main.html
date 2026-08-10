@@ -392,7 +392,7 @@
         //         alert('error' + error)
         //     })
         // }
-        
+
         document.addEventListener('DOMContentLoaded', () => {
             const button = document.querySelectorAll('.buy-btn')
             const token = document.getElementById('token').value;
@@ -417,7 +417,7 @@
                         .then((order_data) => {
                             if (order_data) {
                                 const options = {
-                                    "key": order_data.razorpay_key_id,
+                                    "key": order_data.key,
                                     "amount": order_data.amount,
                                     "currency": order_data.currency,
                                     "name": "cheri bon_bon",
