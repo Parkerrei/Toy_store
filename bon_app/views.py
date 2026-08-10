@@ -96,7 +96,7 @@ def buy(request, id):
 
     except Exception as db_err:
         logger.error(f"Database error during stock deduction: {db_err}")
-        return JsonResponse({'Error': 'Database transaction failed'}, status=500)
+        return JsonResponse({'Error':'Database transaction failed'}, status=500)
 
 
     # Phase 2: Create Razorpay Order outside database lock
@@ -105,13 +105,14 @@ def buy(request, id):
             'amount': amount_paise,
             'currency': 'INR',
             'notes': {
-                'email': request.user.email,
+                'email':request.user.email,
                 'user': request.user.username,
                 'item': item_name,
-                'item_id': item_id_str,
+                'item_id':item_id_str,
             },
             'receipt': f'rcpt_{item_id_str}',
         })
+
     except Exception as api_err:
         # Log the exact Razorpay API failure to your terminal console
         logger.error(f"Razorpay API failure: {api_err}")
@@ -125,9 +126,8 @@ def buy(request, id):
                 product_rollback.save()
         except Exception as rollback_err:
             logger.critical(f"CRITICAL: Stock rollback failed for product {id}: {rollback_err}")
-            
-        return JsonResponse({'error': f'Payment gateway initialization failed: {str(api_err)}'}, status=500)
-
+        return JsonResponse({'error':f'Payment gateway initialization failed: {str(api_err)}'}, status=500)
+ 
     # Phase 4: Return success data
     return JsonResponse({
         'key': settings.RAZORPAY_KEY_ID,
