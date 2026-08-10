@@ -358,162 +358,163 @@
     <div class="zoom-overlay" id="zoomOverlay" onclick="closeZoom()">
         <img id="zoomedImage" src="" alt="Zoomed view">
     </div>
-
     <input type="hidden" value="{{csrf_token}}" id="token">
-    <script src="https://razorpay.com"></script>
+</body>
 
-    <script>
-        // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
-        // function paymentVerification(razorpayResponse) {
-        //     const id = document.getElementById('token').value
-        //     fetch('signature_check/', {
-        //         method: 'POST',
-        //         headers: {
-        //             'X-CSRFToken': id,
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify(razorpayResponse)
-        //     }
+<script src="https://razorpay.com"></script>
 
-        //     ).then((response) => {
-        //         if (!response.ok) {
-        //             throw new Error(`something wrong  ${response.status}`)
-        //         }
-        //         return response.json();
+<script>
+    // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
+    // function paymentVerification(razorpayResponse) {
+    //     const id = document.getElementById('token').value
+    //     fetch('signature_check/', {
+    //         method: 'POST',
+    //         headers: {
+    //             'X-CSRFToken': id,
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(razorpayResponse)
+    //     }
 
-        //     }).then((data) => {
-        //         if (data.success) {
-        //             alert(success);
-        //         } else {
-        //             alert(data.error);
-        //         }
-        //     }).catch(error => {
-        //         alert('error' + error)
-        //     })
-        // }
+    //     ).then((response) => {
+    //         if (!response.ok) {
+    //             throw new Error(`something wrong  ${response.status}`)
+    //         }
+    //         return response.json();
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const button = document.querySelectorAll('.buy-btn')
-            const token = document.getElementById('token').value;
-            button.forEach((btn) => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const id = btn.dataset.id;
-                    fetch(`/buy/${id}/`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': token,
-                            'Content-Type': 'application/json'
-                        },
-                        
+    //     }).then((data) => {
+    //         if (data.success) {
+    //             alert(success);
+    //         } else {
+    //             alert(data.error);
+    //         }
+    //     }).catch(error => {
+    //         alert('error' + error)
+    //     })
+    // }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const button = document.querySelectorAll('.buy-btn')
+        const token = document.getElementById('token').value;
+        button.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const id = btn.dataset.id;
+                fetch(`/buy/${id}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': token,
+                        'Content-Type': 'application/json'
+                    },
+
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`server status ${response.status}: Failed to process purchase.!!`)
+                        }
+                        return response.json()
                     })
-                        .then((response) => {
-                            if (!response.ok) {
-                                throw new Error(`server status ${response.status}: Failed to process purchase.!!`)
-                            }
-                            return response.json()
-                        })
 
-                        .then((order_data) => {
-                            if (order_data) {
-                                const options = {
-                                    "key": order_data.key,
-                                    "amount": order_data.amount,
-                                    "currency": order_data.currency,
-                                    "name": "cheri bon_bon",
-                                    "description": "thanks visit again",
-                                    "order_id": order_data.order_id,
+                    .then((order_data) => {
+                        if (order_data) {
+                            const options = {
+                                "key": order_data.key,
+                                "amount": order_data.amount,
+                                "currency": order_data.currency,
+                                "name": "cheri bon_bon",
+                                "description": "thanks visit again",
+                                "order_id": order_data.order_id,
 
-                                    //this handler function runs automatically  when payment is successful//
-                                    "handler": function (response) {
-                                        alert(`payment successful:${response.razorpay_key_id}`);
-                                    },
+                                //this handler function runs automatically  when payment is successful//
+                                "handler": function (response) {
+                                    alert(`payment successful:${response.razorpay_key_id}`);
+                                },
 
-                                    "theme": {
-                                        "color": "#3399cc"
-                                    }
+                                "theme": {
+                                    "color": "#3399cc"
                                 }
-
-                                //initialize and open the razorpay pop up box over your page//
-                                const rzp1 = new Razorpay(options);
-                                rzp1.open();
                             }
 
-                            else {
-                                alert(order_data.error || "an unknown error occurred!");
-                            }
+                            //initialize and open the razorpay pop up box over your page//
+                            const rzp1 = new Razorpay(options);
+                            rzp1.open();
+                        }
 
-                        }).catch((error) => {
-                            alert(`ooops ${error}`)
-                        });
+                        else {
+                            alert(order_data.error || "an unknown error occurred!");
+                        }
 
-                });
+                    }).catch((error) => {
+                        alert(`ooops ${error}`)
+                    });
+
             });
         });
+    });
 
 
-        // fetch to add items to cart 
-        document.addEventListener('DOMContentLoaded', () => {
-            const cart_btns = document.querySelectorAll('.add-to-cart-btn');
-            const token = document.getElementById('token').value;
+    // fetch to add items to cart 
+    document.addEventListener('DOMContentLoaded', () => {
+        const cart_btns = document.querySelectorAll('.add-to-cart-btn');
+        const token = document.getElementById('token').value;
 
-            cart_btns.forEach((btn) => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const id = btn.dataset.id;
-                    fetch(`/add_to_cart/${id}/`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': token,
-                            'Content-Type': 'application/json'
+        cart_btns.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const id = btn.dataset.id;
+                fetch(`/add_to_cart/${id}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': token,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`unable to fetch: ${response.status}`)
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.success);
+                        } else {
+                            alert(data.error);
                         }
                     })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`unable to fetch: ${response.status}`)
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                alert(data.success);
-                            } else {
-                                alert(data.error);
-                            }
-                        })
-                        .catch(error => {
-                            alert('error:' + error)
-                        });
-                });
+                    .catch(error => {
+                        alert('error:' + error)
+                    });
             });
-
         });
 
-        // Sidebar Toggle Logic
-        function toggleSidebar() {
-            document.getElementById("sidebar").classList.toggle("open");
+    });
+
+    // Sidebar Toggle Logic
+    function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+    }
+
+    // Close sidebar if user clicks outside of it
+    document.addEventListener('click', function (event) {
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.querySelector('.toggle-btn');
+        if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target) && sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
         }
+    });
 
-        // Close sidebar if user clicks outside of it
-        document.addEventListener('click', function (event) {
-            const sidebar = document.getElementById('sidebar');
-            const toggleBtn = document.querySelector('.toggle-btn');
-            if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target) && sidebar.classList.contains('open')) {
-                sidebar.classList.remove('open');
-            }
-        });
+    function zoomImage(wrapperElement) {
+        const thumbnail = wrapperElement.querySelector('img');
+        const overlay = document.getElementById('zoomOverlay');
+        const zoomedImage = document.getElementById('zoomedImage');
+        zoomedImage.src = thumbnail.src;
+        zoomedImage.alt = thumbnail.alt;
+        overlay.classList.add('active');
+    }
 
-        function zoomImage(wrapperElement) {
-            const thumbnail = wrapperElement.querySelector('img');
-            const overlay = document.getElementById('zoomOverlay');
-            const zoomedImage = document.getElementById('zoomedImage');
-            zoomedImage.src = thumbnail.src;
-            zoomedImage.alt = thumbnail.alt;
-            overlay.classList.add('active');
-        }
+    function closeZoom() {
+        document.getElementById('zoomOverlay').classList.remove('active');
+    }
 
-        function closeZoom() {
-            document.getElementById('zoomOverlay').classList.remove('active');
-        }
-
-    </script>
+</script>
