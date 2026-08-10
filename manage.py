@@ -2,7 +2,13 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from dotenv import load_dotenv  # 👈 Add this line
 
+
+def main():
+    load_dotenv()  # 👈 Add this line right at the start of main()
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'YourProject.settings')
+    # ... rest of your original manage.py code ...
 
 def main():
     """Run administrative tasks."""
