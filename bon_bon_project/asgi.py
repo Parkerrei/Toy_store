@@ -10,6 +10,12 @@ https://docs.djangoproject.com/en/6.0/howto/deployment/asgi/
 import os
 
 from django.core.asgi import get_asgi_application
+from django.core.wsgi import get_wsgi_application
+from dotenv import load_dotenv # 👈 Add this
+load_dotenv() # 👈 Add this
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'YourProject.settings')
+application = get_wsgi_application()
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bon_bon_project.settings')
 
