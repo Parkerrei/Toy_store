@@ -15,11 +15,15 @@ from pathlib import Path
 import os 
 from decouple import config 
 import dj_database_url
+from decouple import Config, RepositoryEnv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# 2. Force decouple to read the exact .env path
+ENV_PATH = os.path.join(BASE_DIR, '.env')
+config = Config(RepositoryEnv(ENV_PATH))
 
 RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID' )
 RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')
