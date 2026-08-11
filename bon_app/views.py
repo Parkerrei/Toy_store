@@ -137,11 +137,22 @@ def buy(request, id):
         'order_id': order['id'],
         'receipt': order['receipt']
     })
-  
+client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
 def signature_check(request):
     if request.method != 'POST':
         return JsonResponse({'error':'method not allwed'},status=405)
-    
+
+    try:
+        data = json.loads(request.body)
+        param_dict = {
+            'razorpay_order_id': data.get('razorpay_order_id'),
+            'razorpay_payment_id': data.get('razorpay_payment_id'),
+            'razorpay_signature': data.get('razorpay_signature')
+        }
+        client.utility.verify_payment_signature(param_dict)
+    except razorpay.errors.SignatureVerificationError:
+        return JsonResponse({'error':'signature verification failed'},status=400)
+    return JsonResponse({'success':'signature verified successfullt'},status=200)
 
 
 
