@@ -2,7 +2,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -361,8 +360,8 @@
     <input type="hidden" value="{{csrf_token}}" id="token">
 </body>
 
-<script src="https://razorpay.com"></script>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
     // function paymentVerification(razorpayResponse) {
@@ -427,7 +426,7 @@
 
                                 //this handler function runs automatically  when payment is successful//
                                 "handler": function (response) {
-                                    alert(`payment successful:${response.razorpay_key_id}`);
+                                    alert(`payment successful:${response.razorpay_payment_id}`);
                                 },
 
                                 "theme": {
