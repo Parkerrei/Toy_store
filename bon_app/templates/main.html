@@ -363,34 +363,6 @@
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-    // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
-    // function paymentVerification(razorpayResponse) {
-    //     const id = document.getElementById('token').value
-    //     fetch('signature_check/', {
-    //         method: 'POST',
-    //         headers: {
-    //             'X-CSRFToken': id,
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(razorpayResponse)
-    //     }
-
-    //     ).then((response) => {
-    //         if (!response.ok) {
-    //             throw new Error(`something wrong  ${response.status}`)
-    //         }
-    //         return response.json();
-
-    //     }).then((data) => {
-    //         if (data.success) {
-    //             alert(success);
-    //         } else {
-    //             alert(data.error);
-    //         }
-    //     }).catch(error => {
-    //         alert('error' + error)
-    //     })
-    // }
 
     document.addEventListener('DOMContentLoaded', () => {
         const button = document.querySelectorAll('.buy-btn')
@@ -426,7 +398,8 @@
 
                                 //this handler function runs automatically  when payment is successful//
                                 "handler": function (response) {
-                                    alert(`payment successful:${response.razorpay_payment_id}`);
+                                    // call the helper function to send the transaction data to django for verification//
+                                    paymentVerification(response);
                                 },
 
                                 "theme": {
@@ -451,6 +424,34 @@
         });
     });
 
+    // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
+    function paymentVerification(razorpayResponse) {
+        const id = document.getElementById('token').value
+        fetch('signature_check/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': id,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(razorpayResponse)
+        }
+
+        ).then((response) => {
+            if (!response.ok) {
+                throw new Error(`something wrong  ${response.status}`)
+            }
+            return response.json();
+
+        }).then((data) => {
+            if (data.success) {
+                alert(success);
+            } else {
+                alert(data.error);
+            }
+        }).catch(error => {
+            alert('error' + error)
+        })
+    }
 
     // fetch to add items to cart 
     document.addEventListener('DOMContentLoaded', () => {
