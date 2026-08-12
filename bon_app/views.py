@@ -137,6 +137,7 @@ def buy(request, id):
         'order_id': order['id'],
         'receipt': order['receipt']
     })
+
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
 def signature_check(request):
     if request.method != 'POST':
