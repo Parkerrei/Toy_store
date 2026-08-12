@@ -149,6 +149,7 @@ def signature_check(request):
             'razorpay_payment_id': data.get('razorpay_payment_id'),
             'razorpay_signature': data.get('razorpay_signature')
         }
+        
         client.utility.verify_payment_signature(param_dict)
     except razorpay.errors.SignatureVerificationError:
         return JsonResponse({'error':'signature verification failed'},status=400)
