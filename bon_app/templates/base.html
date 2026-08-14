@@ -95,6 +95,12 @@
                 grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
         }
+
+        select {
+            outline: none;
+            border-radius:5px;
+            padding: 7px;
+        }
     </style>
 
 </head>
@@ -103,7 +109,6 @@
     {% block content %}
     <header>
         <nav>
-           
             <a href="{% url 'main' %}">Home</a>
             <a href="#">Cart</a>
             <a href="#">Profile</a>
