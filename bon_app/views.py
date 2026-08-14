@@ -155,28 +155,6 @@ def signature_check(request):
         return JsonResponse({'error':'signature verification failed'},status=400)
     return JsonResponse({'success':'signature verified successfullt'},status=200)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def doormats(request):
     category = Category.objects.prefetch_related('products').filter(id=4).first()
     return render(request,"doormats.html",{'category':category})
