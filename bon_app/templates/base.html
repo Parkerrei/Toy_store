@@ -118,8 +118,6 @@
         <div class="products">
             {% for prod in category.products.all %}
             <div class="product-card">
-                <img src="{{ prod.image.url }}" alt="{{ prod.name }}">
-                <p>{{ prod.name }}</p>
                 <button>Add to Cart</button>
             </div>
             {% endfor %}
