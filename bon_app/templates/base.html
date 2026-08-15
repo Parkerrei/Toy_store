@@ -127,8 +127,9 @@
         </div>
     </div>
     {% endblock %}
-    <input type="hidden" value="{{ csrf_token }}">
+    <input type="hidden" value="{{ csrf_token }}" id="token">
 </body>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const button = document.querySelectorAll('.buy')
