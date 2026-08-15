@@ -105,8 +105,6 @@
         option {
             border-radius: 5px;
         }
-
-       
     </style>
 
 </head>
@@ -141,6 +139,42 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
+    // fetch to add items to cart 
+    document.addEventListener('DOMContentLoaded', () => {
+        const cart_btns = document.querySelectorAll('.cart-btn');
+        const token = document.getElementById('token').value;
+
+        cart_btns.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const id = btn.dataset.id;
+                fetch(`/add_to_cart/${id}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': token,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`unable to fetch: ${response.status}`)
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.success);
+                        } else {
+                            alert(data.error);
+                        }
+                    })
+                    .catch(error => {
+                        alert('error:' + error)
+                    });
+            });
+        });
+
+    });
     document.addEventListener('DOMContentLoaded', () => {
         const button = document.querySelectorAll('.buy')
         const token = document.getElementById('token').value;

@@ -244,3 +244,5 @@ def user_cart_items(request):
         'total_price':total_price
     } 
     return render(request,'all_cart.html',context)
+
+    
