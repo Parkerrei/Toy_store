@@ -30,8 +30,8 @@
         <div class="product-card">
             <img src="{{ prod.image.url }}" alt="{{ prod.name }}">
             <p>{{ prod.name }}</p>
-            <button>Add to Cart</button>
-           <button data-id="{{ prod.id }}" class="buy">Buy</button>
+            <button class="cart-btn" data-id="{{ prod.id }}">Add to Cart</button>
+            <button data-id="{{ prod.id }}" class="buy">Buy</button>
         </div>
         {% endfor %}
     </div>
