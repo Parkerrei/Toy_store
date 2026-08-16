@@ -245,4 +245,14 @@ def user_cart_items(request):
     } 
     return render(request,'all_cart.html',context)
 
-    
+def cart_deduct(request,id):
+    if request.method == 'DELETE':
+        try:
+            item = Product.objects.get(id=id)
+        except Product.DoesNotExist:
+            return JsonResponse({'error':'item not found'},status=404)
+        """
+        deduct stock from user cart
+        item -= 1
+        
+        """
