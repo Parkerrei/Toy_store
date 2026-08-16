@@ -246,13 +246,15 @@ def user_cart_items(request):
     return render(request,'all_cart.html',context)
 
 def cart_deduct(request,id):
-    if request.method == 'DELETE':
-        try:
-            item = Product.objects.get(id=id)
-        except Product.DoesNotExist:
-            return JsonResponse({'error':'item not found'},status=404)
-        """
-        deduct stock from user cart
-        item -= 1
-        
-        """
+    if request.method != 'DELETE':
+        return JsonResponse({'error':'method not allowed'},status=405)
+    try:
+        item = Product.objects.get(id=id)
+    except Product.DoesNotExist:
+        return JsonResponse({'error':'item not found'},status=404)
+
+    # remove item from cart model
+    rm_it = Cart_item.objects.filter(item).delete()
+
+    #show removed item in frontend 
+    return JsonResponse({'success ':'item removed successfuly'},status=200)
