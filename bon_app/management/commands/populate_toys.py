@@ -5,7 +5,8 @@ from django.core.files import File
 from django.utils.text import slugify 
 from bon_app.models import Category,Product
 import uuid
-from django.db import transaction
+from django.db import transaction,connection
+   
 
 class Command(BaseCommand):
     help = 'Populates the database with toy products' 
@@ -63,7 +64,14 @@ class Command(BaseCommand):
                                 self.stdout.write(self.style.SUCCESS(f'successfully added product:{product_name}'))
                 self.stdout.write(self.style.SUCCESS('\n data population completed!'
                         ))
+             
+                with connection.cursor() as cursor:
+                    # Reset Category IDs
+                    cursor.execute("SELECT setval(pg_get_serial_sequence('bon_app_category', 'id'), COALESCE(MAX(id), 0) + 1, false) FROM bon_app_category;")
+                    # Reset Product IDs
+                    cursor.execute("SELECT setval(pg_get_serial_sequence('bon_app_product', 'id'), COALESCE(MAX(id), 0) + 1, false) FROM bon_app_product;")
                 
+                self.stdout.write(self.style.SUCCESS('ID sequences reset to match current data.'))
         except Exception as e:
             self.stderr.write(self.style.ERROR(f'\nTransaction roled back due to error:{e}'))
                 
