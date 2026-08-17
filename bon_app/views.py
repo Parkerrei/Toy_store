@@ -245,27 +245,6 @@ def user_cart_items(request):
     } 
     return render(request,'all_cart.html',context)
 
-# def cart_deduct(request,id):
-#     if request.method != 'DELETE':
-#         return JsonResponse({'error':'method not allowed'},status=405)
-#     try:
-#         item = Product.objects.get(id=id)
-#     except Product.DoesNotExist:
-#         return JsonResponse({'error':'item not found'},status=404)
-
-#     # remove item from cart model from specific user
-#     try:
-#         it_rm = Cart_item.objects.filter(user_cart=request.user, product=item).delete()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-#     except Cart_item.DoesNotExist:    
-#         return JsonResponse({'error':'item not found'},status=403)
-
-#     #restock item back to its category
-#     item.stock += 1
-#     item.save()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-#     #show removed item in frontend 
-#     return JsonResponse({'success':'item removed successfuly'},status=200)
-
 def cart_deduct(request, id):
     if request.method != 'DELETE':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
@@ -294,6 +273,5 @@ def cart_deduct(request, id):
             product.save()
 
         return JsonResponse({'success': 'Item removed and stock updated successfully'}, status=200)
-
     except Exception as e:
         return JsonResponse({'error': f'An unexpected error occurred: {e}'}, status=500)
