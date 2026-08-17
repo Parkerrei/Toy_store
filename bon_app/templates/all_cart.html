@@ -128,7 +128,7 @@
                 ).then((response) => {
                     return response.json().then((data) => {
                         if (!response.ok) {
-                            throw new Error(data.eror || 'something went wrong')
+                            throw new Error(data.error || 'something went wrong')
                         }
                         return data
                     })
@@ -137,6 +137,13 @@
                     .then((data) => {
                         if (data.success) {
                             alert(data.success)
+                            // 1. Target the correct wrapper block from your HTML
+                            const cartItemBlock = btn.closest('.cart-item');
+
+                            if (cartItemBlock) {
+                                // 2. Erase the block (Name, Image, Qty, Subtotal) instantly from UI
+                                cartItemBlock.remove();
+                            }
                         } else {
                             alert(data.error)
                         }
