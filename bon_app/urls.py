@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import user,sanrio_stickers,sanrio_spoon_set,pencil_pouch,user_log_in,main,buy,doormats,mofusand,neck_pillow,cry_baby,melamine_plates,big_scrun,anime_pens,jelly_bunny,log_out,add_to_cart,user_cart_items
+from .views import user,sanrio_stickers,sanrio_spoon_set,pencil_pouch,user_log_in,main,buy,doormats,mofusand,neck_pillow,cry_baby,melamine_plates,big_scrun,anime_pens,jelly_bunny,log_out,add_to_cart,user_cart_items,cart_deduct
 
 urlpatterns = [
                 path('',user,name='user'),
@@ -19,6 +19,7 @@ urlpatterns = [
                 path('sanrio_spoon_set/',sanrio_spoon_set,name='sanrio_spoon_set'),
                 path('sanrio_stickers/',sanrio_stickers,name='sanrio_stickers'),
                 path('add_to_cart/<int:id>/',add_to_cart,name='add_to_cart'),
-                path('user_cart_items/',user_cart_items,name='user_cart_items')
+                path('user_cart_items/',user_cart_items,name='user_cart_items'),
+                path('cart_deduct/<int:id>/',cart_deduct,name='cart_deduct')
                 
 ]
