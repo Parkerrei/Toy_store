@@ -270,7 +270,7 @@ def cart_deduct(request, id):
     if request.method != 'DELETE':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-    try:
+    try:  
         # Wrap everything in an atomic block for safety
         with transaction.atomic():
             # 1. Find the product
