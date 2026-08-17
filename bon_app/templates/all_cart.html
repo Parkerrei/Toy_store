@@ -57,7 +57,7 @@
             /* Gives the final bill number a professional green hue */
         }
 
-        #card-btn {
+        .card-btn {
             padding: 2px;
             cursor: pointer;
         }
@@ -85,7 +85,7 @@
             <h3>{{ detail.product.name }}</h3>
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <p>Qty: {{ detail.quantity }}</p>
-            <button class="cart-btn" id="cart-btn" data-id="{{detail.id}}">remove</button>
+            <button class="cart-btn" data-id="{{detail.id}}">remove</button>
             <h5>Subtotal: ₹ {{ detail.get_subtotal }}</h5>
         </div>
         {% empty %}
