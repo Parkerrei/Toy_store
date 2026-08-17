@@ -60,7 +60,6 @@
         #card-btn {
             padding: 2px;
             cursor: pointer;
-
         }
     </style>
 </head>
@@ -86,7 +85,7 @@
             <h3>{{ detail.product.name }}</h3>
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <p>Qty: {{ detail.quantity }}</p>
-            <button id="cart-btn">remove</button>
+            <button class="cart-btn" id="cart-btn">remove</button>
             <h5>Subtotal: ₹ {{ detail.get_subtotal }}</h5>
         </div>
         {% empty %}
@@ -98,7 +97,50 @@
             <h2>Grand Total: ₹ {{ total_price }}</h2>
         </div>
     </div>
-
+    <input type="hidden" name="csrfmiddlewaretoken" id="token" value="{{csrf_token}}">
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = document.getElementById('token').value
+        const buttons = document.querySelectorAll('.cart-btn')
+
+        button.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                const id = btn.dataset.id
+                e.preventDefault();
+
+                fetch(`/cart_deduct/${id}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': token,
+                        'Content-Type': 'application/json'
+                    }
+                }
+
+                ).then((response) => {
+                    return response.json().then((data) => {
+                        if (!response.ok) {
+                            throw new Error(data.eror || 'something went wrong')
+                        }
+                        return data
+                    })
+
+                })
+                    .then((data) => {
+                        if (data.success) {
+                            alert(data.success)
+                        } else {
+                            alert(data.error)
+                        }
+                    })
+                    .catch((error) => {
+                        alert('error:' + error)
+                    })
+
+            })
+        })
+    })
+</script>
 
 </html>
