@@ -86,6 +86,8 @@
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <p>Qty: {{ detail.quantity }}</p>
             <button class="cart-btn" data-id="{{detail.id}}">remove</button>
+            <button class="cart-btn" data-id="{{detail.id}}">-</button>
+            <button class="cart-btn" data-id="{{detail.id}}">+</button>
             <h5>Subtotal: ₹ {{ detail.get_subtotal }}</h5>
         </div>
         {% empty %}
