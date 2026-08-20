@@ -245,33 +245,61 @@ def user_cart_items(request):
     } 
     return render(request,'all_cart.html',context)
 
+# def cart_deduct(request, id):
+#     if request.method != 'DELETE':
+#         return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+#     try:  
+#         # Wrap everything in an atomic block for safety
+#         with transaction.atomic():
+#             # 1. Find the product
+#             try:                                                                        
+#                 product = Product.objects.get(id=id)
+#             except Product.DoesNotExist:
+#                 return JsonResponse({'error': 'Item not found'}, status=404)
+
+#             # 2. Delete the specific cart item for THIS user
+#             # filter().delete() returns (count, {details})
+#             deleted_count, _ = Cart_item.objects.filter(
+#                 user_cart=request.user, 
+#                 product=product
+#             ).delete()
+
+#             if deleted_count == 0:
+#                 return JsonResponse({'error': 'Item not in your cart'}, status=404)
+
+#             # 3. Restock the item and PERMANENTLY save it
+#             product.stock += 1
+#             product.save()
+                                    
+#         return JsonResponse({'success': 'Item removed and stock updated successfully'}, status=200)
+#     except Exception as e:
+#         return JsonResponse({'error': f'An unexpected error occurred: {e}'}, status=500)
+
 def cart_deduct(request, id):
     if request.method != 'DELETE':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
     try:  
-        # Wrap everything in an atomic block for safety
         with transaction.atomic():
-            # 1. Find the product
+            product = Product.objects.select_for_update().get(id=id)
+            
+            # Find the specific cart item first so we know HOW MANY to add back
             try:
-                product = Product.objects.get(id=id)
-            except Product.DoesNotExist:
-                return JsonResponse({'error': 'Item not found'}, status=404)
-
-            # 2. Delete the specific cart item for THIS user
-            # filter().delete() returns (count, {details})
-            deleted_count, _ = Cart_item.objects.filter(
-                user_cart=request.user, 
-                product=product
-            ).delete()
-
-            if deleted_count == 0:
+                cart_item = Cart_item.objects.get(user_cart=request.user, product=product)
+            except Cart_item.DoesNotExist:
                 return JsonResponse({'error': 'Item not in your cart'}, status=404)
 
-            # 3. Restock the item and PERMANENTLY save it
-            product.stock += 1
-            product.save()
+            # Get the quantity before we delete it
+            quantity_to_return = cart_item.quantity 
 
-        return JsonResponse({'success': 'Item removed and stock updated successfully'}, status=200)
+            # Delete the item
+            cart_item.delete()
+
+            # Add the FULL quantity back to the product stock
+            product.stock += quantity_to_return
+            product.save()
+                                    
+        return JsonResponse({'success': 'Item removed and stock restored'}, status=200)
     except Exception as e:
-        return JsonResponse({'error': f'An unexpected error occurred: {e}'}, status=500)
+        return JsonResponse({'error': f'Something went wrong: {e}'}, status=500)
