@@ -47,7 +47,7 @@ class Cart_item(models.Model):
     added_at  = models.DateTimeField(auto_now_add=True)
   
     def __str__(self):
-        return f"{self.quantity} x {self.product.name}"
+        return f"{self.quantity} x {self.product.name} id:{self.id}"
 
     #calculate the price of item base on quantity 
     def get_subtotal(self):
