@@ -256,7 +256,7 @@ def cart_deduct(request,id):
                 Cart_item.save()
                 Product.stock += 1
                 Product.save()
-                return JsonResponse({'success':'got the id'},status=200)
+                return JsonResponse({'success':'item removed'},status=200)
 
             return JsonResponse({'error':'item dnt exists'})
     except Exception as e:
