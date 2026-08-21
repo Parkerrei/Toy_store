@@ -246,3 +246,18 @@ def user_cart_items(request):
     return render(request,'all_cart.html',context)
 
 
+def cart_deduct(request,id):
+    if request.method != 'DELETE':
+        return JsonResponse({'error':'method not allowed'},status=405)
+    try:
+        with transaction.atomic():
+            if Product.objects.exists(id=id):
+                print(id)
+                return JsonResponse({'success':'got the id'},status=200)
+            print(f'item dnt exist {id}')
+            return JsonResponse({'error':'item dnt exists'})
+    except Exception as e:
+        print(str(e))
+                                                                                                                               
+
+   
