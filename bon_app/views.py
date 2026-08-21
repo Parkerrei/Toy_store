@@ -252,12 +252,15 @@ def cart_deduct(request,id):
     try:
         with transaction.atomic():
             if Product.objects.exists(id=id):
-                print(id)
+                Cart_item.objects.select_for_update().delete(id=id)
+                Cart_item.save()
+                Product.stock += 1
+                Product.save()
                 return JsonResponse({'success':'got the id'},status=200)
-            print(f'item dnt exist {id}')
+
             return JsonResponse({'error':'item dnt exists'})
     except Exception as e:
-        print(str(e))
+        return JsonResponse({'error':'something went wrong '},status=500)
                                                                                                                                
 
    
