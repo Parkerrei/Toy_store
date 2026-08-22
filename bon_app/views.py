@@ -297,20 +297,4 @@ def cart_deduct(request,id):
 #         print(f"Error: {e}") 
 #         return JsonResponse({'error': 'Something went wrong'}, status=500)
 
-def deduct(request,id):
-    if request.method !="POST":
-        return JsonResponse({'error':'method not allowed'},status=405)
-    try:
-        with transaction.atomic():
-            product = Product.objects.filter(id=id).select_for_update().first()
-            if not product:
-                return JsonResponse({'error':'item doesnot exist'},status=404)
-            Cart_item.objects.filter(id=product.id).select_for_update().delete()
-            product.stock += 1
-            product.save()
-            return JsonResponse({'success':'item stocked successfuly'},status=200)
-       
-    except Exception as e:
-        return JsonResponse({'error':'something went wrong'},status=500)
-            
 
