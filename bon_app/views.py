@@ -305,7 +305,7 @@ def deduct(request,id):
             product = Product.objects.filter(id=id).select_for_update().first()
             if not product:
                 return JsonResponse({'error':'item doesnot exist'},status=404)
-            Cart_item.objects.filter(id=product.id).select_for_update().delete()
+            Cart_item.objects.filter(id=product).select_for_update().delete()
             product.stock += 1
             product.save()
             return JsonResponse({'success':'item stocked successfuly'},status=200)
