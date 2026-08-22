@@ -306,11 +306,11 @@ def deduct(request,id):
             print(product)
             if not product:
                 return JsonResponse({'error':'item doesnot exist'},status=404)
-            Cart_item.objects.filter(id=product).select_for_update().delete()
+            Cart_item.objects.filter(id=product.id).select_for_update().delete()
             product.stock += 1
             product.save()
             return JsonResponse({'success':'item stocked successfuly'},status=200)
-        return JsonResponse({'error':'something went wrong'},status=500)
+       
     except Exception as e:
         return JsonResponse({'error':'something went wrong'},status=500)
             
