@@ -303,6 +303,7 @@ def deduct(request,id):
     try:
         with transaction.atomic():
             product = Product.objects.filter(id=id).select_for_update().first()
+            print(product)
             if not product:
                 return JsonResponse({'error':'item doesnot exist'},status=404)
             Cart_item.objects.filter(id=product).select_for_update().delete()
