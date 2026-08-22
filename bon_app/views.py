@@ -265,37 +265,37 @@ def cart_deduct(request,id):
 
 
 
-def cart_deduct(request, id):
-    # 1. Enforce the correct HTTP method
-    if request.method != 'DELETE':
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
+# def cart_deduct(request, id):
+#     # 1. Enforce the correct HTTP method
+#     if request.method != 'DELETE':
+#         return JsonResponse({'error': 'Method not allowed'}, status=405)
     
-    try:
-        with transaction.atomic():
-            # 2. Fetch the SPECIFIC cart item using its ID
-            # select_for_update() locks this row for Isolation safety
-            cart_item = Cart_item.objects.select_for_update().filter(id=id).first()
+#     try:
+#         with transaction.atomic():
+#             # 2. Fetch the SPECIFIC cart item using its ID
+#             # select_for_update() locks this row for Isolation safety
+#             cart_item = Cart_item.objects.select_for_update().filter(id=id).first()
             
-            if not cart_item:
-                return JsonResponse({'error': 'Item does not exist in cart'}, status=404)
+#             if not cart_item:
+#                 return JsonResponse({'error': 'Item does not exist in cart'}, status=404)
             
-            # 3. Get the specific product associated with this cart item
-            # Lock the product row too because we are modifying its stock count
-            product = Product.objects.select_for_update().get(id=cart_item.product.id)
+#             # 3. Get the specific product associated with this cart item
+#             # Lock the product row too because we are modifying its stock count
+#             product = Product.objects.select_for_update().get(id=cart_item.product.id)
             
-            # 4. Restore the stock (add back the quantity the user had in their cart)
-            product.stock += cart_item.quantity
-            product.save()  # Saves the specific product instance
+#             # 4. Restore the stock (add back the quantity the user had in their cart)
+#             product.stock += cart_item.quantity
+#             product.save()  # Saves the specific product instance
             
-            # 5. Delete the cart item completely
-            cart_item.delete()  
+#             # 5. Delete the cart item completely
+#             cart_item.delete()  
             
-            return JsonResponse({'success': 'Item removed from cart'}, status=200)
+#             return JsonResponse({'success': 'Item removed from cart'}, status=200)
             
-    except Exception as e:
-        # It's helpful to log 'e' to your console during development to debug errors
-        print(f"Error: {e}") 
-        return JsonResponse({'error': 'Something went wrong'}, status=500)
+#     except Exception as e:
+#         # It's helpful to log 'e' to your console during development to debug errors
+#         print(f"Error: {e}") 
+#         return JsonResponse({'error': 'Something went wrong'}, status=500)
 
 def deduct(request,id):
     if request.method !="POST":
@@ -305,8 +305,7 @@ def deduct(request,id):
             product = Product.objects.filter(id=id).select_for_update().first()
             if not product:
                 return JsonResponse({'error':'item doesnot exist'},status=404)
-            item_cart = Cart_item.objects.filter(id=product.id).select_for_update().delete()
-            item_cart.save()
+            Cart_item.objects.filter(id=product.id).select_for_update().delete()
             product.stock += 1
             product.save()
             return JsonResponse({'success':'item stocked successfuly'},status=200)
