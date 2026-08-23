@@ -273,7 +273,7 @@ def cart_deduct(request, id):
             # 2. Fetch the SPECIFIC cart item using its ID
             # select_for_update() locks this row for Isolation safety
             cart_item = Cart_item.objects.select_for_update().filter(id=id).first()
-            
+                
             if not cart_item:
                 return JsonResponse({'error': 'Item does not exist in cart'}, status=404)
             
