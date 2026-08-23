@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
 from .models import Category,Product,Cart_item
-from django.db import transaction
+from django.db import transaction,F
 import json
 import logging
 
@@ -273,7 +273,7 @@ def cart_deduct(request, id):
             # 2. Fetch the SPECIFIC cart item using its ID
             # select_for_update() locks this row for Isolation safety
             cart_item = Cart_item.objects.select_for_update().filter(id=id).first()
-                
+
             if not cart_item:
                 return JsonResponse({'error': 'Item does not exist in cart'}, status=404)
             
@@ -282,8 +282,8 @@ def cart_deduct(request, id):
             product = Product.objects.select_for_update().get(id=cart_item.product.id)
             
             # 4. Restore the stock (add back the quantity the user had in their cart)
-            product.stock += cart_item.quantity
-            product.save()  # Saves the specific product instance
+            product.stock = F('stock') + cart_item.quantity
+            product.save(update_fields=['stock'])  # Saves the specific product instance
             
             # 5. Delete the cart item completely
             cart_item.delete()  
