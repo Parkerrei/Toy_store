@@ -246,7 +246,6 @@ def user_cart_items(request):
     } 
     return render(request,'all_cart.html',context)
 
-
 def cart_deduct(request,id):
     if request.method != 'DELETE':
         return JsonResponse({'error':'method not allowed'},status=405)
@@ -264,37 +263,3 @@ def cart_deduct(request,id):
         print(str(e))
         return JsonResponse({'error':'something went wrong '},status=500)
                                                                                                                                
-
-# def cart_deduct(request, id):
-#     # 1. Enforce the correct HTTP method
-#     if request.method != 'DELETE':
-#         return JsonResponse({'error': 'Method not allowed'}, status=405)
-    
-#     try:
-#         with transaction.atomic():
-#             # 2. Fetch the SPECIFIC cart item using its ID
-#             # select_for_update() locks this row for Isolation safety
-#             cart_item = Cart_item.objects.select_for_update().filter(id=id).first()
-
-#             if not cart_item:
-#                 return JsonResponse({'error': 'Item does not exist in cart'}, status=404)
-            
-#             # 3. Get the specific product associated with this cart item
-#             # Lock the product row too because we are modifying its stock count
-#             product = Product.objects.select_for_update().get(id=cart_item.product.id)
-            
-#             # 4. Restore the stock (add back the quantity the user had in their cart)
-#             product.stock = F('stock') + cart_item.quantity
-#             product.save(update_fields=['stock'])  # Saves the specific product instance
-            
-#             # 5. Delete the cart item completely
-#             cart_item.delete()  
-            
-#             return JsonResponse({'success': 'Item removed from cart'}, status=200)
-            
-#     except Exception as e:
-#         # It's helpful to log 'e' to your console during development to debug errors
-#         print(f"Error: {e}") 
-#         return JsonResponse({'error': 'Something went wrong'}, status=500)
-
-
