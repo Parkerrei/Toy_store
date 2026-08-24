@@ -225,12 +225,14 @@ def add_to_cart(request, id):
         product  = toy,
         defaults = {'quantity': 1}
     )
-    
+
     # 3. If it already exists, increment the quantity
     if not created:
         cart_item.quantity += 1
         cart_item.save()
     
+    toy.stock -= 1
+    toy.save()
  
     # 5. Return JSON data to update your frontend dynamically
     return JsonResponse({
