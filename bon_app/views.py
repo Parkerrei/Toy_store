@@ -231,7 +231,7 @@ def add_to_cart(request, id):
         cart_item.quantity += 1
         cart_item.save()
     
-    toy.stock -= 1
+    toy.stock -= cart_item.quantity
     toy.save()
  
     # 5. Return JSON data to update your frontend dynamically
