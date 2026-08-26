@@ -207,36 +207,79 @@ def log_out(request):
     return redirect('logged')
 
 
-@login_required 
-def add_to_cart(request, id):
-    # Only allow POST requests for changes
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Invalid request method. Only POST is allowed.'}, status=405)
+# @login_required 
+# def add_to_cart(request, id):
+#     # Only allow POST requests for changes
+#     if request.method != 'POST':
+#         return JsonResponse({'error': 'Invalid request method. Only POST is allowed.'}, status=405)
         
+#     # 1. Safely find the product
+#     try:
+#         toy = Product.objects.get(id=id)
+#     except Product.DoesNotExist:
+#         return JsonResponse({'error':'item not found '},status=404)
+    
+#     # 2. Get or create the cart item
+#     cart_item, created = Cart_item.objects.get_or_create(
+#         user_cart = request.user,
+#         product  = toy,
+#         defaults = {'quantity': 1}
+#     )
+
+#     # 3. If it already exists, increment the quantity
+#     if not created:
+#         cart_item.quantity += 1
+#         cart_item.save()
+    
+#     toy.stock -= cart_item.quantity
+#     toy.save()
+ 
+#     # 5. Return JSON data to update your frontend dynamically
+#     return JsonResponse({
+#         'success': 'Item added successfully'
+#     })
+from django.db import transaction
+from django.db.models import F
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Product, CartItem  # Renamed to CartItem
+
+@login_required
+@transaction.atomic  # Ensures database integrity
+def add_to_cart(request, id):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
     # 1. Safely find the product
     try:
-        toy = Product.objects.get(id=id)
+        # select_for_update locks the row until the transaction finishes
+        toy = Product.objects.select_for_update().get(id=id)
     except Product.DoesNotExist:
-        return JsonResponse({'error':'item not found '},status=404)
-    
-    # 2. Get or create the cart item
-    cart_item, created = Cart_item.objects.get_or_create(
-        user_cart = request.user,
-        product  = toy,
-        defaults = {'quantity': 1}
+        return JsonResponse({'error': 'Item not found'}, status=404)
+
+    # 2. Check if product is in stock
+    if toy.stock <= 0:
+        return JsonResponse({'error': 'Item is out of stock'}, status=400)
+
+    # 3. Get or create the cart item
+    cart_item, created = CartItem.objects.get_or_create(
+        user_cart=request.user,
+        product=toy,
+        defaults={'quantity': 1}
     )
 
-    # 3. If it already exists, increment the quantity
+    # 4. If it already exists, increment the quantity
     if not created:
         cart_item.quantity += 1
         cart_item.save()
-    
-    toy.stock -= cart_item.quantity
+
+    # 5. Deduct exactly ONE from stock using F expressions to avoid race conditions
+    toy.stock = F('stock') - 1
     toy.save()
- 
-    # 5. Return JSON data to update your frontend dynamically
+
     return JsonResponse({
-        'success': 'Item added successfully'
+        'success': 'Item added successfully',
+        'cart_count': cart_item.quantity
     })
 
 def user_cart_items(request):
