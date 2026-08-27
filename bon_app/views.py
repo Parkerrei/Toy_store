@@ -8,7 +8,7 @@ from .forms import OrderForm
 from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
-from .models import Category,Product,Cart_item
+from .models import Category,Product,CartItem
 from django.db import transaction
 from django.db.models import F
 import json
