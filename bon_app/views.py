@@ -265,12 +265,13 @@ def add_to_cart(request, id):
 
     # 4. If it already exists, increment the quantity
     if not created:
-        cart_item.quantity += 1
+        cart_item.quantity = F('quantity') + 1
         cart_item.save()
+        cart_item.refresh_from_db()
 
     # 5. Deduct exactly ONE from stock using F expressions to avoid race conditions
     toy.stock = F('stock') - 1
-    toy.save()
+    toy.save(update_fields=['stock'])
 
     return JsonResponse({
         'success': 'Item added successfully',
