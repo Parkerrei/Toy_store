@@ -238,11 +238,6 @@ def log_out(request):
 #     return JsonResponse({
 #         'success': 'Item added successfully'
 #     })
-from django.db import transaction
-from django.db.models import F
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from .models import Product, CartItem  # Renamed to CartItem
 
 @login_required
 @transaction.atomic  # Ensures database integrity
