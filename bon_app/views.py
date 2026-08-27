@@ -278,7 +278,7 @@ def add_to_cart(request, id):
     })
                                                                     
 def user_cart_items(request):
-    user_items  = Cart_item.objects.filter(user_cart=request.user)
+    user_items  = CartItem.objects.filter(user_cart=request.user)
     total_price = sum(item.get_subtotal() for item in user_items) 
    
     context = {
