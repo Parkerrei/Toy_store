@@ -281,7 +281,7 @@ def add_to_cart(request, id):
         'success': 'Item added successfully',
         'cart_count': cart_item.quantity
     })
-
+                                                                    
 def user_cart_items(request):
     user_items  = Cart_item.objects.filter(user_cart=request.user)
     total_price = sum(item.get_subtotal() for item in user_items) 
@@ -297,7 +297,7 @@ def cart_deduct(request,id):
         return JsonResponse({'error':'method not allowed'},status=405)
     try:
         with transaction.atomic():
-            cart_item = Cart_item.objects.select_for_update().filter(id=id).first()
+            cart_item = CartItem.objects.select_for_update().filter(id=id).first()
             if not cart_item:
                 return JsonResponse({'error':'item not found'},status=404)
             product = Product.objects.select_for_update().get(id=cart_item.product.id)
