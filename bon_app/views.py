@@ -14,8 +14,6 @@ from django.db.models import F
 import json
 import logging
 
-
-# from .cart import Session_Cart
 # Create your views here.
 
 def user(request):
