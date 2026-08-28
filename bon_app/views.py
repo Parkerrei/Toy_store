@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
 from .models import Category,Product,CartItem
-from django.db import transaction
+from django.db import transaction,models
 from django.db.models import F
 import json
 import logging
@@ -222,10 +222,10 @@ def add_to_cart(request, id):
         return JsonResponse({'error': 'Item is out of stock'}, status=400)
 
     # 3. Get or create the cart item
-    cart_item, created = CartItem.objects.get_or_create(
+    cart_item, created = CartItem.objects.update_or_create(
         user_cart=request.user,
         product=toy,
-        defaults={'quantity': 1}
+        defaults={'quantity':models.F('quantity') + 1}
     )
 
     # 4. If it already exists, increment the quantity
