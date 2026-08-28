@@ -1,9 +1,9 @@
 from django.db.models.signals import post_delete
 from django.dispatch import  receiver 
 from django.db import connection
-from .models import Cart_item
+from .models import CartItem
 
-@receiver(post_delete,sender=Cart_item)
+@receiver(post_delete,sender=CartItem)
 def reset_cart_sequence(sender,**kwargs):
     #this sql checks the max id  and sets the next sequence value
     # if the table is empty it resets back to 1
