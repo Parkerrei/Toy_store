@@ -218,7 +218,7 @@ def add_to_cart(request, id):
 
     # 2. Check if product is in stock
     if toy.stock <= 0:
-        return JsonResponse({'error': 'Item is out of stock'}, status=400)
+        return JsonResponse({'error': 'out of stock'}, status=400)
 
     # 3. Get or create the cart item
     cart_item, created = CartItem.objects.update_or_create(
