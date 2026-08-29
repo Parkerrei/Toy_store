@@ -212,7 +212,6 @@ def add_to_cart(request, id):
 
     # 1. Safely find the product
     try:
-        
         toy = Product.objects.get(id=id)
     except Product.DoesNotExist:
         return JsonResponse({'error': 'Item not found'}, status=404)
@@ -227,7 +226,9 @@ def add_to_cart(request, id):
         product=toy,
         defaults={'quantity':models.F('quantity') + 1}
     )
-
+    if created:
+        cart_item.save(update_fields=['quantity'])
+        cart_item.refresh_from_db()
     
     # 5. Deduct exactly ONE from stock 
     toy.stock = F('stock') - 1
