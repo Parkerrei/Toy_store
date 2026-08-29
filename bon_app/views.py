@@ -235,8 +235,8 @@ def add_to_cart(request, id):
         cart_item.refresh_from_db()
 
     # 5. Deduct exactly ONE from stock 
-    toy.stock = 1
-    toy.save()
+    toy.stock = F('stock') - 1
+    toy.save(update_fields=['stock'])
 
     return JsonResponse({
         'success': 'Item added successfully',
