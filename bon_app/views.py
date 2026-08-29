@@ -235,10 +235,7 @@ def add_to_cart(request, id):
     toy.stock = F('stock') - 1
     toy.save(update_fields=['stock'])
 
-    return JsonResponse({
-        'success': 'Item added successfully',
-        'cart_count': cart_item.quantity
-    })
+    return JsonResponse({'success': 'Item added successfully'},status=200)
                                                                     
 def user_cart_items(request):
     user_items  = CartItem.objects.filter(user_cart=request.user)
