@@ -212,7 +212,7 @@ def add_to_cart(request, id):
 
     # 1. Safely find the product
     try:
-        toy = Product.objects.get(id=id)
+        toy = Product.objects.select_for_update().get(id=id)
     except Product.DoesNotExist:
         return JsonResponse({'error': 'Item not found'}, status=404)
 
