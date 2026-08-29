@@ -221,15 +221,18 @@ def add_to_cart(request, id):
         return JsonResponse({'error': 'out of stock'}, status=400)
 
     # 3. Get or create the cart item
-    cart_item, created = CartItem.objects.update_or_create(
+    cart_item, created = CartItem.objects.get_or_create(
         user_cart=request.user,
         product=toy,
-        defaults={'quantity':models.F('quantity') + 1}
+        defaults={'quantity':1 }
     )
-    if created:
+    if not created:
+        cart_item.quantity = F('quantity') + 1
         cart_item.save(update_fields=['quantity'])
         cart_item.refresh_from_db()
     
+    cart_item.refresh_from_db()
+
     # 5. Deduct exactly ONE from stock 
     toy.stock = F('stock') - 1
     toy.save(update_fields=['stock'])
