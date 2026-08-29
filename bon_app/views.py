@@ -231,8 +231,6 @@ def add_to_cart(request, id):
         cart_item.save(update_fields=['quantity'])
         cart_item.refresh_from_db()
     
-   
-
     # 5. Deduct exactly ONE from stock 
     toy.stock = F('stock') - 1
     toy.save(update_fields=['stock'])
