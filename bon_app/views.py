@@ -213,7 +213,7 @@ def add_to_cart(request, id):
     # 1. Safely find the product
     try:
         # select_for_update locks the row until the transaction finishes
-        toy = Product.objects.select_for_update().get(id=id)
+        toy = Product.objects.get(id=id)
     except Product.DoesNotExist:
         return JsonResponse({'error': 'Item not found'}, status=404)
 
@@ -235,7 +235,7 @@ def add_to_cart(request, id):
         cart_item.refresh_from_db()
 
     # 5. Deduct exactly ONE from stock 
-    toy.stock -= 1
+    toy.stock = 1
     toy.save()
 
     return JsonResponse({
