@@ -252,7 +252,7 @@ def cart_deduct(request,id):
         return JsonResponse({'error':'method not allowed'},status=405)
     try:
         with transaction.atomic():
-            cart_item = CartItem.objects.select_for_update().filter(id=id).first()
+            cart_item = CartItem.objects.select_for_update().get(id=id)
             if not cart_item:
                 return JsonResponse({'error':'item not found'},status=404)
             product = Product.objects.select_for_update().get(id=cart_item.product_id)
