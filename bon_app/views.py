@@ -264,5 +264,4 @@ def cart_deduct(request,id):
             return JsonResponse({'success':'transaction completed'},status=200)
     except Exception as e:
         print(str(e))
-        return JsonResponse({'error':'something went wrong '},status=500)
-                                                                                                                               
+        return JsonResponse({'error':'something went wrong '},status=500)                                                                                                               
