@@ -10,6 +10,6 @@ def reset_cart_sequence(sender,**kwargs):
     
     with connection.cursor() as cursor:
         cursor.execute(
-            "SELECT setval(pg_get_serial_sequence('bon_app_Cart_item','id' ),"
-            "COALESCE(max(id) , 0) + 1 , false) FROM bon_app_Cart_item;"
+            "SELECT setval(pg_get_serial_sequence('bon_app_CartItem','id' ),"
+            "COALESCE(max(id) , 0) + 1 , false) FROM bon_app_CartItem;"
         )
