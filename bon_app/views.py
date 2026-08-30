@@ -255,7 +255,7 @@ def cart_deduct(request,id):
             cart_item = CartItem.objects.select_for_update().filter(id=id).first()
             if not cart_item:
                 return JsonResponse({'error':'item not found'},status=404)
-            product = Product.objects.select_for_update().get(id=cart_item.product.id)
+            product = Product.objects.select_for_update().get(id=cart_item.product_id)
             product.stock = F('stock') + cart_item.quantity
             product.save(update_fields=['stock'])
             cart_item.delete()
