@@ -16,7 +16,7 @@ def force_renumber(sender):
                 old_ids = [r[0] for r in cursor.fetchall()]
 
                 if not old_ids:
-                     cursor.execute(f'ALTER SEQUENCE"{seq}RESTART WITH 1;')
+                     cursor.execute(f'ALTER SEQUENCE "{seq}" RESTART WITH 1;')
                      return
                 #avoid clash 
                 cursor.execute(f'UPDATE "{table}"SET id = -id')
