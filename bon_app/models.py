@@ -47,11 +47,13 @@ class CartItem(models.Model):
     added_at  = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user_cart','product')
+        unique_together = (('user_cart','product'))
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name} id:{self.id}"
 
     #calculate the price of item base on quantity 
     def get_subtotal(self):
-        return self.product.price * self.quantity
+        if self.quantity >=1:
+            return self.product.price * self.quantity
+        return 
