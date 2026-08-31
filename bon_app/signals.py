@@ -1,7 +1,8 @@
 from django.db.models.signals import post_delete
 from django.dispatch import  receiver 
-from django.db import connection
+from django.db import connection,transaction
 from .models import CartItem
+from django.apps import apps
 
 @receiver(post_delete,sender=CartItem)
 def reset_cart_sequence(sender,**kwargs):
