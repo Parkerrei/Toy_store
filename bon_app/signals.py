@@ -28,12 +28,4 @@ def force_renumber(sender,**kwargs):
                      )
                 cursor.execute(f'ALTER SEQUENCE "{seq}" RESTART WITH {len(old_ids) + 1};')
 
-    #Auto-connect to all your app models
-    #change 'toys' to your app name 
-    app_models = apps.get_app_config('bon_app').get_models()
-    for model in app_models:
-         post_delete.connect(
-              lambda sender , **kwargs:force_renumber(sender),
-              sender = model,
-              weak = False
-         )
+   
