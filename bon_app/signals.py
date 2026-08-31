@@ -5,7 +5,7 @@ from .models import CartItem
 from django.apps import apps
 
 @receiver(post_delete,sender=CartItem)
-def force_renumber(sender):
+def force_renumber(sender,**kwargs):
     #this sql checks the max id  and sets the next sequence value
     # if the table is empty it resets back to 1
     table = sender._meta.db_table
