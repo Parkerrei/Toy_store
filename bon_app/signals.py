@@ -12,7 +12,7 @@ def force_renumber(sender):
     seq = f"{table}_id_seq"
     with transaction.atomic():
         with connection.cursor() as cursor:
-                cursor.execute(f'SELECT id FROM "{table} ORDER BY id')
+                cursor.execute(f'SELECT id FROM "{table}" ORDER BY id')
                 old_ids = [r[0] for r in cursor.fetchall()]
 
                 if not old_ids:
