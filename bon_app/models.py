@@ -50,7 +50,7 @@ class CartItem(models.Model):
         unique_together = (('user_cart','product'))
 
     def __str__(self):
-        return f"{self.quantity} x {self.product.name} id:{self.id}"
+        return f"\nproduct_quantity: {self.quantity}\nname: {self.product.name}\nid: {self.id}"
 
     #calculate the price of item base on quantity 
     def get_subtotal(self):
