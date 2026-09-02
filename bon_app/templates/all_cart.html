@@ -94,9 +94,11 @@
         {% endfor %}
 
         <!-- Total bill sits perfectly at the base -->
+        
         <div class="total-section">
-            <h2>Grand Total: ₹ {{ detail.get_subtotal }}</h2>
+            <h2>Grand Total: ₹ {{ total_price }}</h2>
         </div>
+        
     </div>
     <input type="hidden" name="csrfmiddlewaretoken" id="token" value="{{csrf_token}}">
 </body>
