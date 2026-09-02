@@ -239,17 +239,10 @@ def add_to_cart(request, id):
                                                                     
 def user_cart_items(request):
     user_items  = CartItem.objects.filter(user_cart=request.user)
-    total_price = 0
-
-    if not user_items:
-        return JsonResponse({'error':'cart is empty'},status=404)
-    for item in user_items:
-        if item.quantity >=1:
-            total_price += sum(item.get_subtotal() for item in user_items)
-            
+    total_price = sum(item.get_subtotal() for item in user_items)
     context = {
         'cart_items':user_items,
-        'total_price':total_price
+        'total_price':total_price,
     } 
     return render(request,'all_cart.html',context)
 
