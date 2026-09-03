@@ -278,7 +278,6 @@ def all_cart_order(request):
     # cache the number of product added in cart 
     amount_paise = total_price
    
-
     # create order using razorpay
     order = client.order.create(data={
         'amount':amount_paise,
