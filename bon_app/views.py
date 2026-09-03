@@ -264,3 +264,40 @@ def cart_deduct(request,id):
     except Exception as e:
         print(str(e))
         return JsonResponse({'error':'something went wrong '},status=500)                                                                                                               
+
+def all_cart_order(request):
+    if not request.method == 'POST':
+        return JsonResponse({'error':'method not allowed'},status=405)
+    user_cart = CartItem.objects.filter(user_cart = request.user).first()
+    if not user_cart.exist():
+        return JsonResponse({'error':'user not found'},status=404)
+    total_price = sum(item.sub_total() for item in user_cart)
+
+
+    # cache the number of product added in cart 
+    amount_paise = total_price
+    item_name = user_cart.product
+
+    # create order using razorpay
+    order = client.order.create(data={
+        'amount':amount_paise,
+        'currency':'INR',
+        'notes':{
+            'email':request.user.email,
+            'user':request.user.username,
+            'item':item_name
+        },
+        'receipt':f'rcpt_{item_name}'
+    })
+
+    # return success order data
+    return JsonResponse({
+        'key':settings.RAZORPAY_KEY_ID,
+        'amount':order['amount'],
+        'currency':order['currency'],
+        'notes':order['notes'],
+        'order_id':order['id'],
+        'receipt':order['receipt']
+    })
+
+   
