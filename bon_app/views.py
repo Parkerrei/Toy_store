@@ -268,8 +268,8 @@ def cart_deduct(request,id):
 def all_cart_order(request):
     if not request.method == 'POST':
         return JsonResponse({'error':'method not allowed'},status=405)
-    user_cart = CartItem.objects.filter(user_cart = request.user).first()
-    if not user_cart.exist():
+    user_cart = CartItem.objects.filter(user_cart = request.user)
+    if not user_cart.exists():
         return JsonResponse({'error':'user not found'},status=404)
     total_price = sum(item.sub_total() for item in user_cart)
 
