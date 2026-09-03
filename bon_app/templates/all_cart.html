@@ -85,7 +85,7 @@
             <h3>{{ detail.product.name }}</h3>
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <p>Qty: {{ detail.quantity }}</p>
-            <button class="cart-btn" data-id="{{detail.id}}">remove</button>
+            <button id="cart-btn" data-id="{{detail.id}}">remove</button>
 
             <h5>Subtotal: ₹ {{ detail.product.price }}</h5>
         </div>
@@ -166,7 +166,7 @@
     })
 
     document.addEventListener('DOMContentLoaded', () => {
-        const button = document.querySelectorAll('.buy-btn')
+        const button = document.getElementById('buy-btn')
         const token = document.getElementById('token').value;
         button.forEach((btn) => {
             btn.addEventListener('click', (e) => {
