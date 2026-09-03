@@ -94,12 +94,12 @@
         {% endfor %}
 
         <!-- Total bill sits perfectly at the base -->
-        
+
         <div class="total-section">
             <h2>Grand Total: ₹ {{ total_price }}</h2>
-        <button></button>
+            <button class="buy-btn">Order</button>
         </div>
-        
+
     </div>
     <input type="hidden" name="csrfmiddlewaretoken" id="token" value="{{csrf_token}}">
 </body>
@@ -164,6 +164,96 @@
             })
         })
     })
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const button = document.querySelectorAll('.buy-btn')
+        const token = document.getElementById('token').value;
+        button.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const id = btn.dataset.id;
+                fetch(`/buy/${id}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': token,
+                        'Content-Type': 'application/json'
+                    },
+
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`server status ${response.status}: Failed to process purchase.!!`)
+                        }
+                        return response.json()
+                    })
+
+                    .then((order_data) => {
+                        if (order_data) {
+                            const options = {
+                                "key": order_data.key,
+                                "amount": order_data.amount,
+                                "currency": order_data.currency,
+                                "name": "cheri bon_bon",
+                                "description": "thanks visit again",
+                                "order_id": order_data.order_id,
+
+                                //this handler function runs automatically  when payment is successful//
+                                "handler": function (response) {
+                                    // call the helper function to send the transaction data to django for verification//
+                                    paymentVerification(response);
+                                },
+
+                                "theme": {
+                                    "color": "#3399cc"
+                                }
+                            }
+
+                            //initialize and open the razorpay pop up box over your page//
+                            const rzp1 = new Razorpay(options);
+                            rzp1.open();
+                        }
+
+                        else {
+                            alert(order_data.error || "an unknown error occurred!");
+                        }
+
+                    }).catch((error) => {
+                        alert(`ooops ${error}`)
+                    });
+
+            });
+        });
+    });
+
+    // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
+    function paymentVerification(razorpayResponse) {
+        const id = document.getElementById('token').value
+        fetch('signature_check/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': id,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(razorpayResponse)
+        }
+
+        ).then((response) => {
+            if (!response.ok) {
+                throw new Error(`something wrong  ${response.status}`)
+            }
+            return response.json();
+
+        }).then((data) => {
+            if (data.success) {
+                alert(success);
+            } else {
+                alert(data.error);
+            }
+        }).catch(error => {
+            alert('error' + error)
+        })
+    }
+
 </script>
 
 </html>
