@@ -20,7 +20,7 @@ urlpatterns = [
                 path('sanrio_stickers/',sanrio_stickers,name='sanrio_stickers'),
                 path('add_to_cart/<int:id>/',add_to_cart,name='add_to_cart'),
                 path('user_cart_items/',user_cart_items,name='user_cart_items'),
-                path('cart_deduct/<int:id>/',cart_deduct,name='cart_deduct'),
+                path('cart_deduct/',cart_deduct,name='cart_deduct'),
                 path('all_cart_order/',all_cart_order,name='all_cart_order')
                 
 ]
