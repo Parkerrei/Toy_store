@@ -272,11 +272,12 @@ def all_cart_order(request):
     if not user_cart.exists():
         return JsonResponse({'error':'user not found'},status=404)
     total_price = sum(item.get_subtotal() for item in user_cart)
+    round_to_paise = total_price * 100
      # 6. Create a clean comma-separated list of items for Razorpay's notes panel
     item_names = ", ".join([item.product.name for item in user_cart])
 
     # cache the number of product added in cart 
-    amount_paise = total_price
+    amount_paise = round_to_paise
    
     # create order using razorpay
     order = client.order.create(data={
