@@ -120,7 +120,7 @@
             <h2 id="price">Grand Total: ₹ {{ total_price }}</h2>
             <div id="order-remove-btn">
                 <button id="buy-btn">Order</button>
-                <button id="cart-btn" >Empty cart</button>
+                <button id="cart-btn">Empty cart</button>
             </div>
         </div>
 
@@ -207,57 +207,57 @@
         const token = document.getElementById('token').value
         const buttons = document.getElementById('cart-btn')
 
-       
-            buttons.addEventListener('click', (e) => {
-                e.preventDefault();
-                // 1. Save the original HTML design (handles text AND icons!)
-                const originalContent = btn.innerHTML;
 
-                // 2. Lock the button and show loading state
-                btn.disabled = true;
-                btn.innerText = 'removing...';
+        buttons.addEventListener('click', (e) => {
+            e.preventDefault();
+            // 1. Save the original HTML design (handles text AND icons!)
+            const originalContent = buttons.innerHTML;
 
-                fetch('/cart_deduct/', {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': token,
-                        'Content-Type': 'application/json'
-                    }
+            // 2. Lock the button and show loading state
+            buttons.disabled = true;
+            buttons.innerText = 'removing...';
+
+            fetch('/cart_deduct/', {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': token,
+                    'Content-Type': 'application/json'
                 }
+            }
 
-                ).then((response) => {
-                    return response.json().then((data) => {
-                        if (!response.ok) {
-                            throw new Error(data.error || 'something went wrong')
-                        }
-                        return data
-                    })
-
+            ).then((response) => {
+                return response.json().then((data) => {
+                    if (!response.ok) {
+                        throw new Error(data.error || 'something went wrong')
+                    }
+                    return data
                 })
-                    .then((data) => {
-                        if (data.success) {
 
-                            // 1. Target the correct wrapper block from your HTML
-                            const cartItemBlock = btn.closest('.cart-item');
-
-                            if (cartItemBlock) {
-                                // 2. Erase the block (Name, Image, Qty, Subtotal) instantly from UI
-                                cartItemBlock.remove();
-                            }
-                        } else {
-                            alert(data.error)
-                        }
-                        // 3. SUCCESS RESET: Restore button if it stays on screen
-                        btn.disabled = false;
-                        btn.innerHTML = originalContent;
-                    })
-                    .catch((error) => {
-                        alert('error:' + error)
-                        // 4. ERROR RESET: Always bring the button back to life on failure
-                        btn.disabled = false;
-                        btn.innerHTML = originalContent;
-                    })
             })
+                .then((data) => {
+                    if (data.success) {
+
+                        // 1. Target the correct wrapper block from your HTML
+                        const cartItemBlock = btn.closest('.cart-item');
+
+                        if (cartItemBlock) {
+                            // 2. Erase the block (Name, Image, Qty, Subtotal) instantly from UI
+                            cartItemBlock.remove();
+                        }
+                    } else {
+                        alert(data.error)
+                    }
+                    // 3. SUCCESS RESET: Restore button if it stays on screen
+                    buttons.disabled = false;
+                    buttons.innerHTML = originalContent;
+                })
+                .catch((error) => {
+                    alert('error:' + error)
+                    // 4. ERROR RESET: Always bring the button back to life on failure
+                    buttons.disabled = false;
+                    buttons.innerHTML = originalContent;
+                })
+        })
     })
 
 </script>
