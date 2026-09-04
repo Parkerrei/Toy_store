@@ -107,66 +107,6 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const token = document.getElementById('token').value
-        const buttons = document.querySelectorAll('.cart-btn')
-
-        buttons.forEach((btn) => {
-            btn.addEventListener('click', (e) => {
-
-                const id = btn.dataset.id
-                e.preventDefault();
-                // 1. Save the original HTML design (handles text AND icons!)
-                const originalContent = btn.innerHTML;
-
-                // 2. Lock the button and show loading state
-                btn.disabled = true;
-                btn.innerText = 'removing...';
-
-                fetch(`/cart_deduct/${id}/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': token,
-                        'Content-Type': 'application/json'
-                    }
-                }
-
-                ).then((response) => {
-                    return response.json().then((data) => {
-                        if (!response.ok) {
-                            throw new Error(data.error || 'something went wrong')
-                        }
-                        return data
-                    })
-
-                })
-                    .then((data) => {
-                        if (data.success) {
-
-                            // 1. Target the correct wrapper block from your HTML
-                            const cartItemBlock = btn.closest('.cart-item');
-
-                            if (cartItemBlock) {
-                                // 2. Erase the block (Name, Image, Qty, Subtotal) instantly from UI
-                                cartItemBlock.remove();
-                            }
-                        } else {
-                            alert(data.error)
-                        }
-                        // 3. SUCCESS RESET: Restore button if it stays on screen
-                        btn.disabled = false;
-                        btn.innerHTML = originalContent;
-                    })
-                    .catch((error) => {
-                        alert('error:' + error)
-                        // 4. ERROR RESET: Always bring the button back to life on failure
-                        btn.disabled = false;
-                        btn.innerHTML = originalContent;
-                    })
-            })
-        })
-    })
-
-    document.addEventListener('DOMContentLoaded', () => {
         const key = document.getElementById('token').value
         const id = document.getElementById('buy-btn')
         fetch(`/all_cart_order/`,
@@ -235,7 +175,66 @@
                     alert('payment fail!')
                 }
             })
-    }
+    } document.addEventListener('DOMContentLoaded', () => {
+        const token = document.getElementById('token').value
+        const buttons = document.querySelectorAll('.cart-btn')
+
+        buttons.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+
+                const id = btn.dataset.id
+                e.preventDefault();
+                // 1. Save the original HTML design (handles text AND icons!)
+                const originalContent = btn.innerHTML;
+
+                // 2. Lock the button and show loading state
+                btn.disabled = true;
+                btn.innerText = 'removing...';
+
+                fetch(`/cart_deduct/${id}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': token,
+                        'Content-Type': 'application/json'
+                    }
+                }
+
+                ).then((response) => {
+                    return response.json().then((data) => {
+                        if (!response.ok) {
+                            throw new Error(data.error || 'something went wrong')
+                        }
+                        return data
+                    })
+
+                })
+                    .then((data) => {
+                        if (data.success) {
+
+                            // 1. Target the correct wrapper block from your HTML
+                            const cartItemBlock = btn.closest('.cart-item');
+
+                            if (cartItemBlock) {
+                                // 2. Erase the block (Name, Image, Qty, Subtotal) instantly from UI
+                                cartItemBlock.remove();
+                            }
+                        } else {
+                            alert(data.error)
+                        }
+                        // 3. SUCCESS RESET: Restore button if it stays on screen
+                        btn.disabled = false;
+                        btn.innerHTML = originalContent;
+                    })
+                    .catch((error) => {
+                        alert('error:' + error)
+                        // 4. ERROR RESET: Always bring the button back to life on failure
+                        btn.disabled = false;
+                        btn.innerHTML = originalContent;
+                    })
+            })
+        })
+    })
+
 </script>
 
 </html>
