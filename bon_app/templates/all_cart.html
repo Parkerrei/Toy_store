@@ -120,7 +120,7 @@
             <h2 id="price">Grand Total: ₹ {{ total_price }}</h2>
             <div id="order-remove-btn">
                 <button id="buy-btn">Order</button>
-                <button id="cart-btn" data-id="{{detail.id}}">Empty cart</button>
+                <button id="cart-btn" >Empty cart</button>
             </div>
         </div>
 
@@ -219,7 +219,7 @@
                 btn.disabled = true;
                 btn.innerText = 'removing...';
 
-                fetch(`/cart_deduct/${id}/`, {
+                fetch(`/cart_deduct/`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRFToken': token,
