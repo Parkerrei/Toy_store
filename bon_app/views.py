@@ -271,7 +271,7 @@ def all_cart_order(request):
     user_cart = CartItem.objects.filter(user_cart = request.user)
     if not user_cart.exists():
         return JsonResponse({'error':'user not found'},status=404)
-    total_price = sum(item.sub_total() for item in user_cart)
+    total_price = sum(item.get_subtotal() for item in user_cart)
      # 6. Create a clean comma-separated list of items for Razorpay's notes panel
     item_names = ", ".join([item.product.name for item in user_cart])
 
