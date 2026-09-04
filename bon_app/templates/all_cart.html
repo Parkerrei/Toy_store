@@ -207,10 +207,8 @@
         const token = document.getElementById('token').value
         const buttons = document.getElementById('cart-btn')
 
-        buttons.forEach((btn) => {
+       
             btn.addEventListener('click', (e) => {
-
-                const id = btn.dataset.id
                 e.preventDefault();
                 // 1. Save the original HTML design (handles text AND icons!)
                 const originalContent = btn.innerHTML;
@@ -260,7 +258,6 @@
                         btn.innerHTML = originalContent;
                     })
             })
-        })
     })
 
 </script>
