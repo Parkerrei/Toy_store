@@ -219,7 +219,7 @@
                 btn.disabled = true;
                 btn.innerText = 'removing...';
 
-                fetch(`/cart_deduct/`, {
+                fetch('/cart_deduct/', {
                     method: 'DELETE',
                     headers: {
                         'X-CSRFToken': token,
