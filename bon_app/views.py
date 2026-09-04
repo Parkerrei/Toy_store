@@ -246,24 +246,33 @@ def user_cart_items(request):
     } 
     return render(request,'all_cart.html',context)
 
-def cart_deduct(request,id): 
+def cart_deduct(request): 
     if request.method != 'DELETE':
-        return JsonResponse({'error':'method not allowed'},status=405)
+        return JsonResponse({'error': 'method not allowed'}, status=405)
+        
     try:
         with transaction.atomic():
-            try:
-                cart_item = CartItem.objects.select_for_update().get(id=id)
-            except CartItem.DoesNotExist:
-                return JsonResponse({'error':'item not found'},status=404)
+            # 1. Grab all cart items for the logged-in user
+            cart_items = CartItem.objects.filter(user_cart=request.user)
+            
+            # 2. Check if the cart is already empty cleanly
+            if not cart_items.exists():
+                return JsonResponse({'error': 'Your cart is already empty'}, status=404)
 
-            product = Product.objects.select_for_update().get(id=cart_item.product_id)
-            product.stock = F('stock') + cart_item.quantity
-            product.save(update_fields=['stock'])
-            cart_item.delete()
-            return JsonResponse({'success':'transaction completed'},status=200)
+            # 3. Direct Re-stock loop (No nested loop or Product.objects.all() needed)
+            for item in cart_items:
+                product = item.product
+                product.stock += item.quantity # Add cart quantity back to store stock
+                product.save()                 # ✅ Crucial! Save the change to the database
+                
+            # 4. Wipe the user's entire cart items out at once
+            cart_items.delete()
+            
+            return JsonResponse({'success': True, 'message': 'Cart emptied and items re-stocked successfully.'}, status=200)
+            
     except Exception as e:
-        print(str(e))
-        return JsonResponse({'error':'something went wrong '},status=500)                                                                                                               
+        print(f"Error emptying cart: {str(e)}") # Keep this for terminal debugging
+        return JsonResponse({'error': 'Something went wrong while processing your request.'}, status=500)
 
 def all_cart_order(request):
     if not request.method == 'POST':
