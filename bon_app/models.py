@@ -55,4 +55,5 @@ class CartItem(models.Model):
     #calculate the price of item base on quantity 
     def get_subtotal(self):
         return self.product.price * self.quantity
-       
+
+   
