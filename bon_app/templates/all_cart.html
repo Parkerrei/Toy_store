@@ -57,9 +57,14 @@
             /* Gives the final bill number a professional green hue */
         }
 
-        .card-btn {
-            padding: 2px;
+        #cart-btn {
+            background-color: maroon;
+            color: white;
             cursor: pointer;
+            padding: 7px;
+            border: none;
+            border-radius: 5px;
+            text-transform: capitalize;
         }
 
         #buy-btn {
@@ -70,6 +75,15 @@
             border: none;
             border-radius: 5px;
             text-transform: capitalize;
+        }
+
+        #order-remove-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            gap: 10px;
+
         }
     </style>
 </head>
@@ -93,7 +107,6 @@
             <h3>{{ detail.product.name }}</h3>
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <p>Qty: {{ detail.quantity }}</p>
-            <button id="cart-btn" data-id="{{detail.id}}">remove</button>
 
             <h5>Subtotal: ₹ {{ detail.product.price }}</h5>
         </div>
@@ -105,7 +118,10 @@
 
         <div class="total-section">
             <h2 id="price">Grand Total: ₹ {{ total_price }}</h2>
-            <button id="buy-btn">Order</button>
+            <div id="order-remove-btn">
+                <button id="buy-btn">Order</button>
+                <button id="cart-btn" data-id="{{detail.id}}">Empty cart</button>
+            </div>
         </div>
 
     </div>
