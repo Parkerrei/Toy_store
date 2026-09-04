@@ -109,46 +109,48 @@
     document.addEventListener('DOMContentLoaded', () => {
         const key = document.getElementById('token').value
         const id = document.getElementById('buy-btn')
-        fetch(`/all_cart_order/`,
-            {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': key,
-                    'Content-Type': 'application/json'
-                }
-            }
-        )
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`error : ${request.error}`)
-                }
-                return response.json()
-            }).then((data) => {
-                if (data) {
-                    const option = {
-                        'key': data.key,
-                        'amount': data.amount,
-                        'currency': data.currency,
-                        'notes': data.notes,
-                        'receipt': data.receipt,
-                        'order_id': data.order_id,
-                        'handler': function (response) {
-                            paymentverification(response)
-                        },
-
-                        "theme": {
-                            "color": "#3399cc"
-                        }
+        id.addEventListener('click', () => {
+            fetch(`/all_cart_order/`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': key,
+                        'Content-Type': 'application/json'
                     }
-                    const rzp1 = new Razorpay(option);
-                    rzp1.open()
                 }
-                else {
-                    alert(data.error || 'an unknown error occurred')
-                }
-            }).catch(error => {
-                alert('error :' + data.error)
-            })
+            )
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`error : ${request.error}`)
+                    }
+                    return response.json()
+                }).then((data) => {
+                    if (data) {
+                        const option = {
+                            'key': data.key,
+                            'amount': data.amount,
+                            'currency': data.currency,
+                            'notes': data.notes,
+                            'receipt': data.receipt,
+                            'order_id': data.order_id,
+                            'handler': function (response) {
+                                paymentverification(response)
+                            },
+
+                            "theme": {
+                                "color": "#3399cc"
+                            }
+                        }
+                        const rzp1 = new Razorpay(option);
+                        rzp1.open()
+                    }
+                    else {
+                        alert(data.error || 'an unknown error occurred')
+                    }
+                }).catch(error => {
+                    alert('error :' + data.error)
+                })
+        })
     })
 
     // helper function to send transaction data back to django for verification
