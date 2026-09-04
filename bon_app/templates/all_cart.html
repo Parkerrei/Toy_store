@@ -172,7 +172,7 @@
         fetch(`/all_cart_order/`,
             {
                 method: 'POST',
-                HEADERS: {
+                headers: {
                     'X-CSRFToken': key,
                     'Content-Type': 'application/json'
                 }
@@ -216,7 +216,7 @@
         const token = document.getElementById('token').value
         fetch('/signature_check/', {
             method: 'POST',
-            HEADERS: {
+            headers: {
                 'X-CSRFToken': token,
                 'Content-Type': 'application/json'
             },
