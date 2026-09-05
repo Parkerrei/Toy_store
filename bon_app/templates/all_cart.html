@@ -91,11 +91,22 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            border: 1px solid black;
+            border: 1px solid rgba(39, 37, 37, 0.493);
             border-radius: 5px;
             width: fit-content;
             margin: 0 auto;
             gap: 15px;
+            text-transform: capitalize;
+        }
+
+        #minus {
+            font-size: larger;
+            border: none;
+        }
+
+        #plus {
+            font-size: larger;
+            border: none;
         }
     </style>
 </head>
@@ -119,9 +130,9 @@
             <h3>{{ detail.product.name }}</h3>
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <div class="incre-decrement-btn">
-                <button>-</button>
+                <button id="minus">-</button>
                 <p>Qty: {{ detail.quantity }}</p>
-                <button>+</button>
+                <button id="plus">+</button>
             </div>
             <h5>Price: ₹ {{ detail.product.price }}</h5>
             {% empty %}
