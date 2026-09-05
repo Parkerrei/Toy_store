@@ -319,10 +319,10 @@ def increment_item(request,id):
 
                 if cart_item.product.stock > 0:
                     cart_item.quantity = F('quantity') + 1
-                    cart_item.save(update_fields='quantity')
+                    cart_item.save(update_fields=['quantity'])
                     
                     product.stock = F('stock') - 1
-                    product.save(update_fields='stock')
+                    product.save(update_fields=['stock'])
                     return JsonResponse({'success':True,'message':'item added succesfully'},status=201)
                 return JsonResponse({'error':'out of stock'},status=403)
         except Exception as e:
