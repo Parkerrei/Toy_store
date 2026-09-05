@@ -310,4 +310,3 @@ def all_cart_order(request):
         'receipt':order['receipt']
     })
 
-   
