@@ -130,9 +130,9 @@
             <h3>{{ detail.product.name }}</h3>
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <div class="incre-decrement-btn">
-                <button id="minus">-</button>
+                <button data-id="{{ detail.product.id}}" id="minus">-</button>
                 <p>Qty: {{ detail.quantity }}</p>
-                <button id="plus">+</button>
+                <button data-id="{{ detail.product.id }}" id="plus">+</button>
             </div>
             <h5>Price: ₹ {{ detail.product.price }}</h5>
             {% empty %}
