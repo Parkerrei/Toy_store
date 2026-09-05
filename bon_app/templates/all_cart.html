@@ -226,39 +226,38 @@
             }
 
             ).then((response) => {
-                return response.json().then((data) => {
-                    if (!response.ok) {
-                        throw new Error(data.error || 'something went wrong')
-                    }
-                    return data
-                })
-
+                if (!response.ok) {
+                    throw new Error(data.error || 'something went wrong')
+                }
+                return response.json()
             })
-                .then((data) => {
-                    if (data.success) {
 
-                        // 1. Target the correct wrapper block from your HTML
-                        const cartItemBlock = buttons.closest('.cart-item');
-
-                        if (cartItemBlock) {
-                            // 2. Erase the block (Name, Image, Qty, Subtotal) instantly from UI
-                            cartItemBlock.remove();
-                        }
-                    } else {
-                        alert(data.error)
-                    }
-                    // 3. SUCCESS RESET: Restore button if it stays on screen
-                    buttons.disabled = false;
-                    buttons.innerHTML = originalContent;
-                })
-                .catch((error) => {
-                    alert('error:' + error)
-                    // 4. ERROR RESET: Always bring the button back to life on failure
-                    buttons.disabled = false;
-                    buttons.innerHTML = originalContent;
-                })
         })
+            .then((data) => {
+                if (data.success === true) {
+
+                    // 1. Target the correct wrapper block from your HTML
+                    const cartItemBlock = buttons.closest('.cart-item');
+
+                    if (cartItemBlock) {
+                        // 2. Erase the block (Name, Image, Qty, Subtotal) instantly from UI
+                        cartItemBlock.remove();
+                    }
+                } else {
+                    alert(data.error)
+                }
+                // 3. SUCCESS RESET: Restore button if it stays on screen
+                buttons.disabled = false;
+                buttons.innerHTML = originalContent;
+            })
+            .catch((error) => {
+                alert('error:' + error)
+                // 4. ERROR RESET: Always bring the button back to life on failure
+                buttons.disabled = false;
+                buttons.innerHTML = originalContent;
+            })
     })
+
 
 </script>
 
