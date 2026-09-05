@@ -327,4 +327,4 @@ def increment_item(request,id):
                 return JsonResponse({'error':'out of stock'},status=403)
         except Exception as e:
             return JsonResponse({'error':'something wrong'},status=500)   
-        return JsonResponse({'error':'method not allowed'},status=405)
+    return JsonResponse({'error':'method not allowed'},status=405)
