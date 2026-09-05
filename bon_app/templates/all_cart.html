@@ -157,6 +157,19 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const id = document.getElementById('token').value
+        const increment_btn = document.getElementById('plus')
+        fetch(`/increment_item ${id}/`, {
+            'method': 'POST',
+            headers: {
+                'X-CSRFToken': token,
+                'Content-Type': 'application/json'
+            }
+        })
+    })
+
+
+    document.addEventListener('DOMContentLoaded', () => {
         const key = document.getElementById('token').value
         const id = document.getElementById('buy-btn')
         id.addEventListener('click', () => {
