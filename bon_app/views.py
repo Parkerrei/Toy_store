@@ -310,3 +310,21 @@ def all_cart_order(request):
         'receipt':order['receipt']
     })
 
+def increment_item(request,id):
+    if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                cart_item = CartItem.objects.select_for_update().filter(id=id).first()
+                product = Product.objects.filter(name=cart_item.product.name).select_for_update().first()
+
+                if cart_item.product.stock > 0:
+                    cart_item.quantity = F('quantity') + 1
+                    cart_item.save(update_fields='quantity')
+                    
+                    product.stock = F('stock') - 1
+                    product.save(update_fields='stock')
+                    return JsonResponse({'success':True,'message':'item added succesfully'},status=201)
+                return JsonResponse({'error':'out of stock'},status=403)
+        except Exception as e:
+            return JsonResponse({'error':'something wrong'},status=500)   
+        return JsonResponse({'error':'method not allowed'},status=405)
