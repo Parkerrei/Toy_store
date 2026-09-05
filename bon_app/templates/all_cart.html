@@ -101,18 +101,18 @@
         <p>Logged in as: <b>{{ request.user.username }}</b></p>
         <hr>
 
-        {% for detail in cart_items %}
-        <!-- FIX 2: Grouped item elements inside an item div block -->
         <div id="cart" class="cart-item">
+            {% for detail in cart_items %}
+            <!-- FIX 2: Grouped item elements inside an item div block -->
             <h3>{{ detail.product.name }}</h3>
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <p>Qty: {{ detail.quantity }}</p>
 
             <h5>Subtotal: ₹ {{ detail.product.price }}</h5>
+            {% empty %}
+            {% endfor %}
         </div>
-        {% empty %}
         <p style="color: #666; padding: 20px;">Your cart is completely empty.</p>
-        {% endfor %}
 
         <!-- Total bill sits perfectly at the base -->
 
@@ -206,6 +206,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const token = document.getElementById('token').value
         const buttons = document.getElementById('cart-btn')
+        const total_price_tag = document.getElementById('price')
         buttons.addEventListener('click', () => {
             var originalContent = buttons.innerHTML
             buttons.disabled = true
@@ -230,6 +231,8 @@
                         var cart_container = document.getElementById('cart')
                         if (cart_container) {
                             cart_container.innerHTML = '';
+                        } if (total_price_tag) {
+                            total_price_tag.innerText = 'Grand Total: ₹ 0'
                         }
                     }
                     else {
