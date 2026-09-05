@@ -85,6 +85,17 @@
             gap: 10px;
 
         }
+
+        .incre-decrement-btn {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid black;
+            border-radius: 5px;
+            width: fit-content;
+            margin: 0 auto;
+        }
     </style>
 </head>
 
@@ -106,8 +117,11 @@
             <!-- FIX 2: Grouped item elements inside an item div block -->
             <h3>{{ detail.product.name }}</h3>
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
-            <p>Qty: {{ detail.quantity }}</p>
-
+            <div class="incre-decrement-btn">
+                <button>-</button>
+                <p>Qty: {{ detail.quantity }}</p>
+                <button>+</button>
+            </div>
             <h5>Price: ₹ {{ detail.product.price }}</h5>
             {% empty %}
             <p style="color: #666; padding: 20px;">Your cart is completely empty.</p>
