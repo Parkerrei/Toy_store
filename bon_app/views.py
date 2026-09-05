@@ -323,7 +323,7 @@ def increment_item(request,id):
                     
                     product.stock = F('stock') - 1
                     product.save(update_fields=['stock'])
-                    return JsonResponse({'success':True,'message':'item added succesfully'},status=201)
+                    return JsonResponse({'success':True,'message':'item added succesfully'},status=200)
                 return JsonResponse({'error':'out of stock'},status=403)
         except Exception as e:
             return JsonResponse({'error':'something wrong'},status=500)   
