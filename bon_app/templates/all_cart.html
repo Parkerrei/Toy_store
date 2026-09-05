@@ -108,7 +108,7 @@
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <p>Qty: {{ detail.quantity }}</p>
 
-            <h5>Subtotal: ₹ {{ detail.product.price }}</h5>
+            <h5>Price: ₹ {{ detail.product.price }}</h5>
             {% empty %}
             {% endfor %}
         </div>
