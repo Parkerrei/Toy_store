@@ -103,7 +103,7 @@
 
         {% for detail in cart_items %}
         <!-- FIX 2: Grouped item elements inside an item div block -->
-        <div class="cart-item">
+        <div id="cart" class="cart-item">
             <h3>{{ detail.product.name }}</h3>
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <p>Qty: {{ detail.quantity }}</p>
@@ -235,17 +235,16 @@
         })
             .then((data) => {
                 if (data.success === true) {
-
                     // 1. Target the correct wrapper block from your HTML
-                    const cartItemBlock = buttons.closest('.cart-item');
-
-                    if (cartItemBlock) {
-                        // 2. Erase the block (Name, Image, Qty, Subtotal) instantly from UI
-                        cartItemBlock.remove();
+                    var item_container = document.getElementById('cart')
+                    if (item_container) {
+                        item_container.innerHTML = ''
                     }
+
                 } else {
                     alert(data.error)
                 }
+
                 // 3. SUCCESS RESET: Restore button if it stays on screen
                 buttons.disabled = false;
                 buttons.innerHTML = originalContent;
