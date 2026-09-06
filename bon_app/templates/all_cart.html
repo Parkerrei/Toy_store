@@ -158,7 +158,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const id = document.getElementById('token').value
-        const increment_btn = document.getElementById('plus')
+        const increm_btn = document.querySelectorAll('.increment-btn')
         
         fetch(`/increment_item/${id}/`, {
             'method': 'POST',
