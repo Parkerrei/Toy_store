@@ -159,29 +159,34 @@
     document.addEventListener('DOMContentLoaded', () => {
         const id = document.getElementById('token').value
         const increm_btn = document.querySelectorAll('.increment-btn')
-        
-        fetch(`/increment_item/${id}/`, {
-            'method': 'POST',
-            headers: {
-                'X-CSRFToken': id,
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error('error' + response.status)
-            } return response.json()
-        })
-            .then(data => {
-                if (data.success) {
-                    alert(data.message)
-                } else {
-                    alert(data.error)
-                }
+        increm_btn.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const id = increm_btn.dataset.id
+                fetch(`/increment_item/${id}/`, {
+                    'method': 'POST',
+                    headers: {
+                        'X-CSRFToken': id,
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('error' + response.status)
+                    } return response.json()
+                })
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message)
+                        } else {
+                            alert(data.error)
+                        }
+                    })
+                    .catch(error => {
+                        alert('error' + error)
+                    });
             })
-            .catch(error => {
-                alert('error' + error)
-            });
-    });
+        })
+    })
 
 
     document.addEventListener('DOMContentLoaded', () => {
