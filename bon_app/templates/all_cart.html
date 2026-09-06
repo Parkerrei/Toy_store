@@ -130,9 +130,9 @@
             <h3>{{ detail.product.name }}</h3>
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <div class="incre-decrement-btn">
-                <button data-id="{{ detail.product.id}}" id="minus">-</button>
+                <button class="decrement" data-id="{{ detail.product.id}}" id="minus">-</button>
                 <p>Qty: {{ detail.quantity }}</p>
-                <button data-id="{{ detail.product.id }}" id="plus">+</button>
+                <button class="increment-btn" data-id="{{ detail.product.id }}" id="plus">+</button>
             </div>
             <h5>Price: ₹ {{ detail.product.price }}</h5>
             {% empty %}
@@ -159,6 +159,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const id = document.getElementById('token').value
         const increment_btn = document.getElementById('plus')
+        
         fetch(`/increment_item/${id}/`, {
             'method': 'POST',
             headers: {
@@ -171,7 +172,11 @@
             } return response.json()
         })
             .then(data => {
-                alert(data.success)
+                if (data.success) {
+                    alert(data.message)
+                } else {
+                    alert(data.error)
+                }
             })
             .catch(error => {
                 alert('error' + error)
