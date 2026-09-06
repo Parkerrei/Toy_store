@@ -159,16 +159,16 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const id = document.getElementById('token').value
+        const token = document.getElementById('token').value
         const increm_btn = document.querySelectorAll('.increment-btn')
         increm_btn.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                const id = increm_btn.dataset.id
+                const id = btn.dataset.id
                 fetch(`/increment_item/${id}/`, {
                     'method': 'POST',
-                    headers: {
-                        'X-CSRFToken': id,
+                    headers: {  
+                        'X-CSRFToken': token,
                         'Content-Type': 'application/json'
                     }
                 }).then(response => {
@@ -178,6 +178,7 @@
                 })
                     .then(data => {
                         if (data.success) {
+                            console.log()
                             alert(data.message)
                         } else {
                             alert(data.error)
