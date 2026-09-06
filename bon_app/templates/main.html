@@ -370,7 +370,7 @@
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const id = btn.dataset.id;
-                fetch(`/buy/${id}`, {
+                fetch(`/buy/${id}/`, {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': token,
