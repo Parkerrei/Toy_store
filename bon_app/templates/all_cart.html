@@ -159,14 +159,24 @@
     document.addEventListener('DOMContentLoaded', () => {
         const id = document.getElementById('token').value
         const increment_btn = document.getElementById('plus')
-        fetch(`/increment_item ${id}/`, {
+        fetch(`/increment_item/${id}/`, {
             'method': 'POST',
             headers: {
-                'X-CSRFToken': token,
+                'X-CSRFToken': id,
                 'Content-Type': 'application/json'
             }
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('error' + response.status)
+            } return response.json()
         })
-    })
+            .then(data => {
+                alert(data.success)
+            })
+            .catch(error => {
+                alert('error' + error)
+            });
+    });
 
 
     document.addEventListener('DOMContentLoaded', () => {
