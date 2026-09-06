@@ -167,7 +167,7 @@
                 const id = btn.dataset.id
                 fetch(`/increment_item/${id}/`, {
                     'method': 'POST',
-                    headers: {  
+                    headers: {
                         'X-CSRFToken': token,
                         'Content-Type': 'application/json'
                     }
