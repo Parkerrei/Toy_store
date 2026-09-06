@@ -315,15 +315,16 @@ def increment_item(request,id):
         try:
             with transaction.atomic():
                 cart_item = CartItem.objects.select_for_update().filter(id=id).first()
-                product = Product.objects.filter(name=cart_item.product.name).select_for_update().first()
+                product = Product.objects.select_for_update().filter(name=cart_item.product.name).first()
 
-                if cart_item.product.stock > 0:
+                if product.stock > 0:
                     cart_item.quantity = F('quantity') + 1
                     cart_item.save(update_fields=['quantity'])
+                    context = cart_item.refresh_from_db()
                     
                     product.stock = F('stock') - 1
                     product.save(update_fields=['stock'])
-                    return JsonResponse({'success':True,'message':'item added succesfully'},status=200)
+                    return JsonResponse({'success':True,'message':'item added succesfully','context':context},status=200)
                 return JsonResponse({'error':'out of stock'},status=403)
         except Exception as e:
             return JsonResponse({'error':'something wrong'},status=500)   
