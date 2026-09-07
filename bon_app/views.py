@@ -321,18 +321,19 @@ def increment_item(request,id):
                     cart_item.quantity = F('quantity') + 1
                     cart_item.save(update_fields=['quantity'])
                     cart_item.refresh_from_db()
+                    new_quantity = cart_item.quantity
                     
                     product.stock = F('stock') - 1
                     product.save(update_fields=['stock'])
 
                     cart_items = CartItem.objects.filter(user_cart=request.user)
-                    quantity = cart_items.quantity
+
                     user_cart_total_price = sum(item.subtotal() for item in cart_items)
 
                     return JsonResponse({'success':True,
                                          'message':'item added succesfully',
                                          'price':user_cart_total_price,
-                                         'qty':quantity},
+                                         'qty':new_quantity},
                                           status = 200)
                 return JsonResponse({'error':'out of stock'},status=403)
         except Exception as e:
