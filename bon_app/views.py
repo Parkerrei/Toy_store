@@ -329,7 +329,11 @@ def increment_item(request,id):
                     quantity = cart_items.quantity
                     user_cart_total_price = sum(item.subtotal() for item in cart_items)
 
-                    return JsonResponse({'success':True,'message':'item added succesfully','price':user_cart_total_price,'qty':quantity},status=200)
+                    return JsonResponse({'success':True,
+                                         'message':'item added succesfully',
+                                         'price':user_cart_total_price,
+                                         'qty':quantity},
+                                          status = 200)
                 return JsonResponse({'error':'out of stock'},status=403)
         except Exception as e:
             return JsonResponse({'error':'something wrong'},status=500)   
