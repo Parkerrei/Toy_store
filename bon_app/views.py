@@ -10,7 +10,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
 from .models import Category,Product,CartItem
 from django.db import transaction,models
-from django.db.models import F
+from django.db.models import F,Sum
 import json
 import logging
 
@@ -321,27 +321,27 @@ def increment_item(request,id):
                 if not product:
                     return JsonResponse({'error':'out of stock'},status = 403)
  
-                if product.stock > 0:
-                    cart_item.quantity = F('quantity') + 1
-                    cart_item.save(update_fields=['quantity'])
-                    cart_item.refresh_from_db()
-                    new_quantity = cart_item.quantity
+              
+                cart_item.quantity = F('quantity') + 1
+                cart_item.save(update_fields=['quantity'])
+                cart_item.refresh_from_db()
+                new_quantity = cart_item.quantity
                     
-                    product.stock = F('stock') - 1
-                    product.save(update_fields=['stock'])
+                product.stock = F('stock') - 1
+                product.save(update_fields=['stock'])
 
-                    total_cart_item = CartItem.objects.filter(user_cart=request.user).aggregate(
-                        total_price=sum(F('quantity') * F('product__price'))
+                total_cart_item = CartItem.objects.filter(user_cart=request.user).aggregate(
+                        total_price=Sum(F('quantity') * F('product__price'))
                     )
 
-                    user_cart_total_price = total_cart_item['total_price']
+                user_cart_total_price = total_cart_item['total_price']
 
-                    return JsonResponse({'success':True,
+                return JsonResponse({'success':True,
                                          'message':'item added succesfully',
                                          'price':user_cart_total_price,
                                          'qty':new_quantity},
                                           status = 200)
-                return JsonResponse({'error':'out of stock'},status=403)
+            
         except Exception as e:
             return JsonResponse({'error':'something wrong'},status=500)   
     return JsonResponse({'error':'method not allowed'},status=405)
