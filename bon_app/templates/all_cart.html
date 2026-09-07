@@ -134,7 +134,7 @@
             <div class="incre-decrement-btn">
                 <button class="decrement" data-id="{{ detail.product.id}}" id="minus">-</button>
                 <p class="quantity" id="qty-{{ detail.id }}">Qty: {{ detail.quantity }}</p>
-                <button class="increment-btn" data-id="{{ detail.product.id }}" id="plus">+</button>
+                <button class="increment-btn" data-id="{{ detail.id }}" id="plus">+</button>
             </div>
             <h5>Price: ₹ {{ detail.product.price }}</h5>
             {% empty %}
