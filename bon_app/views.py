@@ -317,7 +317,9 @@ def increment_item(request,id):
                 cart_item = CartItem.objects.select_for_update().filter(id=id).first() 
                 if not cart_item:
                     return JsonResponse({'error':'item dnt exists'},status=404)
-                product = Product.objects.select_for_update().filter(id=cart_item.product_id).first()
+                product = Product.objects.select_for_update().filter(id=cart_item.product_id,stock__gt=0).first()
+                if not product:
+                    return JsonResponse({'error':'out of stock'},status = 403)
  
                 if product.stock > 0:
                     cart_item.quantity = F('quantity') + 1
@@ -328,9 +330,11 @@ def increment_item(request,id):
                     product.stock = F('stock') - 1
                     product.save(update_fields=['stock'])
 
-                    cart_items = CartItem.objects.filter(user_cart=request.user)
+                    cart_items = CartItem.objects.filter(user_cart=request.user).aggregate(
+                        total_price=sum(F('quantity') * F('product__price'))
+                    )
 
-                    user_cart_total_price = sum(item.subtotal() for item in cart_items)
+                    user_cart_total_price = cart_items['total_price']
 
                     return JsonResponse({'success':True,
                                          'message':'item added succesfully',
