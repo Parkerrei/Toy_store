@@ -161,11 +161,11 @@
     document.addEventListener('DOMContentLoaded', () => {
         const token = document.getElementById('token').value
         const increm_btn = document.querySelectorAll('.increment-btn')
-        var total = document.querySelectorAll('.total_price')
-        var quantity = document.querySelectorAll('.quantity')
+        var total = document.querySelector('.total_price')
         increm_btn.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
+                var quantity = document.getElementById('price')
                 const id = btn.dataset.id
                 fetch(`/increment_item/${id}/`, {
                     'method': 'POST',
@@ -181,10 +181,13 @@
                     .then(data => {
                         if (data.success) {
                             total.innerText = data.price
-                            quantity.innerText = data.quantity
                             alert(data.message)
 
-                        } else {
+                        } if (quantity) {
+                            quantity.textContent = data.quantity
+
+                        }
+                        else {
                             alert(data.error)
                         }
                     })
