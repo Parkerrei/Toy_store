@@ -175,6 +175,9 @@
                     }
                 }).then(response => {
                     if (!response.ok) {
+                        response.json().then(errData => {
+                            console.error("Backend Error Message:", errData.error); // 🔍 This will print 'item dnt exists'
+                        });
                         throw new Error('error' + response.status)
                     } return response.json()
                 })
