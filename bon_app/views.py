@@ -330,11 +330,11 @@ def increment_item(request,id):
                     product.stock = F('stock') - 1
                     product.save(update_fields=['stock'])
 
-                    cart_items = CartItem.objects.filter(user_cart=request.user).aggregate(
+                    total_cart_item = CartItem.objects.filter(user_cart=request.user).aggregate(
                         total_price=sum(F('quantity') * F('product__price'))
                     )
 
-                    user_cart_total_price = cart_items['total_price']
+                    user_cart_total_price = total_cart_item['total_price']
 
                     return JsonResponse({'success':True,
                                          'message':'item added succesfully',
