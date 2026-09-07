@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Shopping Cart</title>
-   
+
     <style>
         /* Centers your main wrapper box directly on the browser screen */
         body {
@@ -111,6 +111,33 @@
             font-size: larger;
             border: none;
         }
+
+        #toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #28a745;
+            /* Success Green */
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-family: sans-serif;
+            z-index: 1000;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .toast-hidden {
+            opacity: 0;
+            transform: translateY(50px);
+            pointer-events: none;
+            /* Allows users to click elements behind it */
+        }
+
+        .toast-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 
@@ -155,11 +182,30 @@
 
     </div>
     <input type="hidden" name="csrfmiddlewaretoken" id="token" value="{{csrf_token}}">
+    <!-- A simple non-blocking pop-up container -->
+    <div id="toast-notification" class="toast-hidden"></div>
+
 </body>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
+    // Add this helper function at the top of your DOMContentLoaded event
+    function showToast(message) {
+        const toast = document.getElementById('toast-notification');
+        if (!toast) return;
+
+        toast.innerText = message;
+        toast.classList.remove('toast-hidden');
+        toast.classList.add('toast-visible');
+
+        // Automatically hide it after 3 seconds without freezing the page
+        setTimeout(() => {
+            toast.classList.remove('toast-visible');
+            toast.classList.add('toast-hidden');
+        }, 3000);
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const token = document.getElementById('token').value
         const increm_btn = document.querySelectorAll('.increment-btn')
@@ -186,14 +232,14 @@
                     .then(data => {
                         if (data.success) {
                             total.innerText = data.price
-                            Toastify({ text: data.message, backgroundColor: "#28a745" }).showToast();
+                            showToast(data.message)
 
                             if (quantity) {
                                 quantity.textContent = data.qty
                             }
                         }
                         else {
-                            alert(data.error)
+                            showToast(data.error)
                         }
                     })
                     .catch(error => {
