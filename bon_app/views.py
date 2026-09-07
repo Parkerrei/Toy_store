@@ -310,70 +310,27 @@ def all_cart_order(request):
         'receipt':order['receipt']
     })
 
-# def increment_item(request,id):
-#     if request.method == 'POST':
-#         try:
-#             with transaction.atomic():
-#                 cart_item = CartItem.objects.select_for_update().filter(id=id).first()
-#                 product = Product.objects.select_for_update().filter(name=cart_item.product.name).first()
-
-#                 if product.stock > 0:
-#                     cart_item.quantity = F('quantity') + 1
-#                     cart_item.save(update_fields=['quantity'])
-#                     cart_item.refresh_from_db()
-                    
-#                     product.stock = F('stock') - 1
-#                     product.save(update_fields=['stock'])
-
-#                     cart_items = CartItem.objects.filter(user_cart=request.user).first()
-#                     quantity = cart_items.quantity
-#                     user_cart_total_price = sum(item.subtotal() for item in cart_items)
-
-#                     return JsonResponse({'success':True,'message':'item added succesfully','price':user_cart_total_price,'qty':quantity},status=200)
-#                 return JsonResponse({'error':'out of stock'},status=403)
-#         except Exception as e:
-#             return JsonResponse({'error':'something wrong'},status=500)   
-#     return JsonResponse({'error':'method not allowed'},status=405)
-
-from django.db import transaction
-from django.db.models import F
-from django.http import JsonResponse
-
-def increment_item(request, id):
+def increment_item(request,id):
     if request.method == 'POST':
         try:
             with transaction.atomic():
                 cart_item = CartItem.objects.select_for_update().filter(id=id).first()
-                if not cart_item:
-                    return JsonResponse({'error': 'Item not found'}, status=404)
-                    
                 product = Product.objects.select_for_update().filter(name=cart_item.product.name).first()
 
                 if product.stock > 0:
-                    # 1. Update the targeted item
                     cart_item.quantity = F('quantity') + 1
                     cart_item.save(update_fields=['quantity'])
-                    cart_item.refresh_from_db()  # Fresh numeric value loaded here
+                    cart_item.refresh_from_db()
                     
-                    # 2. Deduct product stock
                     product.stock = F('stock') - 1
                     product.save(update_fields=['stock'])
 
-                    # 3. Fetch ALL items in the user's cart (Notice no .first() here!)
-                    all_cart_items = CartItem.objects.filter(user_cart=request.user)
-                    
-                    # 4. Calculate the grand total safely
-                    user_cart_total_price = sum(item.subtotal() for item in all_cart_items)
+                    cart_items = CartItem.objects.filter(user_cart=request.user)
+                    quantity = cart_items.quantity
+                    user_cart_total_price = sum(item.subtotal() for item in cart_items)
 
-                    return JsonResponse({
-                        'success': True,
-                        'message': 'item added successfully',
-                        'price': float(user_cart_total_price), # Global grand total
-                        'qty': cart_item.quantity              # This specific item's new quantity
-                    }, status=200)
-                    
-                return JsonResponse({'error': 'out of stock'}, status=403)
+                    return JsonResponse({'success':True,'message':'item added succesfully','price':user_cart_total_price,'qty':quantity},status=200)
+                return JsonResponse({'error':'out of stock'},status=403)
         except Exception as e:
-            return JsonResponse({'error': 'something wrong'}, status=500)   
-            
-    return JsonResponse({'error': 'method not allowed'}, status=405)
+            return JsonResponse({'error':'something wrong'},status=500)   
+    return JsonResponse({'error':'method not allowed'},status=405)
