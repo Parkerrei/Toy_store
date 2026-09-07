@@ -320,7 +320,6 @@ def increment_item(request,id):
                 product = Product.objects.select_for_update().filter(id=cart_item.product_id,stock__gt=0).first()
                 if not product:
                     return JsonResponse({'error':'out of stock'},status = 403)
- 
               
                 cart_item.quantity = F('quantity') + 1
                 cart_item.save(update_fields=['quantity'])
