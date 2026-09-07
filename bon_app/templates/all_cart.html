@@ -133,7 +133,7 @@
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <div class="incre-decrement-btn">
                 <button class="decrement" data-id="{{ detail.product.id}}" id="minus">-</button>
-                <p class="quantity">Qty: {{ detail.quantity }}</p>
+                <p class="quantity" id="qty-{{ detail.id }}">Qty: {{ detail.quantity }}</p>
                 <button class="increment-btn" data-id="{{ detail.product.id }}" id="plus">+</button>
             </div>
             <h5>Price: ₹ {{ detail.product.price }}</h5>
@@ -165,7 +165,7 @@
         increm_btn.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                var quantity = document.getElementById('price')
+                var quantity = document.getElementById(`qty-${id}`)
                 const id = btn.dataset.id
                 fetch(`/increment_item/${id}/`, {
                     'method': 'POST',
@@ -183,9 +183,9 @@
                             total.innerText = data.price
                             alert(data.message)
 
-                        } if (quantity) {
-                            quantity.textContent = data.quantity
-
+                            if (quantity) {
+                                quantity.textContent = data.qty
+                            }
                         }
                         else {
                             alert(data.error)
