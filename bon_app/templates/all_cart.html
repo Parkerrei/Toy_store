@@ -133,7 +133,7 @@
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <div class="incre-decrement-btn">
                 <button class="decrement" data-id="{{ detail.product.id}}" id="minus">-</button>
-                <p>Qty: {{ detail.quantity }}</p>
+                <p class="quantity">Qty: {{ detail.quantity }}</p>
                 <button class="increment-btn" data-id="{{ detail.product.id }}" id="plus">+</button>
             </div>
             <h5>Price: ₹ {{ detail.product.price }}</h5>
@@ -145,7 +145,7 @@
         <!-- Total bill sits perfectly at the base -->
 
         <div class="total-section">
-            <h2 id="price">Grand Total: ₹ {{ total_price }}</h2>
+            <h2 class="total_price" id="price">Grand Total: ₹ {{ total_price }}</h2>
             <div id="order-remove-btn">
                 <button id="buy-btn">Order</button>
                 <button id="cart-btn">Empty cart</button>
@@ -161,6 +161,8 @@
     document.addEventListener('DOMContentLoaded', () => {
         const token = document.getElementById('token').value
         const increm_btn = document.querySelectorAll('.increment-btn')
+        var total = document.querySelectorAll('.total_price')
+        var quantity = document.querySelectorAll('.quantity')
         increm_btn.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -178,7 +180,10 @@
                 })
                     .then(data => {
                         if (data.success) {
+                            total.innerText = data.price
+                            quantity.innerText = data.quantity
                             alert(data.message)
+
                         } else {
                             alert(data.error)
                         }
