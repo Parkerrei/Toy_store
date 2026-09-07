@@ -165,8 +165,8 @@
         increm_btn.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                var quantity = document.getElementById(`qty-${id}`)
                 const id = btn.dataset.id
+                var quantity = document.getElementById(`qty-${id}`)
                 fetch(`/increment_item/${id}/`, {
                     'method': 'POST',
                     headers: {
