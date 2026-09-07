@@ -315,7 +315,7 @@ def increment_item(request,id):
         try:
             with transaction.atomic():
                 cart_item = CartItem.objects.select_for_update().filter(id=id).first()
-                product = Product.objects.select_for_update().filter(name=cart_item.product.name).first()
+                product = Product.objects.select_for_update().filter(id=cart_item.product_id).first()
 
                 if product.stock > 0:
                     cart_item.quantity = F('quantity') + 1
