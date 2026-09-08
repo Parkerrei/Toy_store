@@ -258,7 +258,7 @@
                 e.preventDefault();
                 const id = btn.dataset.id
                 var quantity = document.getElementById(`qty-${id}`)
-                fetch(`/increment_item/${id}/`, {
+                fetch(`/decrement_item/${id}/`, {
                     'method': 'POST',
                     headers: {
                         'X-CSRFToken': token,
