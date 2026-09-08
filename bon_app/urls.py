@@ -22,6 +22,6 @@ urlpatterns = [
                 path('user_cart_items/',user_cart_items,name='user_cart_items'),
                 path('cart_deduct/',cart_deduct,name='cart_deduct'),
                 path('all_cart_order/',all_cart_order,name='all_cart_order'),
-                path('increment_item/<int:id>/',increment_item,name='increment_item')
+                path('increment_item/<int:id>/',increment_item,name='increment_item'),
                 path('decrement_item/<int:id>/',decrement_item,name='decrement_item')
 ]
