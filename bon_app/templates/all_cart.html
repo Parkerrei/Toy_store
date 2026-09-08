@@ -160,7 +160,7 @@
             <h3>{{ detail.product.name }}</h3>
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <div class="incre-decrement-btn">
-                <button class="decrement" data-id="{{ detail.id}}" id="minus">-</button>
+                <button class="decrement-btn" data-id="{{ detail.id}}" id="minus">-</button>
                 <p class="quantity" id="qty-{{ detail.id }}">Qty: {{ detail.quantity }}</p>
                 <button class="increment-btn" data-id="{{ detail.id }}" id="plus">+</button>
             </div>
@@ -249,6 +249,48 @@
         })
     })
 
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = document.getElementById('token').value
+        const increm_btn = document.querySelectorAll('.decrement-btn')
+        var total = document.querySelector('.total_price')
+        increm_btn.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const id = btn.dataset.id
+                var quantity = document.getElementById(`qty-${id}`)
+                fetch(`/increment_item/${id}/`, {
+                    'method': 'POST',
+                    headers: {
+                        'X-CSRFToken': token,
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (!response.ok) {
+                        response.json().then(errData => {
+                            console.error("Backend Error Message:", errData.error); // 🔍 This will print 'item dnt exists'
+                        });
+                        throw new Error('error' + response.status)
+                    } return response.json()
+                })
+                    .then(data => {
+                        if (data.success) {
+                            total.innerText = data.price
+                            showToast(data.message)
+
+                            if (quantity) {
+                                quantity.textContent = data.qty
+                            }
+                        }
+                        else {
+                            showToast(data.error)
+                        }
+                    })
+                    .catch(error => {
+                        alert('error' + error)
+                    });
+            })
+        })
+    })
 
     document.addEventListener('DOMContentLoaded', () => {
         const key = document.getElementById('token').value
