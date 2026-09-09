@@ -376,7 +376,7 @@ def decrement_item(request,id):
                     return JsonResponse({'success':True,
                                          'message':'item removed succesfully',
                                          'price':total_cart_price['total_price'],
-                                         'qty':new_quantity},
+                                         'qty':new_quantity}, 
                                          status=200)
                 return JsonResponse({'error':'quantity is already zero'},status=400)
         except Exception as e:
