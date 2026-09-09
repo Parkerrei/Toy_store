@@ -349,7 +349,7 @@ def decrement_item(request,id):
     if request.method == 'POST':
         try:
             with transaction.atomic():
-                cart_item = CartItem.objects.select_for_update().filter(product_id=id,user_cart = request.user).first()
+                cart_item = CartItem.objects.select_for_update().filter(id=id,user_cart = request.user).first()
                 if not cart_item:
                     return JsonResponse({'error':'item not found'},status=404)
                 product = Product.objects.select_for_update().filter(id=cart_item.product_id).first()
