@@ -345,89 +345,46 @@ def increment_item(request,id):
             return JsonResponse({'error':'something wrong'},status=500)   
     return JsonResponse({'error':'method not allowed'},status=405)
 
-# def decrement_item(request,id):
-#     if request.method == 'POST':
-#         try:
-#             with transaction.atomic():
-#                 cart_item = CartItem.objects.select_for_update().filter(id=id,user_cart = request.user).first()
-#                 if not cart_item:
-#                     return JsonResponse({'error':'item not found'},status=404)
-#                 product = Product.objects.select_for_update().filter(id=cart_item.product_id).first()
-#                 if not product:
-#                     return JsonResponse({'error':'product not found'},status=404)
-                
-#                 # check if quantity is greater that 0 only then decrement the quantity and update the product stock
-#                 if cart_item.quantity > 0:
-#                     cart_item.quantity = F('quantity') - 1
-#                     cart_item.save(update_fields=['quantity'])
-#                     cart_item.refresh_from_db()
-#                     new_quantity = cart_item.quantity 
-
-#                     # update the product stock by incrementing it by 1                            
-#                     product.stock = F('stock') + 1
-#                     product.save(update_fields=['stock'])
-
-#                     # calculate the total price of the cart after decrementing the item quantity
-#                     total_cart_price = CartItem.objects.filter(user_cart=request.user).aggregate(
-#                         total_price=Sum(F('quantity') * F('product__price'))
-#                     )
-
-#                     # send the quantity and total price for dynamic update of the cart page
-#                     return JsonResponse({'success':True,
-#                                          'message':'item removed succesfully',
-#                                          'price':total_cart_price['total_price'],
-#                                          'qty':new_quantity}, 
-#                                          status=200)
-#                 return JsonResponse({'error':'quantity is already zero'},status=400)
-#         except Exception as e:
-#             return JsonResponse({'error':'something wrong'},status=500)
-#     return JsonResponse({'error':'method not allowed'},status = 405)
-
-def decrement_item(request, id):
+def decrement_item(request,id):
+    if request.method != 'POST':
+        return JsonResponse({'error':'Method not allowed'},status=405)    
     try:
         with transaction.atomic():
-            if request.method == 'POST':
-                user_item = CartItem.objects.select_for_update().filter(id=id, user_cart=request.user).first()
-                if not user_item:
-                    return JsonResponse({'error': 'item not found'}, status=404)
-                
-                item_in_product = Product.objects.select_for_update().filter(id=user_item.product_id).first()
-                if not item_in_product:
-                    return JsonResponse({'error': 'product doesnot exists'}, status=404)
 
-                # Initialize defaults so they exist in every code path
-                total_cart_price = 0 
-                is_removed = False
+            # locking the row because we will read modify and update the database on condition
+            item_in_cart = CartItem.objects.select_for_update().filter(id=id,user_cart = request.user).first()
 
-                if user_item.quantity <= 1: # Combined <= 0 and == 1 logic cleanly
-                    user_item.delete()
-                    new_quantity = 0
-                    is_removed = True
-                    item_in_product.stock = F('stock') + 1
-                    item_in_product.save(update_fields=['stock'])
-                else:
-                    user_item.quantity = F('quantity') - 1
-                    user_item.save(update_fields=['quantity'])
-                    user_item.refresh_from_db()
-                    new_quantity = user_item.quantity
+            if not item_in_cart:
+                return JsonResponse({'error':'item not in cart'},status=404)
+            
+            # no row locking because we are not evaluating anything here (blind write)
+            item_in_product = Product.objects.filter(id=item_in_cart.product.id).first()
 
-                    item_in_product.stock = F('stock') + 1
-                    item_in_product.save(update_fields=['stock'])
-                    is_removed = False
+            if not item_in_product:
+                return JsonResponse({'error':'item not in product'},status=404)
 
-                # CRITICAL FIX: Moved aggregate calculation OUTSIDE the else block 
-                # so it updates even when an item is deleted from the cart!
-                cart_aggregation = CartItem.objects.filter(user_cart=request.user).aggregate(
-                    total_price=Sum(F('quantity') * F('product__price')) # Fixed relation naming lookup
-                )
-                total_cart_price = cart_aggregation['total_price'] or 0
+            if item_in_cart.quantity > 1:
+                item_in_cart.quantity = F('quantity') - 1
+                item_in_cart.save(update_fields=['quantity'])
+                item_in_cart.refresh_from_db()
+                new_quantity = item_in_cart.quantity
 
-                return JsonResponse({
-                    'success': 'True',
-                    'total_cart_price': total_cart_price,
-                    'qty': new_quantity,
-                    'removed': is_removed
-                }, status=200)
-                
+            else:
+                item_in_cart.delete()
+                new_quantity = 0
+                return JsonResponse({'success':True,'qty':0,'price':total_price['price']})
+            
+            item_in_product.stock = F('stock') + 1
+            item_in_product.save(update_fields=['stock'])
+
+            total_price = CartItem.objects.select_for_update().filter(user_cart = request.user).aggregate(
+                                total = Sum(F('quantity') * F('product__price'))
+                            )
+            final_price = total_price['total']
+            
+            return JsonResponse({'success':True,
+                                 'qty':new_quantity,
+                                 'price':final_price},
+                                  status=200)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error':'something wrong'})
