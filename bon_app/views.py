@@ -345,46 +345,53 @@ def increment_item(request,id):
             return JsonResponse({'error':'something wrong'},status=500)   
     return JsonResponse({'error':'method not allowed'},status=405)
 
-def decrement_item(request,id):
+from django.db import transaction
+from django.db.models import F, Sum
+from django.http import JsonResponse
+
+def decrement_item(request, id):
     if request.method != 'POST':
-        return JsonResponse({'error':'Method not allowed'},status=405)    
+        return JsonResponse({'error': 'Method not allowed'}, status=405)    
     try:
         with transaction.atomic():
-
-            # locking the row because we will read modify and update the database on condition
-            item_in_cart = CartItem.objects.select_for_update().filter(id=id,user_cart = request.user).first()
+            # Lock row because we will read, modify, and update on condition
+            item_in_cart = CartItem.objects.select_for_update().filter(id=id, user_cart=request.user).first()
 
             if not item_in_cart:
-                return JsonResponse({'error':'item not in cart'},status=404)
+                return JsonResponse({'error': 'item not in cart'}, status=404)
             
-            # no row locking because we are not evaluating anything here (blind write)
+            # No row locking because we are performing a blind write below
             item_in_product = Product.objects.filter(id=item_in_cart.product.id).first()
 
             if not item_in_product:
-                return JsonResponse({'error':'item not in product'},status=404)
+                return JsonResponse({'error': 'item not in product'}, status=404)
 
             if item_in_cart.quantity > 1:
                 item_in_cart.quantity = F('quantity') - 1
                 item_in_cart.save(update_fields=['quantity'])
                 item_in_cart.refresh_from_db()
                 new_quantity = item_in_cart.quantity
-
             else:
                 item_in_cart.delete()
-                new_quantity = 0
-                return JsonResponse({'success':True,'qty':0,'price':total_price['price']})
+                new_quantity = 0  # Let the execution flow down naturally!
             
+            # This runs seamlessly for BOTH paths now
             item_in_product.stock = F('stock') + 1
             item_in_product.save(update_fields=['stock'])
 
-            total_price = CartItem.objects.select_for_update().filter(user_cart = request.user).aggregate(
-                                total = Sum(F('quantity') * F('product__price'))
-                            )
-            final_price = total_price['total']
+            # Calculate total remaining price
+            total_price_agg = CartItem.objects.filter(user_cart=request.user).aggregate(
+                total=Sum(F('quantity') * F('product__price'))
+            )
+            final_price = total_price_agg['total'] or 0
             
-            return JsonResponse({'success':True,
-                                 'qty':new_quantity,
-                                 'price':final_price},
-                                  status=200)
+            return JsonResponse({
+                'success': True,
+                'qty': new_quantity,
+                'price': float(final_price),
+                'message': 'Cart updated successfully' # Added message to support your frontend toast!
+            }, status=200)
+            
     except Exception as e:
-        return JsonResponse({'error':'something wrong'})
+        # Temporary tip: return str(e) during testing to see exact errors on screen
+        return JsonResponse({'error': f'Internal server error: {str(e)}'}, status=500)

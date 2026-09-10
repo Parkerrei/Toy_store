@@ -249,45 +249,56 @@
         })
     })
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const token = document.getElementById('token').value
-        const increm_btn = document.querySelectorAll('.decrement-btn')
-        var total = document.querySelector('.total_price')
-        increm_btn.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const id = btn.dataset.id
-                var quantity = document.getElementById(`qty-${id}`)
-                fetch(`/decrement_item/${id}/`, {
-                    'method': 'POST',
-                    headers: {
-                        'X-CSRFToken': token,
-                        'Content-Type': 'application/json'
-                    }
-                }).then(response => {
+    // 2. DECREMENT HANDLING
+    const decrementButtons = document.querySelectorAll('.decrement-btn');
+    decrementButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = btn.dataset.id;
+            const quantityElement = document.getElementById(`qty-${id}`);
+
+            fetch(`/decrement_item/${id}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': token,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
                     if (!response.ok) {
-                        throw new Error('error' + response.status)
+                        throw new Error('error ' + response.status)
                     } return response.json()
                 })
-                    .then(data => {
-                        if (data.success) {
-                            total.innerText = data.price
-                            showToast(data.message)
+                .then(data => {
+                    if (data.success) {
+                        totalElement.innerText = `Grand Total: ₹ ${data.price}`;
+                        showToast(data.message || 'Removed from cart');
 
-                            if (quantity) {
-                                quantity.textContent = data.qty
+                        if (data.qty === 0) {
+                            // If item is deleted, look for its parent wrapper container and remove it!
+                            // For example, if your wrapper has id="item-card-{{ detail.id }}"
+                            const itemCard = document.getElementById(`item-card-${id}`);
+                            if (itemCard) {
+                                itemCard.remove();
+                            } else {
+                                // Fallback if no wrapper wrapper id is found: remove the button row
+                                quantityElement.parentElement.remove();
                             }
                         }
-                        else {
-                            showToast(data.error)
+                        else if (quantityElement) {
+                            quantityElement.textContent = `Qty: ${data.qty}`;
                         }
-                    })
-                    .catch(error => {
-                        alert('error' + error)
-                    });
-            })
-        })
-    })
+                    }
+                    else {
+                        showToast(data.error);
+                    }
+                })
+                .catch(error => {
+                    alert('erorr ' + error)
+                });
+        });
+    });
+
 
     document.addEventListener('DOMContentLoaded', () => {
         const key = document.getElementById('token').value
