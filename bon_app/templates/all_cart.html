@@ -161,7 +161,7 @@
             <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
             <div class="incre-decrement-btn">
                 <button class="decrement-btn" data-id="{{ detail.id}}" id="minus">-</button>
-                <p class="quantity" id="qty-{{ detail.id }}">Qty: {{ detail.quantity }}</p>
+                <p class="quantity" id="item-card-{{ detail.id }}">Qty: {{ detail.quantity }}</p>
                 <button class="increment-btn" data-id="{{ detail.id }}" id="plus">+</button>
             </div>
             <h5>Price: ₹ {{ detail.product.price }}</h5>
@@ -250,54 +250,57 @@
     })
 
     // 2. DECREMENT HANDLING
-    const decrementButtons = document.querySelectorAll('.decrement-btn');
-    decrementButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const id = btn.dataset.id;
-            const quantityElement = document.getElementById(`qty-${id}`);
+    document.addEventListener('DOMContentLoaded', () => {
+        const price_tag = document.getElementById('price')
+        const decrementButtons = document.querySelectorAll('.decrement-btn');
+        decrementButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const id = btn.dataset.id;
+                const quantityElement = document.getElementById(`qty-${id}`);
 
-            fetch(`/decrement_item/${id}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': token,
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('error ' + response.status)
-                    } return response.json()
+                fetch(`/decrement_item/${id}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': token,
+                        'Content-Type': 'application/json'
+                    }
                 })
-                .then(data => {
-                    if (data.success) {
-                        totalElement.innerText = `Grand Total: ₹ ${data.price}`;
-                        showToast(data.message || 'Removed from cart');
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('error ' + response.status)
+                        } return response.json()
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            price_tag.innerText = `Grand Total: ₹ ${data.price}`;
+                            showToast(data.message || 'Removed from cart');
 
-                        if (data.qty === 0) {
-                            // If item is deleted, look for its parent wrapper container and remove it!
-                            // For example, if your wrapper has id="item-card-{{ detail.id }}"
-                            const itemCard = document.getElementById(`item-card-${id}`);
-                            if (itemCard) {
-                                itemCard.remove();
-                            } else {
-                                // Fallback if no wrapper wrapper id is found: remove the button row
-                                quantityElement.parentElement.remove();
+                            if (data.qty === 0) {
+                                // If item is deleted, look for its parent wrapper container and remove it!
+                                // For example, if your wrapper has id="item-card-{{ detail.id }}"
+                                if (quantityElement) {
+                                    quantityElement.remove();
+
+                                } else {
+                                    // Fallback if no wrapper wrapper id is found: remove the button row
+                                    quantityElement.parentElement.remove();
+                                }
+                            }
+                            else if (quantityElement) {
+                                quantityElement.textContent = `Qty: ${data.qty}`;
                             }
                         }
-                        else if (quantityElement) {
-                            quantityElement.textContent = `Qty: ${data.qty}`;
+                        else {
+                            showToast(data.error);
                         }
-                    }
-                    else {
-                        showToast(data.error);
-                    }
-                })
-                .catch(error => {
-                    alert('erorr ' + error)
-                });
+                    })
+                    .catch(error => {
+                        alert('erorr ' + error)
+                    });
+            });
         });
-    });
+    })
 
 
     document.addEventListener('DOMContentLoaded', () => {
