@@ -167,6 +167,7 @@
                 <p class="quantity" id="qty-{{ detail.id }}">Qty: {{ detail.quantity }}</p>
                 <button class="increment-btn" data-id="{{ detail.id }}" id="plus">+</button>
             </div>
+
             <h5>Price: ₹ {{ detail.product.price }}</h5>
             {% empty %}
             <p style="color: #666; padding: 20px;">Your cart is completely empty.</p>
