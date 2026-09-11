@@ -184,7 +184,7 @@
     <input type="hidden" name="csrfmiddlewaretoken" id="token" value="{{csrf_token}}">
     <!-- A simple non-blocking pop-up container -->
     <div id="toast-notification" class="toast-hidden"></div>
- 
+
 </body>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -279,7 +279,7 @@
                             if (data.qty === 0) {
                                 // If item is deleted, look for its parent wrapper container and remove it!
                                 // For example, if your wrapper has id="item-card-{{ detail.id }}"
-                                
+
                                 if (quantityElement) {
                                     quantityElement.remove();
 
