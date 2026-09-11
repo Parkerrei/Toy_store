@@ -345,9 +345,6 @@ def increment_item(request,id):
             return JsonResponse({'error':'something wrong'},status=500)   
     return JsonResponse({'error':'method not allowed'},status=405)
 
-from django.db import transaction
-from django.db.models import F, Sum
-from django.http import JsonResponse
 
 def decrement_item(request, id):
     if request.method != 'POST':

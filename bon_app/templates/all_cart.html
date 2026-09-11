@@ -115,7 +115,7 @@
         #toast-notification {
             position: fixed;
             top: 20px;
-            right: 45px;
+            right: center;
             background-color: #28a745;
             /* Success Green */
             color: white;
@@ -191,6 +191,7 @@
 
 <script>
     // Add this helper function at the top of your DOMContentLoaded event
+
     function showToast(message) {
         const toast = document.getElementById('toast-notification');
         if (!toast) return;
