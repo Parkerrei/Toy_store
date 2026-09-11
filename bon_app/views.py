@@ -380,12 +380,11 @@ def decrement_item(request, id):
             total_price_agg = CartItem.objects.filter(user_cart=request.user).aggregate(
                 total=Sum(F('quantity') * F('product__price'))
             )
-            final_price = total_price_agg['total'] or 0
             
             return JsonResponse({
                 'success': True,
                 'qty': new_quantity,
-                'price': float(final_price),
+                'price': int(total_price_agg['total'] if total_price_agg['total'] is not None else 0),
                 'message': 'Cart updated successfully' # Added message to support your frontend toast!
             }, status=200)
             
