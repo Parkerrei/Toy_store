@@ -158,10 +158,13 @@
             {% for detail in cart_items %}
             <!-- FIX 2: Grouped item elements inside an item div block -->
             <h3>{{ detail.product.name }}</h3>
-            <img src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
+
+            <img id="img-{{ detail.id }}" class="image" src="{{ detail.product.image.url }}"
+                alt="{{ detail.product.name }}">
+
             <div class="incre-decrement-btn">
                 <button class="decrement-btn" data-id="{{ detail.id}}" id="minus">-</button>
-                <p class="quantity" id="item-card-{{ detail.id }}">Qty: {{ detail.quantity }}</p>
+                <p class="quantity" id="qty-{{ detail.id }}">Qty: {{ detail.quantity }}</p>
                 <button class="increment-btn" data-id="{{ detail.id }}" id="plus">+</button>
             </div>
             <h5>Price: ₹ {{ detail.product.price }}</h5>
@@ -252,13 +255,19 @@
 
     // 2. DECREMENT HANDLING
     document.addEventListener('DOMContentLoaded', () => {
-        const price_tag = document.getElementById('price')
-        const decrementButtons = document.querySelectorAll('.decrement-btn');
+        var price_tag = document.getElementById('price');
+        var decrementButtons = document.querySelectorAll('.decrement-btn');
+        var token = document.getElementById('token').value; // 🔑 Kept here because it's static
+
         decrementButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
+
                 const id = btn.dataset.id;
                 const quantityElement = document.getElementById(`qty-${id}`);
+
+                //  FIX: Moved inside the click event so 'id' is defined and specific to this button!
+                var remove_img_row = document.getElementById(`img-${id}`);
 
                 fetch(`/decrement_item/${id}/`, {
                     method: 'POST',
@@ -269,8 +278,9 @@
                 })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('error ' + response.status)
-                        } return response.json()
+                            throw new Error('error ' + response.status);
+                        }
+                        return response.json();
                     })
                     .then(data => {
                         if (data.success) {
@@ -278,31 +288,29 @@
                             showToast(data.message || 'Removed from cart');
 
                             if (data.qty === 0) {
-                                // If item is deleted, look for its parent wrapper container and remove it!
-                                // For example, if your wrapper has id="item-card-{{ detail.id }}"
-
                                 if (quantityElement) {
-                                    quantityElement.remove();
-
-                                } else {
-                                    // Fallback if no wrapper wrapper id is found: remove the button row
-                                    quantityElement.parentElement.remove();
+                                    quantityElement.remove(); // Removes the quantity text
                                 }
-                            }
-                            else if (quantityElement) {
-                                quantityElement.textContent = `Qty: ${data.qty}`;
+                                if (remove_img_row) {
+                                    remove_img_row.remove(); // Removes the specific image cleanly!
+                                }
+                            } else {
+                                if (quantityElement) {
+                                    quantityElement.innerText = `Qty :${data.qty}`;
+                                }
                             }
                         }
                         else {
-                            showToast(data.error);
+                            // Your backend sends validation errors under 'error' key, not 'message'
+                            showToast(data.error || 'Could not update cart');
                         }
                     })
                     .catch(error => {
-                        alert('erorr ' + error)
+                        alert('error ' + error);
                     });
             });
         });
-    })
+    });
 
 
     document.addEventListener('DOMContentLoaded', () => {
