@@ -222,12 +222,15 @@
                 e.preventDefault();
                 const id = btn.dataset.id
                 var quantity = document.getElementById(`qty-${id}`)
+               
                 fetch(`/increment_item/${id}/`, {
                     'method': 'POST',
                     headers: {
                         'X-CSRFToken': token,
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    keepalive: true
+
                 }).then(response => {
                     if (!response.ok) {
                         response.json().then(errData => {
@@ -275,7 +278,8 @@
                     headers: {
                         'X-CSRFToken': token,
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    keepalive: true
                 })
                     .then(response => {
                         if (!response.ok) {
