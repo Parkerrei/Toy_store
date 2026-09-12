@@ -146,6 +146,26 @@
         <header>
             <h1>Cherri Bon Bon</h1>
             <nav>
+                <div class="side-container" id="sidebar">
+                    <nav>
+                        <aside>
+                            <a id="profile" href="#">profile</a>
+                            <a id="cart" href="{% url 'user_cart_items' %}">your Cart</a>
+                            <a href="{% url 'log_out' %}" style="color: #f51f1f;">Logout</a>
+                            <a href="{% url 'anime_pens' %}">Anime_Pens</a>
+                            <a href="{% url 'doormats' %}">Doormats</a>
+                            <a href="{% url 'jelly_bunny' %}"> Jelly_Bunny</a>
+                            <a href="{% url 'cry_baby' %}">Cry_Baby</a>
+                            <a href="{% url 'melamine_plates' %}">Melamine_Plates</a>
+                            <a href="{% url 'big_scrun' %}">Big_Scrunchies</a>
+                            <a href="{% url 'mofusand' %}">Mofusand</a>
+                            <a href="{% url 'neck_pillow' %}">Sanrio neck_pillow</a>
+                            <a href="{% url 'pencil_pouch' %}">Pencil Pouch</a>
+                            <a href="{% url 'sanrio_spoon_set' %}">Sanrio Spoon Set</a>
+                            <a href="{% url 'sanrio_stickers' %}">Sanrio Stickers</a>
+                        </aside>
+                    </nav>
+                </div>
                 <a href="{% url 'main' %}">Home</a>
             </nav>
         </header>
@@ -155,7 +175,6 @@
         <hr>
 
         <div class="cart-item">
-
 
             {% for detail in cart_items %}
             <div id="id-{{ detail.id }}">
@@ -222,7 +241,7 @@
                 e.preventDefault();
                 const id = btn.dataset.id
                 var quantity = document.getElementById(`qty-${id}`)
-               
+
                 fetch(`/increment_item/${id}/`, {
                     'method': 'POST',
                     headers: {
