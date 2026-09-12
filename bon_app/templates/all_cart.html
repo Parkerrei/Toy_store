@@ -154,21 +154,23 @@
         <p>Logged in as: <b>{{ request.user.username }}</b></p>
         <hr>
 
-        <div id="id-{{ detail.id }}" class="cart-item">
+        <div class="cart-item">
+
+
             {% for detail in cart_items %}
-            <!-- FIX 2: Grouped item elements inside an item div block -->
-            <h3>{{ detail.product.name }}</h3>
+            <div id="id-{{ detail.id }}">
+                <!-- FIX 2: Grouped item elements inside an item div block -->
+                <h3>{{ detail.product.name }}</h3>
 
-            <img class="image" src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
+                <img class="image" src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
 
-            <div class="incre-decrement-btn">
-                <button class="decrement-btn" data-id="{{ detail.id}}" id="minus">-</button>
-                <p class="quantity" id="qty-{{ detail.id }}">Qty: {{ detail.quantity }}</p>
-                <button class="increment-btn" data-id="{{ detail.id }}" id="plus">+</button>
+                <div class="incre-decrement-btn">
+                    <button class="decrement-btn" data-id="{{ detail.id}}" id="minus">-</button>
+                    <p id="qty-{{ detail.id }}" class="quantity">Qty: {{ detail.quantity }}</p>
+                    <button class="increment-btn" data-id="{{ detail.id }}" id="plus">+</button>
+                </div>
+                <h5>Price: ₹ {{ detail.product.price }}</h5>
             </div>
-            <h5>Price: ₹ {{ detail.product.price }}</h5>
-
-
             {% empty %}
             <p style="color: #666; padding: 20px;">Your cart is completely empty.</p>
             {% endfor %}
@@ -263,13 +265,10 @@
         decrementButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-
                 const id = btn.dataset.id;
-                const quantityElement = document.getElementById(`qty-${id}`);
-                
-
                 //  FIX: Moved inside the click event so 'id' is defined and specific to this button!
-                var remove_img_row = document.getElementById(`img-${id}`);
+                var container_remove = document.getElementById(`id-${id}`);
+                var quantity = document.getElementById(`qty-${id}`)
 
                 fetch(`/decrement_item/${id}/`, {
                     method: 'POST',
@@ -289,25 +288,19 @@
                             price_tag.innerText = `Grand Total: ₹ ${data.price}`;
                             showToast(data.message || 'Removed from cart');
 
-                            if (data.qty === 0) {
-                                if (quantityElement) {
-                                    quantityElement.remove(); // Removes the quantity text
+                            if (data.qty > 0) {
+                                if (quantity) {
+                                    quantity.textContent = data.qty
                                 }
-                                if (remove_img_row) {
-                                    name_to_remove.remove();
-                                    price_to_remove.remove();
-                                    button_to_remove.remove();
-                                    remove_img_row.remove(); // Removes the specific image cleanly!
-                                }
-                            } else {
-                                if (quantityElement) {
-                                    quantityElement.innerText = `Qty :${data.qty}`;
+                            }
+                            else {
+                                if (container_remove) {
+                                    container_remove.remove(); // Removes the quantity text
                                 }
                             }
                         }
                         else {
-                            // Your backend sends validation errors under 'error' key, not 'message'
-                            showToast(data.error || 'Could not update cart');
+                            showToast(data.error)
                         }
                     })
                     .catch(error => {
