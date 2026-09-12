@@ -154,22 +154,21 @@
         <p>Logged in as: <b>{{ request.user.username }}</b></p>
         <hr>
 
-        <div id="cart" class="cart-item">
+        <div id="id-{{ detail.id }}" class="cart-item">
             {% for detail in cart_items %}
             <!-- FIX 2: Grouped item elements inside an item div block -->
-            <h3 id="name-{{detail.id}}">{{ detail.product.name }}</h3>
+            <h3>{{ detail.product.name }}</h3>
 
-            <img id="img-{{ detail.id }}" class="image" src="{{ detail.product.image.url }}"
-                alt="{{ detail.product.name }}">
+            <img class="image" src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
 
-            <div id="btn-{{ detail.id }}" class="incre-decrement-btn">
+            <div class="incre-decrement-btn">
                 <button class="decrement-btn" data-id="{{ detail.id}}" id="minus">-</button>
                 <p class="quantity" id="qty-{{ detail.id }}">Qty: {{ detail.quantity }}</p>
                 <button class="increment-btn" data-id="{{ detail.id }}" id="plus">+</button>
             </div>
-            <h5 id="price-{{ detail}}">Price: ₹ {{ detail.product.price }}</h5>
+            <h5>Price: ₹ {{ detail.product.price }}</h5>
 
-            
+
             {% empty %}
             <p style="color: #666; padding: 20px;">Your cart is completely empty.</p>
             {% endfor %}
@@ -267,9 +266,7 @@
 
                 const id = btn.dataset.id;
                 const quantityElement = document.getElementById(`qty-${id}`);
-                const button_to_remove = document.getElementById(`id-${id}`);
-                const price_to_remove = document.getElementById(`price-${id}`);
-                const name_to_remove = document.getElementById(`name-${id}`);
+                
 
                 //  FIX: Moved inside the click event so 'id' is defined and specific to this button!
                 var remove_img_row = document.getElementById(`img-${id}`);
