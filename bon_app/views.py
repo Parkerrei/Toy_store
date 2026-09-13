@@ -157,7 +157,7 @@ def signature_check(request):
 def doormats(request):
     category = Category.objects.prefetch_related('products').filter(id=4).first()
     return render(request,"doormats.html",{'category':category})
-
+ 
 def anime_pens(request):
     category = Category.objects.prefetch_related('products').filter(id=1).first()
     return render(request,"anime_pens.html",{'category':category})
