@@ -1,23 +1,15 @@
 from django.urls import path
-from .views import user,sanrio_stickers,sanrio_spoon_set,pencil_pouch,user_log_in,main,buy,doormats,mofusand,neck_pillow,cry_baby,melamine_plates,big_scrun,anime_pens,jelly_bunny,log_out,add_to_cart,user_cart_items,cart_deduct,all_cart_order,increment_item,decrement_item
+import views
+from .views import user,user_log_in,main,buy,log_out,add_to_cart,user_cart_items,cart_deduct,all_cart_order,increment_item,decrement_item
 
 urlpatterns = [
                 path('',user,name='user'),
                 path('logged/',user_log_in,name='logged'),
                 path('main/',main,name='main'),
                 path('buy/<int:id>/',buy,name='buy'),
-                path('doormats/',doormats,name='doormats'),
-                path('mofusand/',mofusand,name='mofusand'),
-                path('cry_baby/',cry_baby,name='cry_baby'),
-                path('melamine_plates/',melamine_plates,name='melamine_plates'),
-                path('jelly_bunny/',jelly_bunny,name='jelly_bunny'),
-                path('big_scrun/',big_scrun,name='big_scrun'),
-                path('anime_pens/',anime_pens,name='anime_pens'),
                 path('log_out/',log_out,name='log_out'),
-                path('neck_pillow/',neck_pillow,name='neck_pillow'),
-                path('pencil_pouch/',pencil_pouch,name='pencil_pouch'),
-                path('sanrio_spoon_set/',sanrio_spoon_set,name='sanrio_spoon_set'),
-                path('sanrio_stickers/',sanrio_stickers,name='sanrio_stickers'),
+                # This single line handles category 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, etc.
+                path('category/<int:category_id>/', views.category_products_view, name='category_detail'),
                 path('add_to_cart/<int:id>/',add_to_cart,name='add_to_cart'),
                 path('user_cart_items/',user_cart_items,name='user_cart_items'),
                 path('cart_deduct/',cart_deduct,name='cart_deduct'),

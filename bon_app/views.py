@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.models import User
 from .forms import UserForm,logged_in
 from django.contrib.auth import authenticate,login,logout
@@ -154,49 +154,23 @@ def signature_check(request):
         return JsonResponse({'error':'signature verification failed'},status=400)
     return JsonResponse({'success':'signature verified successfullt'},status=200)
 
-def doormats(request):
-    category = Category.objects.prefetch_related('products').filter(id=4).first()
-    return render(request,"doormats.html",{'category':category})
- 
-def anime_pens(request):
-    category = Category.objects.prefetch_related('products').filter(id=1).first()
-    return render(request,"anime_pens.html",{'category':category})
+def category_products_view(request, category_id):
+    # 1. OPTIMIZATION: Fetch category AND all its related products in ONE database query
+    # Note: Use quotes around 'products' (the related_name on your Product model)
+    category = get_object_or_404(
+        Category.objects.prefetch_related('products'), 
+        id=category_id
+    )
+    
+    # 2. Get all products belonging to this specific category
+    products = category.products.all()
+    
+    # 3. Render a single template, passing the dynamic data
+    return render(request, 'category_products.html', {
+        'category': category,
+        'products': products
+    })
 
-def cry_baby(request):
-    category = Category.objects.prefetch_related('products').filter(id=3).first()
-    return render(request,"cry_baby.html",{'category':category})
-
-def melamine_plates(request):
-    category = Category.objects.prefetch_related('products').filter(id=6).first()
-    return render(request,"melamine_plates.html",{'category':category})
-
-def mofusand(request):
-    category = Category.objects.prefetch_related('products').filter(id=7).first() 
-    return render(request,"mofusand.html",{'category':category})
-
-def jelly_bunny(request):
-    category = Category.objects.prefetch_related('products').filter(id=5).first() 
-    return render(request,"jelly_bunny.html",{'category':category})
-
-def big_scrun(request):
-    category = Category.objects.prefetch_related('products').filter(id=2).first()
-    return render(request,"big_scrun.html",{'category':category})
-
-def neck_pillow(request):
-    category = Category.objects.prefetch_related('products').filter(id=8).first()
-    return render(request,"neck_pillow.html",{'category':category})
-
-def pencil_pouch(request):
-    category = Category.objects.prefetch_related('products').filter(id=9).first()
-    return render(request,"pencil_pouch.html",{'category':category})
-
-def sanrio_spoon_set(request):
-    category = Category.objects.prefetch_related('products').filter(id=10).first()
-    return render(request,"sanrio_spoon_set.html",{'category':category})
-
-def sanrio_stickers(request):
-    category = Category.objects.prefetch_related('products').filter(id=11).first()
-    return render(request,"sanrio_stickers.html",{'category':category})
 
 def log_out(request):
     # print('before logout:',list(request.session.items()))
