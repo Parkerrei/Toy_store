@@ -110,18 +110,8 @@
 </head>
 
 <body>
+    
     {% block content %}
-    <div class="category">
-        <h2>{{ category.name }}</h2>
-        <div class="products">
-            {% for prod in category.products.all %}
-            <div class="product-card">
-                <button>Add to Cart</button>
-                <button>Buy</button>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
     {% endblock %}
 
     <input type="hidden" value="{{ csrf_token }}" id="token">
