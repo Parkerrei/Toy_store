@@ -154,23 +154,26 @@ def signature_check(request):
         return JsonResponse({'error':'signature verification failed'},status=400)
     return JsonResponse({'success':'signature verified successfullt'},status=200)
 
-def category_products_view(request, category_id):
+def category_products_view(request, slug):
     # 1. OPTIMIZATION: Fetch category AND all its related products in ONE database query
     # Note: Use quotes around 'products' (the related_name on your Product model)
     category = get_object_or_404(
         Category.objects.prefetch_related('products'), 
-        id=category_id
+        slug=slug
     )
     
     # 2. Get all products belonging to this specific category
     products = category.products.all()
     
     # 3. Render a single template, passing the dynamic data
-    return render(request, 'category_products.html', {
+    return render(request, 'category.html', {
         'category': category,
         'products': products
     })
 
+def home(request):
+    categories = Category.objects.all()
+    return render(request,'base.html',{'categories':categories})
 
 def log_out(request):
     # print('before logout:',list(request.session.items()))
