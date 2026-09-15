@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ category.name }}</h1>
+<div class="products"></div>
+{% for product in products %}
+<div class="product-cart">
+    <h3>{{ product.name }}</h3>
+    <button class="cart-btn" data-id="{{ product.id }}">add to cart</button>
+</div>
+{% endfor %}
+{% endblock %}
