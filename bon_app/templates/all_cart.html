@@ -159,7 +159,9 @@
                 <a href="{% url 'main' %}">Home</a>
                 <select name="" id="" onchange="if (this.value) location.href = this.value;">
                     {% for category in categories %}
+                    {% if category.slug %}
                     <option value="{% url 'category_products_view' category.slug %}">{{ category.name }}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
             </nav>
