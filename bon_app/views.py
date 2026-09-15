@@ -61,8 +61,9 @@ def main(request):
             return render(request, "main.html", {"form": OrderForm(), "success": True})
     else:
         form = OrderForm()          
+        categories = Category.objects.all()
         all_product = Product.objects.all() 
-        return render(request, "main.html", {"form": form,'all_product':all_product})
+        return render(request, "main.html", {"form": form,'all_product':all_product,"categories":categories})
     return render(request,'main.html',{'form':form})
 # payments/views.py
 
