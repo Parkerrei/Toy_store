@@ -9,7 +9,7 @@ urlpatterns = [
                 path('buy/<int:id>/',buy,name='buy'),
                 path('log_out/',log_out,name='log_out'),
                 # This single line handles category 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, etc.
-                path('category/<int:category_id>/', views.category_products_view, name='category_detail'),
+                path('category/<slug:slug>/', views.category_products_view, name='category_detail'),
                 path('add_to_cart/<int:id>/',add_to_cart,name='add_to_cart'),
                 path('user_cart_items/',user_cart_items,name='user_cart_items'),
                 path('cart_deduct/',cart_deduct,name='cart_deduct'),
