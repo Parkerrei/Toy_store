@@ -307,17 +307,9 @@
                 <a id="profile" href="#">profile</a>
                 <a id="cart" href="{% url 'user_cart_items' %}">your Cart</a>
                 <a href="{% url 'log_out' %}" style="color: #f51f1f;">Logout</a>
-                <a href="{% url 'category_products_view' %}">Anime_Pens</a>
-                <a href="{% url 'category_products_view' %}">Doormats</a>
-                <a href="{% url 'category_products_view' %}">Jelly_Bunny</a>
-                <a href="{% url 'category_products_view' %}">Cry_Baby</a>
-                <a href="{% url 'category_products_view' %}">Melamine_Plates</a>
-                <a href="{% url 'category_products_view' %}">Big_Scrunchies</a>
-                <a href="{% url 'category_products_view' %}">Mofusand</a>
-                <a href="{% url 'category_products_view' %}">Sanrio neck_pillow</a>
-                <a href="{% url 'category_products_view' %}">Pencil Pouch</a>
-                <a href="{% url 'category_products_view' %}">Sanrio Spoon Set</a>
-                <a href="{% url 'category_products_view' %}">Sanrio Stickers</a>
+                {% for category in categories %}
+                <a href="{% url 'category_products_view' category.slug %}">{{ category.name }}</a>
+                {% endfor %}
             </aside>
         </nav>
     </div>
