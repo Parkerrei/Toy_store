@@ -308,7 +308,9 @@
                 <a id="cart" href="{% url 'user_cart_items' %}">your Cart</a>
                 <a href="{% url 'log_out' %}" style="color: #f51f1f;">Logout</a>
                 {% for category in categories %}
+                {% if category.slug %}
                 <a href="{% url 'category_products_view' category.slug %}">{{ category.name }}</a>
+                {% endif %}
                 {% endfor %}
             </aside>
         </nav>
