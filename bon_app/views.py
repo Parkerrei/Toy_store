@@ -172,9 +172,6 @@ def category_products_view(request, slug):
         'products': products
     })
 
-def home(request):
-    categories = Category.objects.all()
-    return render(request,'base.html',{'categories':categories})
 
 def log_out(request):
     # print('before logout:',list(request.session.items()))
@@ -218,9 +215,11 @@ def add_to_cart(request, id):
 def user_cart_items(request):
     user_items  = CartItem.objects.filter(user_cart=request.user)
     total_price = sum(item.get_subtotal() for item in user_items)
+    category = Category.objects.all()
     context = {
         'cart_items':user_items,
         'total_price':total_price,
+        'categories':category
     } 
     return render(request,'all_cart.html',context)
 
