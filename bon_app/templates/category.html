@@ -3,7 +3,7 @@
 {% block content %}
 <h1>{{ category.name }}</h1>
 <div class="products"></div>
-<a href="{% url 'all_cart_order' %}">your cart</a>
+<a href="{% url 'user_cart_items' %}">your cart</a>
 {% for product in products %}
 <div class="product-cart">
     <h3>{{ product.name }}</h3>
