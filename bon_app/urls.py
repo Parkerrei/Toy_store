@@ -1,5 +1,5 @@
 from django.urls import path
-import views
+import bon_app.views as views
 from .views import user,user_log_in,main,buy,log_out,add_to_cart,user_cart_items,cart_deduct,all_cart_order,increment_item,decrement_item
 
 urlpatterns = [
