@@ -8,14 +8,30 @@
 
     <style>
         /* Centers your main wrapper box directly on the browser screen */
+
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             background-color: #f9f9f9;
             margin: 0;
             font-family: Arial, sans-serif;
+        }
+
+        nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        header {
+            background-color: #0000009f;
+            display: flex;
+            width: 100%;
+            margin-bottom: auto;
+            padding: 30px;
+            margin-right: auto;
         }
 
         /* The master container box */
@@ -140,32 +156,78 @@
         }
 
         select {
+            appearance: none;
+            background-color: rgba(255, 255, 255, 0.08);
+            color: rgb(14, 7, 7);
             outline: none;
-            border-radius: 5px;
-            padding: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            padding: 7px 35px 8px 14px;
+            transition: 0.2s ease;
+            text-decoration: none;
+            font-size: larger;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-style: oblique;
+            font-display: block;
+        }
+
+        select:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        select:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
         option {
             border-radius: 5px;
         }
+
+        a {
+            appearance: none;
+            background-color: rgba(255, 255, 255, 0.08);
+            color: rgb(14, 7, 7);
+            outline: none;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            padding: 7px 35px 8px 14px;
+            transition: 0.2s ease;
+            text-decoration: none;
+            font-size: larger;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-style: oblique;
+            font-display: block;
+        }
+
+        a:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
     </style>
 </head>
 
 <body>
+    <header>
+        <nav>
+            <a href="{% url 'main' %}">Home</a>
+            <select name="" id="" onchange="if (this.value) location.href = this.value;">
+                {% for category in categories %}
+                {% if category.slug %}
+                <option value="{% url 'category_products_view' category.slug %}">{{ category.name }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </nav>
+    </header>
     <div class="cart-container">
-        <header>
-            <h1>Cherri Bon Bon</h1>
-            <nav>
-                <a href="{% url 'main' %}">Home</a>
-                <select name="" id="" onchange="if (this.value) location.href = this.value;">
-                    {% for category in categories %}
-                    {% if category.slug %}
-                    <option value="{% url 'category_products_view' category.slug %}">{{ category.name }}</option>
-                    {% endif %}
-                    {% endfor %}
-                </select>
-            </nav>
-        </header>
+        <h1>Cherri Bon Bon</h1>
         <!-- FIX 1: Title moved OUTSIDE the loop so it only prints once at the top -->
         <h1>Your Shopping Cart</h1>
         <p>Logged in as: <b>{{ request.user.username }}</b></p>
