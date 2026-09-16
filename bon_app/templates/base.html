@@ -6,111 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ category.name }} | Shop</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f5f7fa;
-            color: #333;
-        }
-
-        nav {
-            background: #222;
-            color: #fff;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            margin-left: 20px;
-            font-weight: 500;
-        }
-
-        .category {
-            padding: 30px;
-        }
-
-        .category h2 {
-            margin-bottom: 20px;
-            font-size: 2rem;
-            color: #222;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .products {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
-        }
-
-        .product-card {
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            text-align: center;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-
-        .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-        }
-
-        .product-card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-
-        .product-card p {
-            margin: 15px 0 10px;
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-
-        .product-card button {
-            background: #0078d7;
-            color: #fff;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            transition: background 0.2s ease;
-        }
-
-        .product-card button:hover {
-            background: #005fa3;
-        }
-
-        @media (max-width: 600px) {
-            .products {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            }
-        }
-
-        select {
-            outline: none;
-            border-radius: 5px;
-            padding: 7px;
-        }
-
-        option {
-            border-radius: 5px;
-        }
+     
     </style>
 
 </head>
 
 <body>
-    
+
     {% block content %}
     {% endblock %}
 
@@ -121,7 +23,7 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
-    // fetch to add items to cart 
+    // fet ch to add items to cart 
     document.addEventListener('DOMContentLoaded', () => {
         const cart_btns = document.querySelectorAll('.cart-btn');
         const token = document.getElementById('token').value;
