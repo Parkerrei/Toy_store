@@ -158,10 +158,11 @@ def signature_check(request):
 def category_products_view(request, slug):
     # 1. OPTIMIZATION: Fetch category AND all its related products in ONE database query
     # Note: Use quotes around 'products' (the related_name on your Product model)
-    category = get_object_or_404(
+    category  = get_object_or_404(
         Category.objects.prefetch_related('products'), 
         slug=slug
     )
+    category_list = Category.objects.all()
     
     # 2. Get all products belonging to this specific category
     products = category.products.all()
@@ -169,7 +170,8 @@ def category_products_view(request, slug):
     # 3. Render a single template, passing the dynamic data
     return render(request, 'category.html', {
         'category': category,
-        'products': products
+        'products': products,
+        'category_list':category_list
     })
 
 

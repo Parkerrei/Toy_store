@@ -8,18 +8,26 @@
     <div class="nav-bar">
         <a href="{% url 'user_cart_items' %}">cart</a>
         <a href="{% url 'main' %}">home</a>
+        <select name="" id="" onchange="if(this.value) location.href = this.value">
+            {% for cat in category_list %}
+            {% if cat.slug %}
+            <option value="{% url 'category_products_view' cat.slug %}">{{ cat.name }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
     </div>
 </nav>
-{% for product in products %}
 
+<!-- Move the wrapper OUTSIDE the loop -->
 <div class="product-cart">
+    {% for product in products %}
     <div class="itm-container">
         <h3>{{ product.name }}</h3>
         <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
         <button class="cart-btn" data-id="{{ product.id }}">add to cart</button>
         <button class="buy" data-id="{{ product.id }}">Buy</button>
     </div>
+    {% endfor %}
 </div>
 
-{% endfor %}
 {% endblock %}
