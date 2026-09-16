@@ -6,76 +6,187 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ category.name }} | Shop</title>
     <style>
-        .product-cart {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction:column;
-
+        :root {
+            --primary: #4ade80;
+            /* Vibrant, fresh green */
+            --primary-hover: #22c55e;
+            /* Darker green for hover states */
+            --dark-bg: #111827;
+            /* Sleek dark slate */
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --radius-lg: 16px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .itm-container {
-            flex-direction: column;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            background: white;
-            border-radius: 16px 16px 0 0;
-            width: fit-content;
-            gap: 10px;
-
+        /* Global resets for a clean foundation */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        img {
-            border-radius: 16px;
-            transition: transform 0, 4s ease;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-            object-position: center;
-            width: 400px;
-            height: 220px;
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text-main);
+            background-color: #f9fafb;
         }
 
-        img:hover {
-            transform: scale(1.08);
-        }
-
-        button {
-            background-color: yellowgreen;
-            font-size: large;
-            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-            font-style: oblique;
+        /* 🧭 MODERN NAVIGATION BAR */
+        nav {
             text-transform: capitalize;
-            padding: 8px 0;
-            width: 100%;
+            font-size: large;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            font-style: oblique;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 5%;
+            background: var(--dark-bg);
+            color: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        select {
             border-radius: 5px;
-            cursor: pointer;
+            text-transform: capitalize;
+            font-size: large;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: oblique;
+            font-weight: 700;
+        }
+
+        .ctg-name h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .nav-bar {
             display: flex;
-            gap: 20px;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 5%;
-            background: #111827;
-            color: white;
-            align-items: center;
+            gap: 12px;
         }
 
         nav a {
             text-transform: capitalize;
-            padding: 0 8px;
-            border-radius: 5px;
-            border: 1px solid white;
-            font-size: larger;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 8px 18px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.9rem;
+            font-weight: 500;
             color: white;
             text-decoration: none;
+            transition: var(--transition);
+        }
+
+        nav a:hover {
+            background: white;
+            color: var(--dark-bg);
+            border-color: white;
+        }
+
+        /* 📦 RESPONSIVE PRODUCT GRID */
+        .product-cart {
+            display: grid;
+            /* Automatically handles columns based on screen size (desktop, tablet, mobile) */
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 40px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* 🏷️ INDIVIDUAL PRODUCT CARD */
+        .itm-container {
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid #f3f4f6;
+            overflow: hidden;
+            padding: 16px;
+            /* Internal breathing room */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            transition: var(--transition);
+        }
+
+        .itm-container:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Product Title Styling */
+        .itm-container h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-main);
+            line-height: 1.4;
+            /* Prevents long titles from breaking the card layout */
+            display: -webkit-box;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.8rem;
+        }
+
+        /* 📷 RESPONSIVE & IMAGE ZOOM EFFECT */
+        .itm-container img {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            /* Perfect standard e-commerce landscape aspect ratio */
+            object-fit: cover;
+            object-position: center;
+            border-radius: calc(var(--radius-lg) - 4px);
+            margin-bottom: 16px;
+            transition: var(--transition);
+            background-color: #f3f4f6;
+            /* Fallback skeleton color while loading */
+        }
+
+        .itm-container:hover img {
+            transform: scale(1.03);
+        }
+
+        /* 🛒 E-COMMERCE ACTIONS & BUTTONS */
+        .cart-btn,
+        .buy {
+            width: 100%;
+            padding: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Primary "Add to Cart" Button */
+        .cart-btn {
+            background-color: var(--primary);
+            color: var(--dark-bg);
+            margin-bottom: 8px;
+            margin-top: auto;
+            /* Always pushes buttons neatly to the bottom */
+        }
+
+        .cart-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Secondary "Buy Now" Button */
+        .buy {
+            background-color: #f3f4f6;
+            color: var(--text-main);
+        }
+
+        .buy:hover {
+            background-color: #e5e7eb;
+            color: #000;
         }
     </style>
 
