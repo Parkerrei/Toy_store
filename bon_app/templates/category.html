@@ -2,14 +2,18 @@
 
 {% block content %}
 <h1>{{ category.name }}</h1>
+
 <div class="products"></div>
+
 <a href="{% url 'user_cart_items' %}">your cart</a>
 {% for product in products %}
+
 <div class="product-cart">
     <h3>{{ product.name }}</h3>
     <img src="{{ product.image.url }}" alt="{{ product.name }}">
     <button class="cart-btn" data-id="{{ product.id }}">add to cart</button>
     <button class="buy" data-id="{{ product.id }}">Buy</button>
 </div>
+
 {% endfor %}
 {% endblock %}
