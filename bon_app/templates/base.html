@@ -6,7 +6,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ category.name }} | Shop</title>
     <style>
-     
+        .product-cart {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction:column;
+
+        }
+
+        .itm-container {
+            flex-direction: column;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: white;
+            border-radius: 16px 16px 0 0;
+            width: fit-content;
+            gap: 10px;
+
+        }
+
+        img {
+            border-radius: 16px;
+            transition: transform 0, 4s ease;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            object-position: center;
+            width: 400px;
+            height: 220px;
+        }
+
+        img:hover {
+            transform: scale(1.08);
+        }
+
+        button {
+            background-color: yellowgreen;
+            font-size: large;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-style: oblique;
+            text-transform: capitalize;
+            padding: 8px 0;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .nav-bar {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 5%;
+            background: #111827;
+            color: white;
+            align-items: center;
+        }
+
+        nav a {
+            text-transform: capitalize;
+            padding: 0 8px;
+            border-radius: 5px;
+            border: 1px solid white;
+            font-size: larger;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            text-decoration: none;
+        }
     </style>
 
 </head>
