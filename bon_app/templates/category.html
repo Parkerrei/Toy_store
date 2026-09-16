@@ -1,18 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>{{ category.name }}</h1>
-
-<div class="products"></div>
-
-<a href="{% url 'user_cart_items' %}">your cart</a>
+<nav>
+    <div class="ctg-name">
+        <h1>{{ category.name }}</h1>
+    </div>
+    <div class="nav-bar">
+        <a href="{% url 'user_cart_items' %}">cart</a>
+        <a href="{% url 'main' %}">home</a>
+    </div>
+</nav>
 {% for product in products %}
 
 <div class="product-cart">
-    <h3>{{ product.name }}</h3>
-    <img src="{{ product.image.url }}" alt="{{ product.name }}">
-    <button class="cart-btn" data-id="{{ product.id }}">add to cart</button>
-    <button class="buy" data-id="{{ product.id }}">Buy</button>
+    <div class="itm-container">
+        <h3>{{ product.name }}</h3>
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+        <button class="cart-btn" data-id="{{ product.id }}">add to cart</button>
+        <button class="buy" data-id="{{ product.id }}">Buy</button>
+    </div>
 </div>
 
 {% endfor %}
