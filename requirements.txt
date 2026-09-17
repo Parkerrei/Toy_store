@@ -5,5 +5,3 @@ razorpay==2.0.1
 pillow==12.3.0
 psycopg==3.3.4
 psycopg-binary==3.3.4
-gunicorn==20.1.0
-whitenoise==6.0.0
