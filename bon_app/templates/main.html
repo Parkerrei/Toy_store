@@ -6,361 +6,503 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cherri Bon Bon | Toy Store</title>
+    <!-- Inside your main.html -->
     <style>
+        /* 1. Global Themes & Cozy Color Variables */
         :root {
-            --bg-color: #0f0f12;
-            --card-bg: #1a1a24;
-            --sidebar-bg: #16161f;
-            --accent-color: #ff4a75;
-            --text-color: #ffffff;
-            --text-muted: #a0a0b0;
-            --border-color: #2a2a3a;
-        }
-
-        * {
-            margin: 0;
-            box-sizing: border-box;
+            --amazon-dark: #131921;
+            --cozy-amber: #FF9900;
+            /* Amazon signature accent */
+            --cozy-warm-btn: #FFD814;
+            /* Amazon primary action gold */
+            --cozy-warm-btn-hover: #F7CA00;
+            --wood-warm-bg: #FDFBF7;
+            /* Soft warm white background */
+            --text-main: #1F1F1F;
+            --border-subtle: #E6E1DA;
+            --card-shadow: 0 4px 15px rgba(139, 115, 85, 0.08);
+            /* Cozy brown-tinted shadow */
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.8;
-            padding: 20px;
+            background-color: var(--wood-warm-bg);
+            color: var(--text-main);
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        header {
-            text-align: center;
-            margin: 40px 0;
-        }
-
-        /* h1 {
-            font-size: 2.5rem;
-            color: var(--accent-color);
-            margin-bottom: 10px;
-        } */
-
-        .welcome-msg {
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        .toggle-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 1px 1px 14px 1px rgba(112, 88, 95, 0.4);
-            font-size: 1.1rem;
-            transition: transform 0.2s, background-color 0.2s;
-        }
-
-        .toggle-btn:hover {
-            transform: scale(1.05);
-            background-color: #e03860;
-        }
-
-        .side-container {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: var(--sidebar-bg);
-            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
-            transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            padding: 90px 24px 24px 24px;
-            z-index: 999;
-            overflow-y: auto;
-        }
-
-        .side-container.open {
-            left: 0;
-        }
-
-        .side-container aside {
+        /* 2. Responsive Navigation Bar (Amazon Layout Style) */
+        nav {
+            background-color: var(--amazon-dark);
+            padding: 12px 20px;
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            flex-wrap: wrap;
+            /* Allows rows to wrap perfectly on mobile */
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
-        .side-container aside a {
-            color: var(--text-muted);
+        /* Store Title Brand Identity */
+        nav h1 {
+            color: #FFFFFF;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            order: 1;
+            /* Places title first */
+            letter-spacing: 0.5px;
+        }
+
+        /* Navigation Anchors & Select Elements */
+        nav a,
+        nav select {
+            color: #E2E8F0;
             text-decoration: none;
-            padding: 12px 16px;
-            border-radius: 8px;
+            font-size: 14px;
             font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
             transition: all 0.2s ease;
         }
 
-        .side-container aside a:hover {
-            background-color: var(--card-bg);
-            color: var(--accent-color);
-            padding-left: 20px;
+        nav a:hover {
+            color: #FFFFFF;
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
-        .add-to-cart-btn {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
+        nav select {
+            background-color: #FFFFFF;
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
             cursor: pointer;
-            font-size: 0.9rem;
-            margin-top: 8px;
-            transition: background-color 0.2s;
+            padding: 6px 10px;
+            outline: none;
+            border-radius: 4px;
         }
 
-        .add-to-cart-btn:hover {
-            background-color: #e03860;
-        }
-
-        .img-wrapper {
-            width: 100%;
-            /* Allows container to scale responsively */
-            max-width: 100px;
-            /* Limits the maximum width */
-            height: 100px;
-            border-radius: 8px;
-            background-color: var(--bg-color);
-            cursor: zoom-in;
-            /* Center the image horizontally and vertically */
-            margin: 40px 40px;
-            /* Centers the wrapper itself if it has extra space */
-            flex-wrap: wrap;
-        }
-
-        .product-img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: cover;
-            /* Prevents cropping while fitting inside the frame */
-            transition: transform 0.3s ease-in;
-        }
-
-        .product-item {
-            flex-wrap: wrap;
-            display: flex;
-            flex-direction: row;
-            border: 1px solid rgb(37, 36, 36);
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 10, 10, 0.1);
-            min-width: 250px;
-            flex: 1 1 calc(25% -16px);
-        }
-
-        .product-img:hover {
-            transform: scale(1.1);
-        }
-
-        .product-info {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            flex-direction: column;
-            align-items: center;
-            flex-grow: 1;
-        }
-
-        .product-name {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .product-price {
-            color: var(--accent-color);
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .empty-msg {
-            color: var(--text-muted);
-            font-style: italic;
-            font-size: 0.9rem;
-        }
-
-        .zoom-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 14, 0.9);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            cursor: zoom-out;
-        }
-
-        .zoom-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .zoom-overlay img {
-            max-width: 95%;
-            max-height: 90%;
-            border-radius: 12px;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7);
-            transform: scale(0.9);
-            transition: transform 0.4s ease;
-        }
-
-        .zoom-overlay.active img {
-            transform: scale(1.1);
-        }
-
-        /* ✅ FIX: Default grid is single column */
-        #parent-category-container {
-            flex-wrap: wrap;
-            display: flex;
-            flex-direction: row;
-            gap: 20px;
-        }
-
+        /* Align Links / Controls on Desktop */
         #profile {
-            color: rgb(170, 170, 240);
+            order: 2;
+            margin-left: auto;
         }
 
         #cart {
-            color: rgb(164, 164, 230);
+            order: 3;
         }
 
-        @media (min-width: 768px) {
-            #parent-category-container {
-                flex-direction: row;
-                flex-wrap: wrap;
-                gap: 25px;
-                justify-content: center;
-            }
-
-            .product-item {
-                flex: 1 1 calc(50% - 25px);
-                max-width: calc(50%-25px);
-            }
+        nav select {
+            order: 4;
         }
 
-
-        @media (min-width: 1024px) {
-            #parent-category-container {
-                justify-content: flex-start;
-                gap: 30px;
-            }
-
-            .product-item {
-                flex: 1 1 calc(33.333% - 30px);
-                max-width: calc(33.333% - 30px);
-            }
+        nav a[href*="log_out"] {
+            order: 5;
         }
 
-        #banner-img {
-            width: auto;
-            min-width: auto;
-        }
-
-        .full-width-banner {
+        .welcome-msg {
+            color: #A0AEC0;
+            font-size: 13px;
+            font-weight: 400;
+            margin: 0;
             width: 100%;
-
-            /* 1. Force the image to scale naturally without stretching */
-            height: auto;
-
-            /* 2. Cap the height so it never gets too massive on big monitors */
-            max-height: 350px;
-
-            /* 3. Keep it tall enough so it never gets too small on tiny phones */
-            min-height: 100px;
-
-            /* 4. Crop the edges gracefully ONLY when hitting the max/min limits */
-            object-fit: cover;
-            object-position: center center;
-            display: block;
+            /* Drops welcome text to its own neat line */
+            order: 6;
+            padding-top: 4px;
         }
 
+        /* 3. Optimized Dynamic Product Grid (Flexbox System) */
+        .product-grid {
+            display: flex;
+            flex-wrap: wrap;
+            /* CRITICAL: Wraps columns smoothly to prevent squeezing */
+            gap: 20px;
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
 
-        .buy-btn {
-            width: 80px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
+        /* 4. Cozy, Premium Product Cards Layout */
+        .product-card {
+            background-color: #FFFFFF;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            /* Soft rounded cozy corners */
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+            box-shadow: var(--card-shadow);
+
+            /* Desktop Default Column Width (4 Columns) */
+            flex: 1 1 calc(25% - 20px);
+            min-width: 260px;
+            /* Row wraps immediately when space becomes narrow */
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(139, 115, 85, 0.15);
+            border-color: #D1C9BC;
+        }
+
+        /* Image Scaling Controls inside partials */
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            /* Preserves toy image shapes cleanly */
+            background-color: #FAF8F5;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .product-info h3 {
+            margin: 0 0 6px 0;
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            /* Clamps long toy titles to exactly 2 lines maximum */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-info .price {
+            margin: 0 0 14px 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #B12704;
+            /* Authentic product price dark red tint */
+        }
+
+        /* 5. Pill-Shaped Action Checkout Button */
+        .buy {
+            background: var(--cozy-warm-btn);
+            border: 1px solid #FCD200;
+            border-radius: 20px;
+            /* Standard Amazon pill shape style */
+            color: var(--text-main);
             cursor: pointer;
-            font-size: 0.9rem;
-            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(213, 217, 217, .5);
+            transition: background-color 0.15s ease;
+        }
+
+        .buy:hover {
+            background: var(--cozy-warm-btn-hover);
+            border-color: #F2C200;
+        }
+
+        .buy:disabled {
+            background: #F5DF8A;
+            border-color: #F3D976;
+            cursor: not-allowed;
+        }
+
+        /* Razorpay Async Button Spinner CSS Rules */
+        .btn-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top-color: var(--text-main);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 6. Infinite Scroll Watchtower Elements */
+        #scroll-sentinel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 80px;
+            /* Fixed physical footprint space tracking checkpoint */
+            margin: 30px 0 50px 0;
+            clear: both;
+        }
+
+        .infinite-spinner {
+            font-size: 14px;
+            color: #565959;
+            font-weight: 500;
+        }
+
+        .amazon-btn {
+            background-color: #FFFFFF;
+            color: var(--text-main);
+            border: 1px solid #D5D9D9;
+            border-radius: 8px;
+            padding: 12px 35px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(213, 217, 217, .3);
             transition: background-color 0.2s;
         }
+
+        .amazon-btn:hover {
+            background-color: #F7FAFA;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ==========================================================================
+       7. RESPONSIVE BREAKPOINTS (TABLET & MOBILE OPTIMIZATIONS)
+       ========================================================================== */
+
+        /* TABLET DEVICES (Suns out, layout adapts to 2 or 3 items across) */
+        @media (max-width: 992px) {
+            .product-card {
+                flex: 1 1 calc(33.333% - 20px);
+                /* 3 Columns on standard tablets */
+            }
+
+            nav h1 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .product-card {
+                flex: 1 1 calc(50% - 20px);
+                /* 2 Columns on smaller mini tablet screen limits */
+            }
+
+            nav {
+                padding: 12px 15px;
+            }
+        }
+
+        /* SMARTPHONE MOBILE DEVICES (Items scale cleanly into full single blocks) */
+        @media (max-width: 540px) {
+            nav {
+                gap: 10px;
+            }
+
+            /* Layout re-ordering: brand layout stacks cleanly on small screens */
+            nav h1 {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 5px;
+            }
+
+            #profile {
+                margin-left: 0;
+            }
+
+            /* Reset spacing properties */
+
+            /* Collapse navigation elements to balance nicely */
+            #profile,
+            #cart,
+            nav select,
+            nav a[href*="log_out"] {
+                flex: 1 1 calc(50% - 10px);
+                /* 2 inline items per row cluster layout on mobile */
+                text-align: center;
+                font-size: 13px;
+                padding: 6px 4px;
+            }
+
+            .welcome-msg {
+                text-align: center;
+            }
+
+            .product-grid {
+                gap: 15px;
+                padding: 0 12px;
+                margin: 15px auto;
+            }
+
+            .product-card {
+                flex: 1 1 100%;
+                /* 1 Full Column on phone layouts */
+                padding: 12px;
+                border-radius: 10px;
+            }
+
+            .product-card img {
+                height: 170px;
+                /* Scales image down slightly to optimize view space */
+            }
+        }
     </style>
+
+
 </head>
 
 <body>
-    <button class="toggle-btn" onclick="toggleSidebar()" aria-label="Toggle navigation menu"> ☰ Menu</button>
-    <div class="side-container" id="sidebar">
-        <nav>
-            <aside>
-                <a id="profile" href="#">profile</a>
-                <a id="cart" href="{% url 'user_cart_items' %}">your Cart</a>
-                <a href="{% url 'log_out' %}" style="color: #f51f1f;">Logout</a>
-                {% for category in categories %}
-                {% if category.slug %}
-                <a href="{% url 'category_products_view' category.slug %}">{{ category.name }}</a>
-                {% endif %}
-                {% endfor %}
-            </aside>
-        </nav>
-    </div>
+    <nav>
+        <a id="profile" href="#">profile</a>
+        <a id="cart" href="{% url 'user_cart_items' %}">your Cart</a>
+        <a href="{% url 'log_out' %}" style="color: #f51f1f;">Logout</a>
+        <select name="" id="" onchange="if (this.value) location.href = this.value;">
+            {% for category in categories %}
+            {% if category.slug %}
+            <option value="{% url 'category_products_view' category.slug %}">{{ category.name }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
 
-    <header>
         <h1>Cheri Bon Bon</h1>
         {% if user %}
         <h4 class="welcome-msg">Welcome, {{ user }}</h4>
         {% endif %}
-    </header>
+    </nav>
 
-    <main id="parent-category-container">
-        {% for item in all_product %}
+    <!-- Location: bon_app/templates/main.html -->
 
-        <div class="product-item">
-            {% if item.image %}
-
-            <div class="img-wrapper" onclick="zoomImage(this)">
-                <img class="product-img" src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">
-            </div>
-            {% endif %}
-
-            <div class="product-info">
-                <p class="product-name">{{ item.name }}</p>
-                <p class="product-price">₹{{ item.price }}</p>
-                <button class="add-to-cart-btn" data-id="{{ item.id }}">Add to Cart</button>
-                <button class="buy-btn" data-id="{{ item.id }}">Buy</button>
-            </div>
-        </div>
-        {% empty %}
-        <p class="empty-msg">No products </p>
-        {% endfor %}
-    </main>
-
-    <!-- Modern Image Zoom Lightbox Element -->
-    <div class="zoom-overlay" id="zoomOverlay" onclick="closeZoom()">
-        <img id="zoomedImage" src="" alt="Zoomed view">
+    <div id="product-grid" class="product-grid">
+        {% include 'partials/product_cards.html' %}
     </div>
-    <input type="hidden" value="{{csrf_token}}" id="token">
+
+    <!-- Clear, Uncluttered Automated Target -->
+    <div id="scroll-sentinel" data-next-page="2"
+        data-has-next="{% if products.has_next %}true{% else %}false{% endif %}">
+
+        <!-- This spinner text will briefly show ONLY if user out-scrolls the prefetch link -->
+        <div class="infinite-spinner hidden">
+            Loading more toys...
+        </div>
+    </div>
+
+
 </body>
 
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sentinel = document.getElementById('scroll-sentinel');
+        const grid = document.getElementById('product-grid');
+        const spinner = sentinel.querySelector('.infinite-spinner');
 
+        let isLoading = false;
+        let prefetchedHTML = null;
+
+        // 1. Quietly fetch the next page data in the background
+        const prefetchNextPageSilent = () => {
+            const hasNext = sentinel.getAttribute('data-has-next') === 'true';
+            const nextPage = sentinel.getAttribute('data-next-page');
+
+            if (!hasNext || prefetchedHTML !== null || isLoading) return;
+
+            fetch(`/main/?page=${nextPage}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(response => response.text())
+                .then(htmlChunk => {
+                    if (htmlChunk.trim() !== "") {
+                        prefetchedHTML = htmlChunk;
+                    } else {
+                        sentinel.setAttribute('data-has-next', 'false');
+                    }
+                })
+                .catch(err => console.log("Background prefetch paused:", err));
+        };
+
+        // 2. Render the next batch of product cards onto the screen
+        const renderNextChunk = () => {
+            const hasNext = sentinel.getAttribute('data-has-next') === 'true';
+            const nextPage = sentinel.getAttribute('data-next-page');
+
+            if (isLoading || !hasNext) return;
+
+            // If background prefetch finished, append instantly (0 millisecond delay!)
+            if (prefetchedHTML) {
+                grid.insertAdjacentHTML('beforeend', prefetchedHTML);
+                sentinel.setAttribute('data-next-page', parseInt(nextPage) + 1);
+                prefetchedHTML = null; // Reset cache slot
+
+                checkIfStillNearBottom(); // Check if we need to load more immediately
+                setTimeout(prefetchNextPageSilent, 100);
+                return;
+            }
+
+            // Fallback: If network connection is slower than fast scrolling
+            isLoading = true;
+            spinner.classList.remove('hidden');
+
+            fetch(`/main/?page=${nextPage}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(response => response.text())
+                .then(htmlChunk => {
+                    if (htmlChunk.trim() === "") {
+                        sentinel.setAttribute('data-has-next', 'false');
+                        observer.unobserve(sentinel); // Stop observing if out of stock
+                    } else {
+                        grid.insertAdjacentHTML('beforeend', htmlChunk);
+                        sentinel.setAttribute('data-next-page', parseInt(nextPage) + 1);
+
+                        checkIfStillNearBottom();
+                    }
+                    isLoading = false;
+                    spinner.classList.add('hidden');
+                    setTimeout(prefetchNextPageSilent, 100);
+                })
+                .catch(error => {
+                    console.error('Error auto-loading toys:', error);
+                    isLoading = false;
+                    spinner.classList.add('hidden');
+                });
+        };
+
+        // Safety fallback: if screen is huge and sentinel is still visible, keep loading
+        const checkIfStillNearBottom = () => {
+            const rect = sentinel.getBoundingClientRect();
+            if (rect.top < window.innerHeight + 400) {
+                renderNextChunk();
+            }
+        };
+
+        // 3. Automated Viewport Watcher Engine
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // Fires immediately when user gets within 800px of the sentinel
+                if (entry.isIntersecting) {
+                    renderNextChunk();
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '800px', // Looks 2 full screens ahead for instant loads
+            threshold: 0
+        });
+
+        // Start tracking the watchtower div element
+        const hasNextInit = sentinel.getAttribute('data-has-next') === 'true';
+        if (hasNextInit) {
+            observer.observe(sentinel);
+        }
+
+        // Seed the first background cache page shortly after landing
+        setTimeout(prefetchNextPageSilent, 400);
+    });
+
+
+    // payment and cart logic
     document.addEventListener('DOMContentLoaded', () => {
         const button = document.querySelectorAll('.buy-btn')
         const token = document.getElementById('token').value;
@@ -500,18 +642,5 @@
             sidebar.classList.remove('open');
         }
     });
-
-    function zoomImage(wrapperElement) {
-        const thumbnail = wrapperElement.querySelector('img');
-        const overlay = document.getElementById('zoomOverlay');
-        const zoomedImage = document.getElementById('zoomedImage');
-        zoomedImage.src = thumbnail.src;
-        zoomedImage.alt = thumbnail.alt;
-        overlay.classList.add('active');
-    }
-
-    function closeZoom() {
-        document.getElementById('zoomOverlay').classList.remove('active');
-    }
 
 </script>
