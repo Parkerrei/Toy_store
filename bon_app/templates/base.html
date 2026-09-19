@@ -46,8 +46,8 @@
             background: var(--dark-bg);
             color: white;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-           flex-wrap: wrap;
-           gap: 12px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         select {
@@ -64,7 +64,7 @@
             font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: -0.5px;
-           
+
         }
 
         .nav-bar {
@@ -181,16 +181,53 @@
         .cart-btn:hover {
             background-color: var(--primary-hover);
         }
-
-        /* Secondary "Buy Now" Button */
-        .buy {
-            background-color: #f3f4f6;
-            color: var(--text-main);
-        }
-
+        
         .buy:hover {
             background-color: #e5e7eb;
             color: #000;
+        }
+        
+        /* Styling for your existing buy button */
+        .buy {
+            background-color: #f3f4f6;
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* Pure CSS Circle Spinner */
+        .btn-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            /* Match your text color */
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+            /* Gap between "Buy" text and spinner */
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Utility to hide the spinner by default */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Prevent double-clicking while loading */
+        .buy:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
     </style>
 
@@ -244,20 +281,43 @@
         });
 
     });
+
+    // fetch to buy items and handle razorpay payment
     document.addEventListener('DOMContentLoaded', () => {
         const button = document.querySelectorAll('.buy')
         const token = document.getElementById('token').value;
+
         button.forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const id = btn.dataset.id;
+
+                // --- 1. GET SPINNER ELEMENTS & TURN ON LOADING STATE ---
+                const btnText = btn.querySelector('.btn-text');
+                const btnSpinner = btn.querySelector('.btn-spinner');
+
+                // Fallback checking in case span wrappers don't exist yet in HTML
+                if (btnText && btnSpinner) {
+                    btn.disabled = true;
+                    btnSpinner.classList.remove('hidden');
+                    btnText.textContent = "Processing...";
+                }
+
+                // Helper function to restore the button back to normal
+                function resetButtonState() {
+                    if (btnText && btnSpinner) {
+                        btn.disabled = false;
+                        btnSpinner.classList.add('hidden');
+                        btnText.textContent = "Buy";
+                    }
+                }
+
                 fetch(`/buy/${id}/`, {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': token,
                         'Content-Type': 'application/json'
                     },
-
                 })
                     .then((response) => {
                         if (!response.ok) {
@@ -265,7 +325,6 @@
                         }
                         return response.json()
                     })
-
                     .then((order_data) => {
                         if (order_data) {
                             const options = {
@@ -276,10 +335,18 @@
                                 "description": "thanks visit again",
                                 "order_id": order_data.order_id,
 
-                                //this handler function runs automatically  when payment is successful//
+                                // This handler function runs automatically when payment is successful
                                 "handler": function (response) {
-                                    // call the helper function to send the transaction data to django for verification//
+                                    // Reset button when moving forward with verification
+                                    resetButtonState();
                                     paymentVerification(response);
+                                },
+
+                                // --- 2. RESET BUTTON IF THE USER CLOSES THE POPUP MANUALLY ---
+                                "modal": {
+                                    "ondismiss": function () {
+                                        resetButtonState();
+                                    }
                                 },
 
                                 "theme": {
@@ -287,17 +354,23 @@
                                 }
                             }
 
-                            //initialize and open the razorpay pop up box over your page//
+                            // Initialize and open the razorpay pop up box over your page
                             const rzp1 = new Razorpay(options);
                             rzp1.open();
-                        }
 
+                            // --- 3. SAFETY RESET ---
+                            // Since Razorpay covers the viewport, hide the spinner 2 seconds 
+                            // after opening so the button is fresh if they return to it.
+                            setTimeout(resetButtonState, 2000);
+                        }
                         else {
                             alert(order_data.error || "an unknown error occurred!");
+                            resetButtonState(); // Reset if no order data received
                         }
 
                     }).catch((error) => {
-                        alert(`ooops ${error}`)
+                        alert(`ooops ${error}`);
+                        resetButtonState(); // Reset if server network request crashes
                     });
 
             });
