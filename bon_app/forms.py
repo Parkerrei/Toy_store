@@ -38,8 +38,3 @@ class logged_in(forms.Form):
     username = forms.CharField(max_length=140) 
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'password','required':'required'}))
 
-class OrderForm(forms.Form):
-    name    = forms.CharField(label="Your Name", max_length=100)
-    email   = forms.EmailField(label="Email")
-    address = forms.CharField(label="Shipping Address", widget=forms.Textarea)
-    

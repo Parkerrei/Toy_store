@@ -4,7 +4,6 @@ from .forms import UserForm,logged_in
 from django.contrib.auth import authenticate,login,logout
 import razorpay
 from django.conf import settings
-from .forms import OrderForm
 from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
@@ -53,18 +52,11 @@ def user_log_in(request):
     return render(request, 'login.html', {'form': form, 'next': next_url})
 
 @login_required(login_url='logged')
-def main(request):
-    if request.method == "POST":
-        form = OrderForm(request.POST)
-        if form.is_valid():   
-            # Save order or send email here
-            return render(request, "main.html", {"form": OrderForm(), "success": True})
-    else:
-        form = OrderForm()          
-        categories = Category.objects.all()
-        all_product = Product.objects.all() 
-        return render(request, "main.html", {"form": form,'all_product':all_product,"categories":categories})
-    return render(request,'main.html',{'form':form})
+def main(request):       
+    categories = Category.objects.all()
+    all_product = Product.objects.all() 
+    return render(request, "main.html", {'all_product':all_product,"categories":categories})
+    
 # payments/views.py
 
 client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))

@@ -37,7 +37,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
@@ -51,7 +51,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.security.SecurityMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -82,15 +82,21 @@ WSGI_APPLICATION = 'bon_bon_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
-DATABASES = {
+if os.environ.get('PYTHONANYWHERE_DOMAIN'):
+    DATABASES = {
+        'default':{
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR ,'db.sqlite3'),
+        }
+}
+else:
+   DATABASES = {
     'default': dj_database_url.config(
        default=config('DATABASE_URL'),
         conn_max_age=0,
         ssl_require=True # Forces SSL connection securely
-        
-)
-}    
+    )
+   } 
 
 
 # Password validation
@@ -129,6 +135,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
+
  
 LOGIN_URL = '/logged'
 MEDIA_URL = '/media/'
