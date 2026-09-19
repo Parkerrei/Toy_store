@@ -12,8 +12,7 @@ from django.db import transaction,models
 from django.db.models import F,Sum
 import json
 import logging
-
-# Create your views here.
+from django.core.paginator import Paginator
 
 def user(request):
     if request.method == 'POST':
@@ -54,11 +53,24 @@ def user_log_in(request):
 @login_required(login_url='logged')
 def main(request):       
     categories = Category.objects.all()
-    all_product = Product.objects.all() 
-    return render(request, "main.html", {'all_product':all_product,"categories":categories})
+    all_product = Product.objects.select_related('category').filter(stock__gt=0)
+    paginator = Paginator(all_product,10)
+    page_number = request.GET.get('page', 1) # Reads the current scroll depth state
+    products = paginator.get_page(page_number)
     
-# payments/views.py
+    # --- THIS CHANGED: CRITICAL BLOCK ---
+    # Detects if the Amazon-style JavaScript is asking for another row
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # Render ONLY the product cards wrapper snippet, nothing else!
+        return render(request, 'partials/product_cards.html', {'products': products})
+        
+    # Standard user fresh hit: render the main base frame layout shell
+    return render(request, 'main.html', {
+        'categories': categories,
+        'products': products
+    })
 
+# payments/views.py
 client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 client.timeout = 200
 logger = logging.getLogger(__name__)
