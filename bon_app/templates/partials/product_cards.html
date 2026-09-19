@@ -1,0 +1,13 @@
+{% for product in products %}
+<div class="product-card">
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+    <div class="product-info">
+        <h3>{{ product.name }}</h3>
+        <p class="price">₹{{ product.price }}</p>
+    </div>
+    <button class="buy" data-id="{{ product.id }}">
+        <span class="btn-text">Buy</span>
+        <span class="btn-spinner hidden"></span>
+    </button>
+</div>
+{% endfor %}
