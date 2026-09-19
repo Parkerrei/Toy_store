@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'bon_bon_project.wsgi.application'
 if os.environ.get('PYTHONANYWHERE_DOMAIN'):
     DATABASES = {
         'default':{
-            'ENGINE': 'django.db.backends.sqlite3 ',
+            'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR ,'db.sqlite3'),
         }
 }
