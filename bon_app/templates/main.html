@@ -128,13 +128,13 @@
             max-width: 100px;
             /* Limits the maximum width */
             height: 100px;
-            flex-shrink: 0;
             border-radius: 8px;
             background-color: var(--bg-color);
             cursor: zoom-in;
             /* Center the image horizontally and vertically */
             margin: 40px 40px;
             /* Centers the wrapper itself if it has extra space */
+            flex-wrap: wrap;
         }
 
         .product-img {
@@ -146,6 +146,7 @@
         }
 
         .product-item {
+            flex-wrap: wrap;
             display: flex;
             flex-direction: row;
             border: 1px solid rgb(37, 36, 36);
@@ -220,7 +221,7 @@
 
         /* ✅ FIX: Default grid is single column */
         #parent-category-container {
-
+            flex-wrap: wrap;
             display: flex;
             flex-direction: column;
             gap: 20px;
