@@ -386,10 +386,7 @@
             Loading more toys...
         </div>
     </div>
-
-
 </body>
-
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
@@ -400,6 +397,96 @@
 
         let isLoading = false;
         let prefetchedHTML = null;
+        grid.addEventListener('click', function (event) {
+            // 1. Move the CSRF Token and Button checks to the very top so both blocks can use them safely
+            const token = document.getElementById('token').value;
+            const buyButton = event.target.closest('.buy');
+            const cartButton = event.target.closest('.add-to-cart');
+
+            // ==========================================
+            // CASE 1: BUY BUTTON WAS CLICKED
+            // ==========================================
+            if (buyButton) {
+                event.preventDefault();
+
+                // FIX: Variable name matches 'buyButton' perfectly
+                const productId = buyButton.getAttribute('data-id');
+                console.log("Processing Razorpay order for Product:", productId);
+
+                fetch(`/buy/${productId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': token,
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`Server status ${response.status}: Failed to process purchase.!!`);
+                        }
+                        return response.json();
+                    })
+                    .then((order_data) => {
+                        if (order_data) {
+                            const options = {
+                                "key": order_data.key,
+                                "amount": order_data.amount,
+                                "currency": order_data.currency,
+                                "name": "cheri bon_bon",
+                                "description": "thanks visit again",
+                                "order_id": order_data.order_id,
+                                "handler": function (response) {
+                                    paymentVerification(response);
+                                },
+                                "theme": {
+                                    "color": "#3399cc"
+                                }
+                            };
+                            const rzp1 = new Razorpay(options);
+                            rzp1.open();
+                        } else {
+                            alert(order_data.error || "An unknown error occurred!");
+                        }
+                    })
+                    .catch((error) => {
+                        alert(`Ooops ${error}`);
+                    });
+            }
+
+            // ==========================================
+            // CASE 2: CHECK IF ADD TO CART BUTTON WAS CLICKED
+            // ==========================================
+            else if (cartButton) { // FIX: Removed the blocking 'return;' statement
+                event.preventDefault();
+
+                const productId = cartButton.getAttribute('data-id');
+                console.log("Adding product to cart:", productId);
+
+                fetch(`/add_to_cart/${productId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': token,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`unable to fetch: ${response.status}`)
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.success);
+                        } else {
+                            alert(data.error);
+                        }
+                    })
+                    .catch(error => {
+                        alert('error:' + error)
+                    });
+            }
+        });
 
         // 1. Quietly fetch the next page data in the background
         const prefetchNextPageSilent = () => {
@@ -501,68 +588,6 @@
         setTimeout(prefetchNextPageSilent, 400);
     });
 
-
-    // payment and cart logic
-    document.addEventListener('DOMContentLoaded', () => {
-        const button = document.querySelectorAll('.buy-btn')
-        const token = document.getElementById('token').value;
-        button.forEach((btn) => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const id = btn.dataset.id;
-                fetch(`/buy/${id}/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': token,
-                        'Content-Type': 'application/json'
-                    },
-
-                })
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(`server status ${response.status}: Failed to process purchase.!!`)
-                        }
-                        return response.json()
-                    })
-
-                    .then((order_data) => {
-                        if (order_data) {
-                            const options = {
-                                "key": order_data.key,
-                                "amount": order_data.amount,
-                                "currency": order_data.currency,
-                                "name": "cheri bon_bon",
-                                "description": "thanks visit again",
-                                "order_id": order_data.order_id,
-
-                                //this handler function runs automatically  when payment is successful//
-                                "handler": function (response) {
-                                    // call the helper function to send the transaction data to django for verification//
-                                    paymentVerification(response);
-                                },
-
-                                "theme": {
-                                    "color": "#3399cc"
-                                }
-                            }
-
-                            //initialize and open the razorpay pop up box over your page//
-                            const rzp1 = new Razorpay(options);
-                            rzp1.open();
-                        }
-
-                        else {
-                            alert(order_data.error || "an unknown error occurred!");
-                        }
-
-                    }).catch((error) => {
-                        alert(`ooops ${error}`)
-                    });
-
-            });
-        });
-    });
-
     // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
     function paymentVerification(razorpayResponse) {
         const id = document.getElementById('token').value
@@ -592,42 +617,6 @@
         })
     }
 
-    // fetch to add items to cart 
-    document.addEventListener('DOMContentLoaded', () => {
-        const cart_btns = document.querySelectorAll('.add-to-cart-btn');
-        const token = document.getElementById('token').value;
-
-        cart_btns.forEach((btn) => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const id = btn.dataset.id;
-                fetch(`/add_to_cart/${id}/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': token,
-                        'Content-Type': 'application/json'
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`unable to fetch: ${response.status}`)
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            alert(data.success);
-                        } else {
-                            alert(data.error);
-                        }
-                    })
-                    .catch(error => {
-                        alert('error:' + error)
-                    });
-            });
-        });
-
-    });
 
     // Sidebar Toggle Logic
     function toggleSidebar() {
