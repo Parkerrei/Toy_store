@@ -180,6 +180,24 @@
             /* Authentic product price dark red tint */
         }
 
+        .add-to-cart {
+            background: var(--cozy-amber);
+            border: 1px solid #FCD200;
+            border-radius: 20px;
+            color: var(--text-main);
+            cursor: pointer;
+            display: inline-flex;
+            margin-bottom: 4px;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(213, 217, 217, .5);
+            transition: background-color 0.15s ease;
+        }
+
         /* 5. Pill-Shaped Action Checkout Button */
         .buy {
             background: var(--cozy-warm-btn);
@@ -348,8 +366,6 @@
             }
         }
     </style>
-
-
 </head>
 
 <body>
@@ -383,9 +399,10 @@
 
         <!-- This spinner text will briefly show ONLY if user out-scrolls the prefetch link -->
         <div class="infinite-spinner hidden">
-            Loading more toys...
+            Loading more...
         </div>
     </div>
+
 </body>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
