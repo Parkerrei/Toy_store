@@ -53,7 +53,7 @@ def user_log_in(request):
 @login_required(login_url='logged')
 def main(request):       
     categories = Category.objects.all()
-    all_product = Product.objects.select_related('category').filter(stock__gt=0)
+    all_product = Product.objects.select_related('category').filter(stock__gt=0).order_by('-id')
     paginator = Paginator(all_product,10)
     page_number = request.GET.get('page', 1) # Reads the current scroll depth state
     products = paginator.get_page(page_number)
