@@ -6,11 +6,11 @@ urlpatterns = [
                 path('',user,name='user'),
                 path('logged/',user_log_in,name='logged'),
                 path('main/',main,name='main'),
-                path('buy/<int:id>/',buy,name='buy'),
+                path('buy/<int:productId>/',buy,name='buy'),
                 path('log_out/',log_out,name='log_out'),
                 # This single line handles category 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, etc.
                 path('category_products_view/<slug:slug>/', views.category_products_view, name='category_products_view'),
-                path('add_to_cart/<int:id>/',add_to_cart,name='add_to_cart'),
+                path('add_to_cart/<int:productId>/',add_to_cart,name='add_to_cart'),
                 path('user_cart_items/',user_cart_items,name='user_cart_items'),
                 path('cart_deduct/',cart_deduct,name='cart_deduct'),
                 path('all_cart_order/',all_cart_order,name='all_cart_order'),
