@@ -75,7 +75,7 @@ client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORP
 client.timeout = 200
 logger = logging.getLogger(__name__)
 
-def buy(request, id):
+def buy(request, productId):
     if request.method != 'POST':
         return JsonResponse({'Error': 'Method not allowed'}, status=405)
 
@@ -187,7 +187,7 @@ def log_out(request):
 
 @login_required
 @transaction.atomic  # Ensures database integrity
-def add_to_cart(request, id):
+def add_to_cart(request, productId):
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
