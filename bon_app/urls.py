@@ -1,6 +1,6 @@
 from django.urls import path
 import bon_app.views as views
-from .views import user,user_log_in,main,buy,log_out,add_to_cart,user_cart_items,cart_deduct,all_cart_order,increment_item,decrement_item
+from .views import user,user_log_in,main,buy,log_out,add_to_cart,user_cart_items,cart_deduct,user_cart_order_payment,increment_item,decrement_item
 
 urlpatterns = [
                 path('',user,name='user'),
@@ -13,7 +13,7 @@ urlpatterns = [
                 path('add_to_cart/<int:productId>/',add_to_cart,name='add_to_cart'),
                 path('user_cart_items/',user_cart_items,name='user_cart_items'),
                 path('cart_deduct/',cart_deduct,name='cart_deduct'),
-                path('all_cart_order/',all_cart_order,name='all_cart_order'),
+                path('user_cart_order_payment/',user_cart_order_payment,name='user_cart_order_payment'),
                 path('increment_item/<int:id>/',increment_item,name='increment_item'),
                 path('decrement_item/<int:id>/',decrement_item,name='decrement_item')
 ]
