@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>Cherri Bon Bon | Toy Store</title>
     <!-- Inside your main.html -->
     <style>
@@ -349,7 +350,6 @@
         }
     </style>
 
-
 </head>
 
 <body>
@@ -390,211 +390,60 @@
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+
+    product_grid = document.getElementById('product-grid')
     document.addEventListener('DOMContentLoaded', () => {
-        const sentinel = document.getElementById('scroll-sentinel');
-        const grid = document.getElementById('product-grid');
-        const spinner = sentinel.querySelector('.infinite-spinner');
+        token = document.querySelector('[name=csrf-token]').content
+        product_grid.addEventListener('click', (e) => {
+            buy_btn = e.target.closest('.buy')
+            add_to_cart_btn = e.target.closest('.add-to-cart')
 
-        let isLoading = false;
-        let prefetchedHTML = null;
-        grid.addEventListener('click', function (event) {
-            // 1. Move the CSRF Token and Button checks to the very top so both blocks can use them safely
-            const token = document.getElementById('token').value;
-            const buyButton = event.target.closest('.buy');
-            const cartButton = event.target.closest('.add-to-cart');
-
-            // ==========================================
-            // CASE 1: BUY BUTTON WAS CLICKED
-            // ==========================================
-            if (buyButton) {
-                event.preventDefault();
-
-                // FIX: Variable name matches 'buyButton' perfectly
-                const productId = buyButton.getAttribute('data-id');
-                console.log("Processing Razorpay order for Product:", productId);
-
-                fetch(`/buy/${productId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': token,
-                        'Content-Type': 'application/json'
-                    },
-                })
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(`Server status ${response.status}: Failed to process purchase.!!`);
-                        }
-                        return response.json();
-                    })
-                    .then((order_data) => {
-                        if (order_data) {
-                            const options = {
-                                "key": order_data.key,
-                                "amount": order_data.amount,
-                                "currency": order_data.currency,
-                                "name": "cheri bon_bon",
-                                "description": "thanks visit again",
-                                "order_id": order_data.order_id,
-                                "handler": function (response) {
-                                    paymentVerification(response);
-                                },
-                                "theme": {
-                                    "color": "#3399cc"
-                                }
-                            };
-                            const rzp1 = new Razorpay(options);
-                            rzp1.open();
-                        } else {
-                            alert(order_data.error || "An unknown error occurred!");
-                        }
-                    })
-                    .catch((error) => {
-                        alert(`Ooops ${error}`);
-                    });
-            }
-
-            // ==========================================
-            // CASE 2: CHECK IF ADD TO CART BUTTON WAS CLICKED
-            // ==========================================
-            else if (cartButton) { // FIX: Removed the blocking 'return;' statement
-                event.preventDefault();
-
-                const productId = cartButton.getAttribute('data-id');
-                console.log("Adding product to cart:", productId);
-
-                fetch(`/add_to_cart/${productId}/`, {
+            if (buy_btn) {
+                fetch(`/buy/${buy_btn.dataset.id}/`, {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': token,
                         'Content-Type': 'application/json'
                     }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`unable to fetch: ${response.status}`)
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error(response.status)
+                    } return response.json()
+                }).then(data => {
+                    if (data) {
+                        const option = {
+                            'key': data.key,
+                            'amount': data.amount,
+                            'currency': data.currency,
+                            'notes': data.notes,
+                            'order_id': data.order_id,
+                            'receipt': data.receipt,
+                            'handler': function (response) {
+                                paymentVerification(response)
+                            },
+                            'theme': {
+                                'color': '#3399cc'
+                            }
                         }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            alert(data.success);
-                        } else {
-                            alert(data.error);
-                        }
-                    })
-                    .catch(error => {
-                        alert('error:' + error)
-                    });
-            }
-        });
-
-        // 1. Quietly fetch the next page data in the background
-        const prefetchNextPageSilent = () => {
-            const hasNext = sentinel.getAttribute('data-has-next') === 'true';
-            const nextPage = sentinel.getAttribute('data-next-page');
-
-            if (!hasNext || prefetchedHTML !== null || isLoading) return;
-
-            fetch(`/main/?page=${nextPage}`, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-                .then(response => response.text())
-                .then(htmlChunk => {
-                    if (htmlChunk.trim() !== "") {
-                        prefetchedHTML = htmlChunk;
+                        const rzp1 = new Razorpay(option)
+                        rzp1.open()
                     } else {
-                        sentinel.setAttribute('data-has-next', 'false');
+                        alert(data.error)
                     }
+                }).catch(error => {
+                    alert(error)
                 })
-                .catch(err => console.log("Background prefetch paused:", err));
-        };
-
-        // 2. Render the next batch of product cards onto the screen
-        const renderNextChunk = () => {
-            const hasNext = sentinel.getAttribute('data-has-next') === 'true';
-            const nextPage = sentinel.getAttribute('data-next-page');
-
-            if (isLoading || !hasNext) return;
-
-            // If background prefetch finished, append instantly (0 millisecond delay!)
-            if (prefetchedHTML) {
-                grid.insertAdjacentHTML('beforeend', prefetchedHTML);
-                sentinel.setAttribute('data-next-page', parseInt(nextPage) + 1);
-                prefetchedHTML = null; // Reset cache slot
-
-                checkIfStillNearBottom(); // Check if we need to load more immediately
-                setTimeout(prefetchNextPageSilent, 100);
-                return;
             }
-
-            // Fallback: If network connection is slower than fast scrolling
-            isLoading = true;
-            spinner.classList.remove('hidden');
-
-            fetch(`/main/?page=${nextPage}`, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-                .then(response => response.text())
-                .then(htmlChunk => {
-                    if (htmlChunk.trim() === "") {
-                        sentinel.setAttribute('data-has-next', 'false');
-                        observer.unobserve(sentinel); // Stop observing if out of stock
-                    } else {
-                        grid.insertAdjacentHTML('beforeend', htmlChunk);
-                        sentinel.setAttribute('data-next-page', parseInt(nextPage) + 1);
-
-                        checkIfStillNearBottom();
-                    }
-                    isLoading = false;
-                    spinner.classList.add('hidden');
-                    setTimeout(prefetchNextPageSilent, 100);
-                })
-                .catch(error => {
-                    console.error('Error auto-loading toys:', error);
-                    isLoading = false;
-                    spinner.classList.add('hidden');
-                });
-        };
-
-        // Safety fallback: if screen is huge and sentinel is still visible, keep loading
-        const checkIfStillNearBottom = () => {
-            const rect = sentinel.getBoundingClientRect();
-            if (rect.top < window.innerHeight + 400) {
-                renderNextChunk();
-            }
-        };
-
-        // 3. Automated Viewport Watcher Engine
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                // Fires immediately when user gets within 800px of the sentinel
-                if (entry.isIntersecting) {
-                    renderNextChunk();
-                }
-            });
-        }, {
-            root: null,
-            rootMargin: '800px', // Looks 2 full screens ahead for instant loads
-            threshold: 0
-        });
-
-        // Start tracking the watchtower div element
-        const hasNextInit = sentinel.getAttribute('data-has-next') === 'true';
-        if (hasNextInit) {
-            observer.observe(sentinel);
-        }
-
-        // Seed the first background cache page shortly after landing
-        setTimeout(prefetchNextPageSilent, 400);
-    });
+        })
+    })
 
     // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
     function paymentVerification(razorpayResponse) {
-        const id = document.getElementById('token').value
+        token = document.querySelector('[name=csrf-token]').content
         fetch('signature_check/', {
             method: 'POST',
             headers: {
-                'X-CSRFToken': id,
+                'X-CSRFToken': token,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(razorpayResponse)
@@ -618,18 +467,5 @@
     }
 
 
-    // Sidebar Toggle Logic
-    function toggleSidebar() {
-        document.getElementById("sidebar").classList.toggle("open");
-    }
-
-    // Close sidebar if user clicks outside of it
-    document.addEventListener('click', function (event) {
-        const sidebar = document.getElementById('sidebar');
-        const toggleBtn = document.querySelector('.toggle-btn');
-        if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target) && sidebar.classList.contains('open')) {
-            sidebar.classList.remove('open');
-        }
-    });
 
 </script>
