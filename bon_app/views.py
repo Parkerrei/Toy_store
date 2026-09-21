@@ -75,7 +75,7 @@ client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORP
 client.timeout = 200
 logger = logging.getLogger(__name__)
 
-def buy(request, productId):
+def buy(request, id):
     if request.method != 'POST':
         return JsonResponse({'Error': 'Method not allowed'}, status=405)
 
@@ -145,19 +145,13 @@ def buy(request, productId):
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
 def signature_check(request):
     if request.method != 'POST':
-        return JsonResponse({'error':'method not allwed'},status=405)
+        return JsonResponse({'error':'method not allowed'},status=405)
     try:
-        data = json.loads(request.body)
-        param_dict = {
-            'razorpay_order_id': data.get('razorpay_order_id'),
-            'razorpay_payment_id': data.get('razorpay_payment_id'),
-            'razorpay_signature': data.get('razorpay_signature')
-        }
-        
-        client.utility.verify_payment_signature(param_dict)
+        data = json.loads(request.body) 
+        client.utility.verify_payment_signature(data)
     except razorpay.errors.SignatureVerificationError:
         return JsonResponse({'error':'signature verification failed'},status=400)
-    return JsonResponse({'success':'signature verified successfullt'},status=200)
+    return JsonResponse({'success':'signature verified successfully'},status=200)
 
 def category_products_view(request, slug):
     # 1. OPTIMIZATION: Fetch category AND all its related products in ONE database query
@@ -257,7 +251,7 @@ def cart_deduct(request):
         print(f"Error emptying cart: {str(e)}") # Keep this for terminal debugging
         return JsonResponse({'error': 'Something went wrong while processing your request.'}, status=500)
 
-def all_cart_order(request):
+def user_cart_order_payment(request):
     if not request.method == 'POST':
         return JsonResponse({'error':'method not allowed'},status=405)
     user_cart = CartItem.objects.filter(user_cart = request.user)
