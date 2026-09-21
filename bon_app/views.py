@@ -148,13 +148,7 @@ def signature_check(request):
         return JsonResponse({'error':'method not allwed'},status=405)
     try:
         data = json.loads(request.body)
-        param_dict = {
-            'razorpay_order_id': data.get('razorpay_order_id'),
-            'razorpay_payment_id': data.get('razorpay_payment_id'),
-            'razorpay_signature': data.get('razorpay_signature')
-        }
-        
-        client.utility.verify_payment_signature(param_dict)
+        client.utility.verify_payment_signature(data)
     except razorpay.errors.SignatureVerificationError:
         return JsonResponse({'error':'signature verification failed'},status=400)
     return JsonResponse({'success':'signature verified successfullt'},status=200)
