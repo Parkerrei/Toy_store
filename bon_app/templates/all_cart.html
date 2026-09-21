@@ -400,7 +400,7 @@
         const key = document.getElementById('token').value
         const id = document.getElementById('buy-btn')
         id.addEventListener('click', () => {
-            fetch(`/all_cart_order/`,
+            fetch(`/user_cart_order_payment/`,
                 {
                     method: 'POST',
                     headers: {
