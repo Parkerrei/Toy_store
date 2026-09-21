@@ -257,7 +257,7 @@ def cart_deduct(request):
         print(f"Error emptying cart: {str(e)}") # Keep this for terminal debugging
         return JsonResponse({'error': 'Something went wrong while processing your request.'}, status=500)
 
-def all_cart_order(request):
+def user_cart_order_payment(request):
     if not request.method == 'POST':
         return JsonResponse({'error':'method not allowed'},status=405)
     user_cart = CartItem.objects.filter(user_cart = request.user)
