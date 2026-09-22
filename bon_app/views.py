@@ -83,7 +83,7 @@ def buy(request, productId):
     try:
         with transaction.atomic():
             try:
-                toy_to_buy = Product.objects.select_for_update().get(id=id)
+                toy_to_buy = Product.objects.select_for_update().get(id=productId)
             except Product.DoesNotExist:
                 return JsonResponse({'Error':'Item not found'}, status=404)
 
@@ -145,7 +145,7 @@ def buy(request, productId):
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
 def signature_check(request):
     if request.method != 'POST':
-        return JsonResponse({'error':'method not allwed'},status=405)
+        return JsonResponse({'error':'method not allowed'},status=405)
     try:
         data = json.loads(request.body)
         client.utility.verify_payment_signature(data)
@@ -187,7 +187,7 @@ def add_to_cart(request, productId):
 
     # 1. Safely find the product
     try:
-        toy = Product.objects.select_for_update().get(id=id)
+        toy = Product.objects.select_for_update().get(id=productId)
     except Product.DoesNotExist:
         return JsonResponse({'error': 'Item not found'}, status=404)
 
