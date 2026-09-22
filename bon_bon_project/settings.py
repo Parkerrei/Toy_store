@@ -90,7 +90,7 @@ if os.environ.get('PYTHONANYWHERE_DOMAIN'):
         }
 }
 else:
-   DATABASES = {
+    DATABASES = {
     'default': dj_database_url.config(
        default=config('DATABASE_URL'),
          # Reuse the hosted Postgres connection between scroll requests.
