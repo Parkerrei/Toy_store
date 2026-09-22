@@ -31,6 +31,11 @@ class Product(models.Model):
     stock    = models.PositiveIntegerField(default=0)
     price    = models.PositiveIntegerField()
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['name','id'])
+        ]
+
     def __str__(self): 
         return self.name
 
@@ -48,6 +53,9 @@ class CartItem(models.Model):
 
     class Meta:
         unique_together = (('user_cart','product'))
+        indexes = [
+            models.Index(fields=['user_cart','product'])
+        ] 
 
     def __str__(self):
         return f"\nproduct_quantity: {self.quantity}\nname: {self.product.name}\nid: {self.id}"
