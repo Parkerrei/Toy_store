@@ -145,7 +145,7 @@ def buy(request, productId):
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
 def signature_check(request):
     if request.method != 'POST':
-        return JsonResponse({'error':'method not allwed'},status=405)
+        return JsonResponse({'error':'method not allowed'},status=405)
     try:
         data = json.loads(request.body)
         client.utility.verify_payment_signature(data)
