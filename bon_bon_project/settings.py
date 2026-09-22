@@ -93,9 +93,10 @@ else:
    DATABASES = {
     'default': dj_database_url.config(
        default=config('DATABASE_URL'),
-        conn_max_age=0,
-        ssl_require=True # Forces SSL connection securely
-    )
+         # Reuse the hosted Postgres connection between scroll requests.
+         conn_max_age=600,
+         ssl_require=True # Forces SSL connection securely
+     )
    } 
 
 
