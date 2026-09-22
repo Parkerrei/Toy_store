@@ -14,6 +14,8 @@ import json
 import logging
 from django.core.paginator import Paginator
 
+PRODUCTS_PER_PAGE = 10
+
 def user(request):
     if request.method == 'POST':
         form  = UserForm(request.POST)
@@ -52,19 +54,32 @@ def user_log_in(request):
 
 @login_required(login_url='logged')
 def main(request):       
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # Avoid Paginator.count() on every scroll request. The extra row tells
+        # us whether another page exists without a separate COUNT(*) query.
+        try:
+            page_number = max(int(request.GET.get('page', 1)), 1)
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'Invalid page number.'}, status=400)
+
+        offset = (page_number - 1) * PRODUCTS_PER_PAGE
+        products = list(
+            Product.objects.filter(stock__gt=0)
+            .order_by('-id')
+            .only('image', 'name', 'price')[offset:offset + PRODUCTS_PER_PAGE + 1]
+        )
+
+        if len(products) > PRODUCTS_PER_PAGE:
+            products = products[:PRODUCTS_PER_PAGE]
+
+        return render(request, 'partials/product_cards.html', {'products': products})
+
     categories = Category.objects.all()
     all_product = Product.objects.filter(stock__gt=0).order_by('-id').only('image','name','price')
-    paginator = Paginator(all_product,10)
-    page_number = request.GET.get('page', 1) # Reads the current scroll depth state
+    paginator = Paginator(all_product, PRODUCTS_PER_PAGE)
+    page_number = request.GET.get('page', 1)
     products = paginator.get_page(page_number)
-    
-    # --- THIS CHANGED: CRITICAL BLOCK ---
-    # Detects if the Amazon-style JavaScript is asking for another row
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        # Render ONLY the product cards wrapper snippet, nothing else!
-        return render(request, 'partials/product_cards.html', {'products': products})
-        
-    # Standard user fresh hit: render the main base frame layout shell
+
     return render(request, 'main.html', {
         'categories': categories,
         'products': products
