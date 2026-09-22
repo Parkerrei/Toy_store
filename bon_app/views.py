@@ -83,7 +83,7 @@ def buy(request, productId):
     try:
         with transaction.atomic():
             try:
-                toy_to_buy = Product.objects.select_for_update().get(id=id)
+                toy_to_buy = Product.objects.select_for_update().get(id=productId)
             except Product.DoesNotExist:
                 return JsonResponse({'Error':'Item not found'}, status=404)
 
@@ -187,7 +187,7 @@ def add_to_cart(request, productId):
 
     # 1. Safely find the product
     try:
-        toy = Product.objects.select_for_update().get(id=id)
+        toy = Product.objects.select_for_update().get(id=productId)
     except Product.DoesNotExist:
         return JsonResponse({'error': 'Item not found'}, status=404)
 
