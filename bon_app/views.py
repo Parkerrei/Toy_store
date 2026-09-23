@@ -187,7 +187,6 @@ def category_products_view(request, slug):
         'category_list':category_list
     })
 
-
 def log_out(request):
     # print('before logout:',list(request.session.items()))
     logout(request)
