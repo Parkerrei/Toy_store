@@ -181,12 +181,12 @@
         .cart-btn:hover {
             background-color: var(--primary-hover);
         }
-        
+
         .buy:hover {
             background-color: #e5e7eb;
             color: #000;
         }
-        
+
         /* Styling for your existing buy button */
         .buy {
             background-color: #f3f4f6;
@@ -229,6 +229,11 @@
             opacity: 0.7;
             cursor: not-allowed;
         }
+        dialog{
+            border: 1px solid grey;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
     </style>
 
 </head>
@@ -237,7 +242,7 @@
 
     {% block content %}
     {% endblock %}
-
+    <dialog></dialog>
     <input type="hidden" value="{{ csrf_token }}" id="token">
 
 </body>
@@ -249,6 +254,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const cart_btns = document.querySelectorAll('.cart-btn');
         const token = document.getElementById('token').value;
+        const show_message = document.querySelector('dialog')
 
         cart_btns.forEach((btn) => {
             btn.addEventListener('click', (e) => {
@@ -269,13 +275,26 @@
                     })
                     .then(data => {
                         if (data.success) {
-                            alert(data.success);
+                            show_message.innerText = data.success
+                            show_message.showModal()
+                            setTimeout(() => {
+                                show_message.close()
+                            }, 3000);
                         } else {
-                            alert(data.error);
+                            show_message.innerText = data.error
+                            show_message.showModal()
+                            setTimeout(() => {
+                                show_message.close()
+                            }, 3000);
+
                         }
                     })
                     .catch(error => {
-                        alert('error:' + error)
+                        show_message.innerText = data.error
+                        show_message.showModal()
+                        setTimeout(() => {
+                            show_message.close()
+                        }, 3000);
                     });
             });
         });
@@ -286,6 +305,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const button = document.querySelectorAll('.buy')
         const token = document.getElementById('token').value;
+        const show_message = document.querySelector('dialog')
 
         button.forEach((btn) => {
             btn.addEventListener('click', (e) => {
@@ -364,12 +384,20 @@
                             setTimeout(resetButtonState, 2000);
                         }
                         else {
-                            alert(order_data.error || "an unknown error occurred!");
+                            show_message.innerText = data.error
+                            show_message.showModal()
+                            setTimeout(() => {
+                                show_message.close()
+                            }, 3000);
                             resetButtonState(); // Reset if no order data received
                         }
 
                     }).catch((error) => {
-                        alert(`ooops ${error}`);
+                        show_message.innerText = error
+                        show_message.showModal()
+                        setTimeout(() => {
+                            show_message.close()
+                        }, 3000);
                         resetButtonState(); // Reset if server network request crashes
                     });
 
