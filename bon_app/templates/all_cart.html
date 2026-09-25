@@ -213,6 +213,12 @@
             background-color: rgba(255, 255, 255, 0.2);
             border-color: rgba(255, 255, 255, 0.4);
         }
+
+        dialog {
+            border: 1px solid grey;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
     </style>
 </head>
 
@@ -271,7 +277,7 @@
     <input type="hidden" name="csrfmiddlewaretoken" id="token" value="{{csrf_token}}">
     <!-- A simple non-blocking pop-up container -->
     <div id="toast-notification" class="toast-hidden"></div>
-
+    <dialog></dialog>
 </body>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -298,6 +304,7 @@
         const token = document.getElementById('token').value
         const increm_btn = document.querySelectorAll('.increment-btn')
         var total = document.querySelector('.total_price')
+        const show_message = document.querySelector('dialog')
         increm_btn.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -334,7 +341,7 @@
                         }
                     })
                     .catch(error => {
-                        alert('error' + error)
+                        showToast(error)
                     });
             })
         })
@@ -389,7 +396,7 @@
                         }
                     })
                     .catch(error => {
-                        alert('error ' + error);
+                        showToast(error)
                     });
             });
         });
@@ -437,7 +444,7 @@
                         alert(data.error || 'an unknown error occurred')
                     }
                 }).catch(error => {
-                    alert('error :' + data.error)
+                    showToast(error)
                 })
         })
     })
