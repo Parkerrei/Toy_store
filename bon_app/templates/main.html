@@ -365,6 +365,12 @@
                 /* Scales image down slightly to optimize view space */
             }
         }
+
+        dialog {
+            border: 1px solid grey;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
     </style>
 </head>
 
@@ -402,7 +408,8 @@
             Loading more...
         </div>
     </div>
-<input type="hidden" name="csrfmiddlewaretoken" id="token" value="{{csrf_token}}">
+    <dialog></dialog>
+    <input type="hidden" name="csrfmiddlewaretoken" id="token" value="{{csrf_token}}">
 </body>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -419,6 +426,7 @@
             const token = document.getElementById('token').value;
             const buyButton = event.target.closest('.buy');
             const cartButton = event.target.closest('.add-to-cart');
+            show_message = document.querySelector('dialog')
 
             // ==========================================
             // CASE 1: BUY BUTTON WAS CLICKED
@@ -461,12 +469,11 @@
                             };
                             const rzp1 = new Razorpay(options);
                             rzp1.open();
-                        } else {
-                            alert(order_data.error || "An unknown error occurred!");
                         }
                     })
                     .catch((error) => {
-                        alert(`Ooops ${error}`);
+                        show_message.innerText = data.error
+                        show_message.showModal()
                     });
             }
 
@@ -493,14 +500,13 @@
                         return response.json();
                     })
                     .then(data => {
-                        if (data.success) {
-                            alert(data.success);
-                        } else {
-                            alert(data.error);
-                        }
+                        show_message.innerText = data.success
+                        show_message.showModal()
+
                     })
                     .catch(error => {
-                        alert('error:' + error)
+                        show_message.innerText = data.error
+                        show_message.showModal()
                     });
             }
         });
@@ -608,6 +614,7 @@
     // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
     function paymentVerification(razorpayResponse) {
         const id = document.getElementById('token').value
+        const show_message = document.querySelector('dialog')
         fetch('signature_check/', {
             method: 'POST',
             headers: {
@@ -624,13 +631,12 @@
             return response.json();
 
         }).then((data) => {
-            if (data.success) {
-                alert(success);
-            } else {
-                alert(data.error);
-            }
+            show_message.innerText = data.success
+            show_message.showModal()
+
         }).catch(error => {
-            alert('error' + error)
+            show_message.innerText = data.error
+            show_message.showModal()
         })
     }
 
