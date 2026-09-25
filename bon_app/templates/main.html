@@ -478,6 +478,9 @@
                     .catch((error) => {
                         show_message.innerText = data.error
                         show_message.showModal()
+                        setTimeout(() => {
+                            show_message.close()
+                        }, 3000);
                     });
             }
 
@@ -506,11 +509,17 @@
                     .then(data => {
                         show_message.innerText = data.success
                         show_message.showModal()
+                        setTimeout(() => {
+                            show_message.close()
+                        }, 3000)
 
                     })
                     .catch(error => {
                         show_message.innerText = data.error
                         show_message.showModal()
+                        setTimeout(() => {
+                            show_message.close()
+                        }, 3000)
                     });
             }
         });
@@ -637,10 +646,16 @@
         }).then((data) => {
             show_message.innerText = data.success
             show_message.showModal()
+            setTimeout(() => {
+                show_message.close()
+            }, 3000)
 
         }).catch(error => {
             show_message.innerText = data.error
             show_message.showModal()
+            setTimeout(() => {
+                show_message.close()
+            }, 3000)
         })
     }
 
