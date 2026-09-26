@@ -13,9 +13,8 @@ from django.db.models import F,Sum
 import json
 import logging
 from django.core.paginator import Paginator
-
-PRODUCTS_PER_PAGE = 10
-
+import uuid
+import time
 def user(request):
     if request.method == 'POST':
         form  = UserForm(request.POST)
@@ -54,6 +53,7 @@ def user_log_in(request):
 
 @login_required(login_url='logged')
 def main(request):       
+    PRODUCTS_PER_PAGE = 10
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         # Avoid Paginator.count() on every scroll request. The extra row tells
         # us whether another page exists without a separate COUNT(*) query.
@@ -265,40 +265,48 @@ def cart_deduct(request):
         print(f"Error emptying cart: {str(e)}") # Keep this for terminal debugging
         return JsonResponse({'error': 'Something went wrong while processing your request.'}, status=500)
 
+# Add this to the top of your views.py file
+
 def user_cart_order_payment(request):
     if not request.method == 'POST':
         return JsonResponse({'error':'method not allowed'},status=405)
+        
     user_cart = CartItem.objects.filter(user_cart = request.user)
     if not user_cart.exists():
         return JsonResponse({'error':'user not found'},status=404)
+        
     total_price = sum(item.get_subtotal() for item in user_cart)
-    round_to_paise = total_price * 100
-     # 6. Create a clean comma-separated list of items for Razorpay's notes panel
+    round_to_paise = int(total_price * 100) # Ensure amount is an integer
+    
+    # 1. Comma-separated list is safe here inside the 'notes' field (max 2048 characters total for notes)
     item_names = ", ".join([item.product.name for item in user_cart])
 
-    # cache the number of product added in cart 
-    amount_paise = round_to_paise
+    # 2. FIX: Generate a clean, unique receipt string that stays well under 56 characters
+    # Example output: rcpt_1727375185_a1b2c3d4
+   
+    unique_suffix = uuid.uuid4().hex[:8] # Short 8-character unique string
+    receipt_id = f"rcpt_{int(time.time())}_{unique_suffix}" 
    
     # create order using razorpay
     order = client.order.create(data={
-        'amount':amount_paise,
-        'currency':'INR',
-        'notes':{
-            'email':request.user.email,
-            'user':request.user.username,
-            'item':item_names
+        'amount': round_to_paise,
+        'currency': 'INR',
+        'notes': {
+            'email': request.user.email,
+            'user': request.user.username,
+            'item': item_names # Keeps your item breakdown visible in Razorpay dashboard notes
         },
-        'receipt':f'rcpt_{item_names}'
+        'receipt': receipt_id # Now strictly unique and short (approx 20-25 characters)
     })
 
     # return success order data
     return JsonResponse({
-        'key':settings.RAZORPAY_KEY_ID,
-        'amount':order['amount'],
-        'currency':order['currency'],
-        'notes':order['notes'],
-        'order_id':order['id'],
-        'receipt':order['receipt']
+        'key': settings.RAZORPAY_KEY_ID,
+        'amount': order['amount'],
+        'currency': order['currency'],
+        'notes': order['notes'],
+        'order_id': order['id'],
+        'receipt': order['receipt']
     })
 
 def increment_item(request,id):
