@@ -309,7 +309,7 @@
                     .catch(error => {
                         btn.innerText = originalContent
                         btn.disabled = false
-                        show_message.innerText = data.error
+                        show_message.innerText = error
                         show_message.showModal()
                         setTimeout(() => {
                             show_message.close()
