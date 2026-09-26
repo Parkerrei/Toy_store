@@ -271,6 +271,9 @@
 
         cart_btns.forEach((btn) => {
             btn.addEventListener('click', (e) => {
+                let originalContent = btn.innerText
+                btn.innerText = 'processing...'
+                btn.disabled = true
                 e.preventDefault();
                 const id = btn.dataset.id;
                 fetch(`/add_to_cart/${id}/`, {
@@ -287,6 +290,8 @@
                         return response.json();
                     })
                     .then(data => {
+                        btn.innerText = originalContent
+                        btn.disabled = false
                         if (data.success) {
                             show_message.innerText = data.success
                             show_message.showModal()
@@ -302,13 +307,15 @@
                         }
                     })
                     .catch(error => {
+                        btn.innerText = originalContent
+                        btn.disabled = false
                         show_message.innerText = data.error
                         show_message.showModal()
                         setTimeout(() => {
                             show_message.close()
                         }, 3000);
                     });
-            });
+            })
         });
 
     });
