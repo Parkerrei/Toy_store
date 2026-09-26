@@ -239,6 +239,15 @@
             background-color: #1f2937;
             color: white;
         }
+
+        dialog::backdrop {
+            background-color: rgba(0, 0, 0, 0.3);
+            /* Dim the background slightly */
+            backdrop-filter: blur(5px);
+            /* This blurs the background content */
+            transition: all 0.3s ease;
+            /* Smooth transition */
+        }
     </style>
 
 </head>
@@ -284,7 +293,7 @@
                             show_message.showModal()
                             setTimeout(() => {
                                 show_message.close()
-                            }, 3000);
+                            }, 1500);
                         } else {
                             show_message.innerText = data.error
                             show_message.showModal()
