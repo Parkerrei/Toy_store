@@ -236,7 +236,7 @@
         <p>Logged in as: <b>{{ request.user.username }}</b></p>
         <hr>
 
-        <div class="cart-item">
+        <div class="cart-item" id="cart">
 
             {% for detail in cart_items %}
             <div id="id-{{ detail.id }}">
@@ -293,7 +293,7 @@
             toast.classList.add('toast-hidden');
         }, 3000);
     }
-
+    // increment handling
     document.addEventListener('DOMContentLoaded', () => {
         const token = document.getElementById('token').value
         const increm_btn = document.querySelectorAll('.increment-btn')
@@ -475,7 +475,8 @@
                 }
             })
     }
-
+   
+    // wipe all user cart items
     document.addEventListener('DOMContentLoaded', () => {
         const token = document.getElementById('token').value
         const buttons = document.getElementById('cart-btn')
@@ -485,7 +486,7 @@
             buttons.disabled = true
             buttons.innerText = "removing ...."
 
-            fetch('/cart_deduct/',
+            fetch('/wipe_user_cart/',
                 {
                     'method': 'DELETE',
                     headers: {
