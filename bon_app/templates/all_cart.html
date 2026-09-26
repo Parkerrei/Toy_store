@@ -213,8 +213,6 @@
             background-color: rgba(255, 255, 255, 0.2);
             border-color: rgba(255, 255, 255, 0.4);
         }
-
-      
     </style>
 </head>
 
@@ -273,7 +271,7 @@
     <input type="hidden" name="csrfmiddlewaretoken" id="token" value="{{csrf_token}}">
     <!-- A simple non-blocking pop-up container -->
     <div id="toast-notification" class="toast-hidden"></div>
-    
+
 </body>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -401,6 +399,9 @@
     document.addEventListener('DOMContentLoaded', () => {
         const key = document.getElementById('token').value
         const id = document.getElementById('buy-btn')
+        let originalContent = id.innerText
+        id.innerText = 'processing...'
+        id.disabled = true
         id.addEventListener('click', () => {
             fetch(`/user_cart_order_payment/`,
                 {
@@ -417,6 +418,8 @@
                     }
                     return response.json()
                 }).then((data) => {
+                    id.innerText = originalContent
+                    id.innerText = false
                     if (data) {
                         const option = {
                             'key': data.key,
@@ -440,6 +443,8 @@
                         alert(data.error || 'an unknown error occurred')
                     }
                 }).catch(error => {
+                    id.innerText = originalContent
+                    id.disabled = false
                     showToast(error)
                 })
         })
