@@ -237,7 +237,7 @@ def user_cart_items(request):
     } 
     return render(request,'all_cart.html',context)
 
-def cart_deduct(request): 
+def wipe_user_cart(request): 
     if request.method != 'DELETE':
         return JsonResponse({'error': 'method not allowed'}, status=405)
         
