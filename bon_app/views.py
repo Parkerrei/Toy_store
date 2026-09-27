@@ -345,19 +345,19 @@ def increment_item(request,productId):
     return JsonResponse({'error':'method not allowed'},status=405)
 
 
-def decrement_item(request, id):
+def decrement_item(request, productId):
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)    
     try:
         with transaction.atomic():
             # Lock row because we will read, modify, and update on condition
-            item_in_cart = CartItem.objects.select_for_update().filter(id=id, user_cart=request.user).first()
+            item_in_cart = CartItem.objects.select_for_update().filter(id=productId, user_cart=request.user).first()
 
             if not item_in_cart:
                 return JsonResponse({'error': 'item not in cart'}, status=404)
             
             # No row locking because we are performing a blind write below
-            item_in_product = Product.objects.filter(id=item_in_cart.product.id).first()
+            item_in_product = Product.objects.filter(id=item_in_cart.product.productId).first()
 
             if not item_in_product:
                 return JsonResponse({'error': 'item not in product'}, status=404)
