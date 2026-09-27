@@ -307,10 +307,10 @@
         increm_btn.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                const id = btn.dataset.id
+                const productId = btn.dataset.id
                 var quantity = document.getElementById(`qty-${id}`)
 
-                fetch(`/increment_item/${id}/`, {
+                fetch(`/increment_item/${productId}/`, {
                     'method': 'POST',
                     headers: {
                         'X-CSRFToken': token,
