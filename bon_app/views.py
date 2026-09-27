@@ -140,7 +140,7 @@ def buy(request, productId):
         try:
             with transaction.atomic():
                 # Avoid select_for_update here to prevent deadlocks during failure recovery
-                product_rollback = Product.objects.get(id=id)
+                product_rollback = Product.objects.get(id=productId)
                 product_rollback.stock += 1
                 product_rollback.save()
         except Exception as rollback_err:
