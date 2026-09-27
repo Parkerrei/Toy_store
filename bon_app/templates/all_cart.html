@@ -355,12 +355,12 @@
         decrementButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                const id = btn.dataset.id;
+                const productId = btn.dataset.id;
                 //  FIX: Moved inside the click event so 'id' is defined and specific to this button!
                 var container_remove = document.getElementById(`id-${id}`);
                 var quantity = document.getElementById(`qty-${id}`)
 
-                fetch(`/decrement_item/${id}/`, {
+                fetch(`/decrement_item/${productId}/`, {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': token,
