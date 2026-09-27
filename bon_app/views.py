@@ -309,11 +309,11 @@ def user_cart_order_payment(request):
         'receipt': order['receipt']
     })
 
-def increment_item(request,id):
+def increment_item(request,productId):
     if request.method == 'POST':
         try:
             with transaction.atomic():
-                cart_item = CartItem.objects.select_for_update().filter(id=id).first() 
+                cart_item = CartItem.objects.select_for_update().filter(id=productId).first() 
                 if not cart_item:
                     return JsonResponse({'error':'item dnt exists'},status=404)
                 product = Product.objects.select_for_update().filter(id=cart_item.product_id,stock__gt=0).first()
