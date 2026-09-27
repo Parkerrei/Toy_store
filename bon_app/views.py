@@ -63,11 +63,7 @@ def main(request):
             return JsonResponse({'error': 'Invalid page number.'}, status=400)
 
         offset = (page_number - 1) * PRODUCTS_PER_PAGE
-        products = list(
-            Product.objects.filter(stock__gt=0)
-            .order_by('-id')
-            .only('image', 'name', 'price')[offset:offset + PRODUCTS_PER_PAGE + 1]
-        )
+        products = list(Product.objects.filter(stock__gt=0).order_by('-id').only('image', 'name', 'price')[offset:offset + PRODUCTS_PER_PAGE + 1])
 
         if len(products) > PRODUCTS_PER_PAGE:
             products = products[:PRODUCTS_PER_PAGE]
