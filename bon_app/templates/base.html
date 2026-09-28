@@ -351,7 +351,7 @@
                     }
                 }
 
-                fetch(`/buy/${id}/`, {
+                fetch(`/initiate_razorpay_checkout/${id}/`, {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': token,
@@ -427,7 +427,7 @@
     // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
     function paymentVerification(razorpayResponse) {
         const id = document.getElementById('token').value
-        fetch('signature_check/', {
+        fetch('cryptographic_signature_check/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': id,
