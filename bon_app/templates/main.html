@@ -398,7 +398,7 @@
     <nav>
         <a id="profile" href="#">profile</a>
         <a id="cart" href="{% url 'show_user_cart_items' %}">your Cart</a>
-        <a href="{% url 'user_log_out' %}" style="color: #f51f1f;">Logout</a>
+        <a href="{% url 'user_log_out' %}" style="color: #f51f1f;text-transform: capitalize;">Logout</a>
         <select name="" id="" onchange="if (this.value) location.href = this.value;">
             {% for category in categories %}
             {% if category.slug %}
