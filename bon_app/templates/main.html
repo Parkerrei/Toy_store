@@ -440,7 +440,7 @@
             const buyButton = event.target.closest('.buy');
             const cartButton = event.target.closest('.add-to-cart');
             const show_message = document.querySelector('dialog')
-            
+
             // ==========================================
             // CASE 1: BUY BUTTON WAS CLICKED
             // ==========================================
@@ -667,19 +667,4 @@
             }, 3000)
         })
     }
-
-    // Sidebar Toggle Logic
-    function toggleSidebar() {
-        document.getElementById("sidebar").classList.toggle("open");
-    }
-
-    // Close sidebar if user clicks outside of it
-    document.addEventListener('click', function (event) {
-        const sidebar = document.getElementById('sidebar');
-        const toggleBtn = document.querySelector('.toggle-btn');
-        if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target) && sidebar.classList.contains('open')) {
-            sidebar.classList.remove('open');
-        }
-    });
-
 </script>
