@@ -3,7 +3,7 @@ from django.urls import path
 from .views import signup_user,user_log_in,main_page,initiate_razorpay_checkout,user_log_out,add_to_cart,show_user_cart_items,wipe_user_cart,user_cart_order_payment,increment_item,decrement_item,category_products_view
 
 urlpatterns = [
-                path('signup',signup_user,name='signup_user'),
+                path('signup_user',signup_user,name='signup_user'),
                 path('logged/',user_log_in,name='logged'),
                 path('',main_page,name='main_page'),
                 path('initiate_razorpay_checkout/<int:productId>/',initiate_razorpay_checkout,name='initiate_razorpay_checkout'),
