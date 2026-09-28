@@ -15,13 +15,13 @@ import logging
 from django.core.paginator import Paginator
 import uuid
 import time
-def user(request):
+def signup_user(request):
     if request.method == 'POST':
         form  = UserForm(request.POST)
         if form.is_valid():
             user = form.save(commit= True)
             login(request,user)
-            return redirect('main')
+            return redirect('main_page')
         else:
             return render(request,'user_creation.html',{'form':form})
     form = UserForm()
@@ -44,15 +44,15 @@ def user_log_in(request):
                     allowed_hosts={request.get_host()},
                     require_https=request.is_secure()):
                     return redirect(next_url)
-                return redirect('main')
+                return redirect('main_page')
             else:
                 form.add_error(None, 'Invalid username or Password')
     else:
         form = logged_in()
     return render(request, 'login.html', {'form': form, 'next': next_url})
 
-@login_required(login_url='logged')
-def main(request):       
+# @login_required(login_url='logged')
+def main_page(request):       
     PRODUCTS_PER_PAGE = 10
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         # Avoid Paginator.count() on every scroll request. The extra row tells
@@ -86,7 +86,7 @@ client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORP
 client.timeout = 200
 logger = logging.getLogger(__name__)
 
-def buy(request, productId):
+def initiate_razorpay_checkout(request, productId):
     if request.method != 'POST':
         return JsonResponse({'Error': 'Method not allowed'}, status=405)
 
@@ -154,7 +154,7 @@ def buy(request, productId):
     })
 
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
-def signature_check(request):
+def cryptographic_signature_check(request):
     if request.method != 'POST':
         return JsonResponse({'error':'method not allowed'},status=405)
     try:
@@ -183,7 +183,7 @@ def category_products_view(request, slug):
         'category_list':category_list
     })
 
-def log_out(request):
+def user_log_out(request):
     # print('before logout:',list(request.session.items()))
     logout(request)
     # print('after logout:',list(request.session.items()))
@@ -222,7 +222,7 @@ def add_to_cart(request, productId):
 
     return JsonResponse({'success': 'Item added successfully'},status=200)
                                                                     
-def user_cart_items(request):
+def show_user_cart_items(request):
     user_items  = CartItem.objects.filter(user_cart=request.user)
     total_price = sum(item.get_subtotal() for item in user_items)
     category = Category.objects.all()
@@ -312,7 +312,7 @@ def increment_item(request,productId):
                 cart_item = CartItem.objects.select_for_update().filter(id=productId).first() 
                 if not cart_item:
                     return JsonResponse({'error':'item dnt exists'},status=404)
-                product = Product.objects.select_for_update().filter(id=cart_item.product_id,stock__gt=0).first()
+                product = Product.objects.select_for_update().filter(id=cart_item.product_id).first()
                 if not product:
                     return JsonResponse({'error':'out of stock'},status = 403)
               
