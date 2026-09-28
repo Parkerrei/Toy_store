@@ -29,7 +29,7 @@
             color: var(--text-main);
             font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 60px;
         }
 
         /* 2. Responsive Navigation Bar (Amazon Layout Style) */
@@ -312,13 +312,6 @@
             }
         }
 
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            /* Keeps it on top of other elements */
-        }
 
         /* SMARTPHONE MOBILE DEVICES (Items scale cleanly into full single blocks) */
         @media (max-width: 540px) {
@@ -548,7 +541,7 @@
 
             if (!hasNext || prefetchedHTML !== null || isLoading) return;
 
-            fetch(`/main_page/?page=${nextPage}`, {
+            fetch(`?page=${nextPage}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
                 .then(response => response.text())
@@ -584,7 +577,7 @@
             isLoading = true;
             spinner.classList.remove('hidden');
 
-            fetch(`/main_page/?page=${nextPage}`, {
+            fetch(`?page=${nextPage}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
                 .then(response => response.text())
