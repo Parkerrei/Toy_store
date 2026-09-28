@@ -7,225 +7,311 @@
     <title>Your Shopping Cart</title>
 
     <style>
-        /* Centers your main wrapper box directly on the browser screen */
+        :root {
+            --primary: #ff477e;
+            --primary-hover: #ff2a63;
+            --dark: #1a1a1a;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --border: #e9ecef;
+            --text-muted: #6c757d;
+        }
 
         body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f9f9f9;
+            background-color: var(--light-bg);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--dark);
             margin: 0;
-            font-family: Arial, sans-serif;
+        }
+
+        /* Modern Header & Nav */
+        header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
         }
 
         nav {
-            display: flex;
-            gap: 10px;
-        }
-
-        header {
-            padding: 20px;
-            border: 1px;
-            background-color: #2c0909b6;
-            position:fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            width: 100%;
-            /* Ensures it covers exactly the viewport width */
-            box-sizing: border-box;
-            /* Crucial so padding doesn't push it wider */
-        }
-
-
-        /* The master container box */
-        .cart-container {
-            text-align: center;
-            width: 90%;
-            max-width: 500px;
-            /* Keeps the box from stretching too wide on laptops */
-            background-color: white;
-            padding: 20px;
-            border-radius: 12px;
-            /* Smooth rounded corners look more modern */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            /* Adds a soft drop shadow */
-            border: 1px solid #e0e0e0;
-        }
-
-        /* Each item card gets its own nice spacing row inside the box */
-        .cart-item {
-            border-bottom: 1px solid #eee;
-            padding: 15px 0;
-        }
-
-        /* Constrains image sizes so they look proportional instead of massive */
-        .cart-item img {
-            max-width: 150px;
-            height: auto;
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-
-        .cart-item h3 {
-            margin: 5px 0;
-            color: #333;
-        }
-
-        .total-section {
-            margin-top: 20px;
-            color: #2e7d32;
-            /* Gives the final bill number a professional green hue */
-        }
-
-        #cart-btn {
-            background-color: maroon;
-            color: white;
-            cursor: pointer;
-            padding: 7px;
-            border: none;
-            border-radius: 5px;
-            text-transform: capitalize;
-        }
-
-        #buy-btn {
-            cursor: pointer;
-            color: rgb(216, 207, 207);
-            padding: 7px;
-            width: 10rem;
-            background-color: rgb(12, 105, 228);
-            border: none;
-            border-radius: 5px;
-            text-transform: capitalize;
-        }
-
-        #order-remove-btn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: row;
-            gap: 10px;
-        }
-
-        .incre-decrement-btn {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid rgba(39, 37, 37, 0.493);
-            border-radius: 5px;
-            width: fit-content;
+            max-width: 1200px;
             margin: 0 auto;
-            gap: 15px;
-            text-transform: capitalize;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        #minus {
-            font-size: larger;
-            border: none;
+        nav a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: color 0.2s ease;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav select {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background-color: #fff;
+            font-weight: 500;
             cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
         }
 
-        #plus {
-            cursor: pointer;
-            font-size: larger;
+        nav select:hover {
+            border-color: var(--primary);
+        }
+
+        /* Main Container Layout */
+        .cart-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .brand-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--dark), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .user-status {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* Flexbox Grid Structure for Cart and Sidebar */
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        @media (min-width: 992px) {
+            .cart-layout {
+                grid-template-columns: 7fr 4fr;
+            }
+        }
+
+        /* Modern Cart Item Cards */
+        .cart-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .cart-item-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .cart-item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        @media (min-width: 576px) {
+            .cart-item-card {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+
+        .product-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 12px;
+            background-color: var(--light-bg);
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .product-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        /* Stylish Quantity Controller */
+        .qty-controller {
+            display: inline-flex;
+            align-items: center;
+            background: var(--light-bg);
+            padding: 0.35rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+        }
+
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             border: none;
+            background: #fff;
+            color: var(--dark);
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
         }
 
+        .qty-btn:hover {
+            background: var(--dark);
+            color: #fff;
+        }
+
+        .quantity-text {
+            font-weight: 600;
+            min-width: 45px;
+            text-align: center;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        /* Premium Sticky Sidebar Summary */
+        .summary-sidebar {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--light-bg);
+            padding-bottom: 1rem;
+        }
+
+        .total-price-display {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Premium Dynamic Action Buttons */
+        .action-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--dark);
+            color: #fff;
+            border: none;
+            padding: 1.1rem;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 71, 126, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 0.9rem;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #fff5f7;
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Modern Toast Pop-up Layout */
         #toast-notification {
             position: fixed;
-            top: 20px;
-            right: center;
-            background-color: #28a745;
-            /* Success Green */
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--dark);
             color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            font-family: sans-serif;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 1000;
-            transition: transform 0.3s ease, opacity 0.3s ease;
+            font-weight: 500;
         }
 
-        .toast-hidden {
-            opacity: 0;
-            transform: translateY(50px);
-            pointer-events: none;
-            /* Allows users to click elements behind it */
-        }
-
-        .toast-visible {
-            opacity: 1;
+        #toast-notification.toast-visible {
             transform: translateY(0);
-        }
-
-        select {
-            appearance: none;
-            background-color: rgba(255, 255, 255, 0.08);
-            color: rgb(233, 233, 233);
-            outline: none;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 20px;
-            padding: 7px 35px 8px 14px;
-            transition: 0.2s ease;
-            text-decoration: none;
-            font-size: larger;
-            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-            font-style: oblique;
-            font-display: block;
-        }
-
-        select:hover {
-            color: rgb(19, 18, 18);
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        select:focus {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        option {
-            border-radius: 5px;
-        }
-
-        a {
-            appearance: none;
-            background-color: rgba(255, 255, 255, 0.08);
-            color: rgb(250, 244, 244);
-            outline: none;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 20px;
-            padding: 7px 35px 8px 14px;
-            transition: 0.2s ease;
-            text-decoration: none;
-            font-size: larger;
-            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-            font-style: oblique;
-            font-display: block;
-        }
-
-        a:focus {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        a:hover {
-            color: whitesmoke;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.4);
         }
     </style>
 </head>
 
 <body>
+
     <header>
         <nav>
-            <a href="{% url 'main_page' %}">Home</a>
-            <select name="" id="" onchange="if (this.value) location.href = this.value;">
+            <a href="{% url 'main_page' %}">Cherri Bon Bon</a>
+            <select onchange="if (this.value) location.href = this.value;">
+                <option value="" disabled selected>Explore Categories</option>
                 {% for category in categories %}
                 {% if category.slug %}
                 <option value="{% url 'category_products_view' category.slug %}">{{ category.name }}</option>
@@ -234,47 +320,57 @@
             </select>
         </nav>
     </header>
+
     <div class="cart-container">
-        <h1>Cherri Bon Bon</h1>
-        <!-- FIX 1: Title moved OUTSIDE the loop so it only prints once at the top -->
-        <h1>Your Shopping Cart</h1>
-        <p>Logged in as: <b>{{ request.user.username }}</b></p>
-        <hr>
+        <h1 class="brand-title">Cherri Bon Bon</h1>
+        <div class="page-title">Your Shopping Cart</div>
+        <div class="user-status">Logged in as: <b>{{ request.user.username }}</b></div>
 
-        <div class="cart-item" id="cart">
+        <div class="cart-layout">
+            <!-- Left Hand Side: Items Area -->
+            <div class="cart-list" id="cart">
+                {% for detail in cart_items %}
+                <div class="cart-item-card" id="id-{{ detail.id }}">
+                    <img class="product-img" src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
 
-            {% for detail in cart_items %}
-            <div id="id-{{ detail.id }}">
-                <!-- FIX 2: Grouped item elements inside an item div block -->
-                <h3>{{ detail.product.name }}</h3>
+                    <div class="product-details">
+                        <h3 class="product-name">{{ detail.product.name }}</h3>
+                        <h5 class="product-price">₹ {{ detail.product.price }}</h5>
+                    </div>
 
-                <img class="image" src="{{ detail.product.image.url }}" alt="{{ detail.product.name }}">
-
-                <div class="incre-decrement-btn">
-                    <button class="decrement-btn" data-id="{{ detail.id}}" id="minus">-</button>
-                    <p id="qty-{{ detail.id }}" class="quantity">Qty: {{ detail.quantity }}</p>
-                    <button class="increment-btn" data-id="{{ detail.id }}" id="plus">+</button>
+                    <div class="qty-controller">
+                        <button class="qty-btn decrement-btn" data-id="{{ detail.id }}" id="minus">−</button>
+                        <p id="qty-{{ detail.id }}" class="quantity-text">{{ detail.quantity }}</p>
+                        <button class="qty-btn increment-btn" data-id="{{ detail.id }}" id="plus">+</button>
+                    </div>
                 </div>
-                <h5>Price: ₹ {{ detail.product.price }}</h5>
+                {% empty %}
+                <div
+                    style="text-align: center; padding: 4rem 2rem; color: var(--text-muted); background: white; border-radius: 16px; border: 1px solid var(--border);">
+                    <p style="font-size: 1.2rem; font-weight: 500; margin-bottom: 0.5rem;">Your cart is completely
+                        empty.</p>
+                    <p style="font-size: 0.95rem;">Add items to your cart to see them here.</p>
+                </div>
+                {% endfor %}
             </div>
-            {% empty %}
-            <p style="color: #666; padding: 20px;">Your cart is completely empty.</p>
-            {% endfor %}
-        </div>
 
-        <!-- Total bill sits perfectly at the base -->
+            <!-- Right Hand Side: Sticky Summary Sidebar -->
+            <div class="summary-sidebar">
+                <div class="summary-title">Order Summary</div>
+                <div class="total-price-display" id="price">
+                    <span style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500;">Grand Total</span>
+                    <span>₹ {{ total_price }}</span>
+                </div>
 
-        <div class="total-section">
-            <h2 class="total_price" id="price">Grand Total: ₹ {{ total_price }}</h2>
-            <div id="order-remove-btn">
-                <button id="buy-btn">Order</button>
-                <button id="cart-btn">Empty cart</button>
+                <div class="action-btn-group">
+                    <button id="buy-btn" class="btn-primary">Proceed to Order</button>
+                    <button id="cart-btn" class="btn-secondary">Empty Cart</button>
+                </div>
             </div>
         </div>
-
     </div>
+
     <input type="hidden" name="csrfmiddlewaretoken" id="token" value="{{csrf_token}}">
-    <!-- A simple non-blocking pop-up container -->
     <div id="toast-notification" class="toast-hidden"></div>
 
 </body>
