@@ -540,7 +540,7 @@
 
             if (!hasNext || prefetchedHTML !== null || isLoading) return;
 
-            fetch(`/main/?page=${nextPage}`, {
+            fetch(`/main_page/?page=${nextPage}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
                 .then(response => response.text())
@@ -576,7 +576,7 @@
             isLoading = true;
             spinner.classList.remove('hidden');
 
-            fetch(`/main/?page=${nextPage}`, {
+            fetch(`/main_page/?page=${nextPage}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
                 .then(response => response.text())
