@@ -224,7 +224,7 @@
 <body>
     <header>
         <nav>
-            <a href="{% url 'main' %}">Home</a>
+            <a href="{% url 'main_page' %}">Home</a>
             <select name="" id="" onchange="if (this.value) location.href = this.value;">
                 {% for category in categories %}
                 {% if category.slug %}
@@ -400,7 +400,7 @@
             });
         });
     });
-
+    // initiate cart checkout
     document.addEventListener('DOMContentLoaded', () => {
         const key = document.getElementById('token').value
         const id = document.getElementById('buy-btn')
@@ -458,7 +458,7 @@
     // helper function to send transaction data back to django for verification
     function paymentverification(razorpay_response) {
         const token = document.getElementById('token').value
-        fetch('/signature_check/', {
+        fetch('/cryptographic_signature_check/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': token,
