@@ -29,13 +29,19 @@
             color: var(--text-main);
             font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
             margin: 0;
-            padding: 60px;
+            padding: 90px;
         }
 
         /* 2. Responsive Navigation Bar (Amazon Layout Style) */
         nav {
+            padding-top: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            z-index: 1000;
             background-color: var(--amazon-dark);
-            padding: 12px 20px;
             display: flex;
             flex-wrap: wrap;
             /* Allows rows to wrap perfectly on mobile */
