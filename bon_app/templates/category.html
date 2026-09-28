@@ -6,8 +6,8 @@
         <h1>{{ category.name }}</h1>
     </div>
     <div class="nav-bar">
-        <a href="{% url 'user_cart_items' %}">cart</a>
-        <a href="{% url 'main' %}">home</a>
+        <a href="{% url 'show_user_cart_items' %}">cart</a>
+        <a href="{% url 'main_page' %}">home</a>
         <select name="" id="" onchange="if(this.value) location.href = this.value">
             {% for cat in category_list %}
             {% if cat.slug %}
