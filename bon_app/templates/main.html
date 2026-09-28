@@ -390,8 +390,8 @@
 <body>
     <nav>
         <a id="profile" href="#">profile</a>
-        <a id="cart" href="{% url 'user_cart_items' %}">your Cart</a>
-        <a href="{% url 'log_out' %}" style="color: #f51f1f;">Logout</a>
+        <a id="cart" href="{% url 'show_user_cart_items' %}">your Cart</a>
+        <a href="{% url 'user_log_out' %}" style="color: #f51f1f;">Logout</a>
         <select name="" id="" onchange="if (this.value) location.href = this.value;">
             {% for category in categories %}
             {% if category.slug %}
@@ -451,7 +451,7 @@
                 const productId = buyButton.getAttribute('data-id');
                 console.log("Processing Razorpay order for Product:", productId);
 
-                fetch(`/buy/${productId}/`, {
+                fetch(`/initiate_razorpay_checkout/${productId}/`, {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': token,
@@ -637,7 +637,7 @@
     function paymentVerification(razorpayResponse) {
         const id = document.getElementById('token').value
         const show_message = document.querySelector('dialog')
-        fetch('signature_check/', {
+        fetch('cryptographic_signature_check/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': id,
