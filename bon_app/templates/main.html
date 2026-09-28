@@ -25,23 +25,19 @@
         }
 
         body {
+            box-sizing: border-box;
             background-color: var(--wood-warm-bg);
             color: var(--text-main);
             font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
             margin: 0;
-            padding: 70px;
+            padding: 0;
         }
 
         /* 2. Responsive Navigation Bar (Amazon Layout Style) */
         nav {
-            padding-top: 20px;
-            position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
-            overflow: hidden;
-            z-index: 1000;
             background-color: var(--amazon-dark);
+            
             display: flex;
             flex-wrap: wrap;
             /* Allows rows to wrap perfectly on mobile */
@@ -318,6 +314,13 @@
             }
         }
 
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            /* Keeps it on top of other elements */
+        }
 
         /* SMARTPHONE MOBILE DEVICES (Items scale cleanly into full single blocks) */
         @media (max-width: 540px) {
@@ -398,7 +401,7 @@
     <nav>
         <a id="profile" href="#">profile</a>
         <a id="cart" href="{% url 'show_user_cart_items' %}">your Cart</a>
-        <a href="{% url 'user_log_out' %}" style="color: #f51f1f;text-transform: capitalize;">Logout</a>
+        <a href="{% url 'user_log_out' %}" style="color: #f51f1f;">Logout</a>
         <select name="" id="" onchange="if (this.value) location.href = this.value;">
             {% for category in categories %}
             {% if category.slug %}
