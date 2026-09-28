@@ -51,7 +51,7 @@ def user_log_in(request):
         form = logged_in()
     return render(request, 'login.html', {'form': form, 'next': next_url})
 
-# @login_required(login_url='logged')
+
 def main_page(request):       
     PRODUCTS_PER_PAGE = 10
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
