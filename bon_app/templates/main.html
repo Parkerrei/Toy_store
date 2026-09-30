@@ -126,9 +126,8 @@
             flex-direction: column;
             justify-content: space-between;
             box-sizing: border-box;
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+           
             box-shadow: var(--card-shadow);
-
             /* Desktop Default Column Width (4 Columns) */
             flex: 1 1 calc(25% - 20px);
             min-width: 260px;
@@ -136,7 +135,7 @@
         }
 
         .product-card:hover {
-            transform: translateY(-4px);
+            
             box-shadow: 0 8px 24px rgba(139, 115, 85, 0.15);
             border-color: #D1C9BC;
         }
@@ -206,10 +205,13 @@
             font-size: 14px;
             font-weight: 500;
             box-shadow: 0 2px 4px rgba(213, 217, 217, .5);
-            transition: background-color 0.15s ease;
+            
         }
-
+        
         .buy:hover {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+            transform: scale(4px); 
+           
             background: var(--cozy-warm-btn-hover);
             border-color: #F2C200;
         }
@@ -307,7 +309,6 @@
         nav {
             width: 100%;
             background-color: var(--amazon-dark);
-          
             display: flex;
             flex-wrap: wrap;
             /* Allows rows to wrap perfectly on mobile */
