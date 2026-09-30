@@ -498,7 +498,7 @@
                     .catch((error) => {
                         buyButton.innerText = originalhtml
                         buyButton.disabled = false
-                        show_message.innerText = error
+                        show_message.innerText = error.message
                         show_message.showModal()
                         setTimeout(() => {
                             show_message.close()
@@ -544,7 +544,7 @@
                     .catch(error => {
                         cartButton.innerText = originalhtml
                         cartButton.disabled = false
-                        show_message.innerText = error
+                        show_message.innerText = error.message
                         show_message.showModal()
                         setTimeout(() => {
                             show_message.close()
