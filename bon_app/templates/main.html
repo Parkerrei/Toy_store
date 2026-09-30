@@ -33,19 +33,6 @@
             padding: 0;
         }
 
-        /* 2. Responsive Navigation Bar (Amazon Layout Style) */
-        nav {
-            width: 100%;
-            background-color: var(--amazon-dark);
-            
-            display: flex;
-            flex-wrap: wrap;
-            /* Allows rows to wrap perfectly on mobile */
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
         /* Store Title Brand Identity */
         nav h1 {
             color: #FFFFFF;
@@ -74,16 +61,6 @@
             background-color: rgba(255, 255, 255, 0.1);
         }
 
-        nav select {
-            background-color: #FFFFFF;
-            color: var(--text-main);
-            border: 1px solid var(--border-subtle);
-            cursor: pointer;
-            padding: 6px 10px;
-            outline: none;
-            border-radius: 4px;
-        }
-
         /* Align Links / Controls on Desktop */
         #profile {
             order: 2;
@@ -95,6 +72,13 @@
         }
 
         nav select {
+            background-color: #FFFFFF;
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
+            cursor: pointer;
+            padding: 6px 10px;
+            outline: none;
+            border-radius: 4px;
             order: 4;
         }
 
@@ -315,6 +299,15 @@
         }
 
         nav {
+            width: 100%;
+            background-color: var(--amazon-dark);
+
+            display: flex;
+            flex-wrap: wrap;
+            /* Allows rows to wrap perfectly on mobile */
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             position: fixed;
             top: 0;
             left: 0;
