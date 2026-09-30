@@ -465,15 +465,15 @@
                     },
                 })
                     .then((response) => {
-                        buyButton.innerText = originalhtml
-                        buyButton.disabled = false
                         if (!response.ok) {
                             throw new Error(`Server status ${response.status}: Failed to process purchase.!!`);
                         }
                         return response.json();
                     })
                     .then((order_data) => {
-
+                        if (!order_data) {
+                            throw new Error('invalid data from server')
+                        }
                         buyButton.innerText = originalhtml
                         buyButton.disabled = false
                         if (order_data) {
@@ -496,6 +496,8 @@
                         }
                     })
                     .catch((error) => {
+                        buyButton.innerText = originalhtml
+                        buyButton.disabled = false
                         show_message.innerText = error
                         show_message.showModal()
                         setTimeout(() => {
