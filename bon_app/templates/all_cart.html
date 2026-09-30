@@ -491,7 +491,7 @@
                         }
                     })
                     .catch(error => {
-                        showToast(error)
+                        showToast(error.message)
                     });
             });
         });
@@ -617,9 +617,9 @@
                     buttons.innerText = originalContent
                 })
                 .catch(error => {
-                    alert('error:' + error)
                     buttons.disabled = false
                     buttons.innerText = originalContent
+                    alert('error:' + error)
                 })
         })
 
