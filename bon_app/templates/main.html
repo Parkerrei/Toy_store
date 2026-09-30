@@ -452,6 +452,9 @@
 
                 // FIX: Variable name matches 'buyButton' perfectly
                 const productId = buyButton.getAttribute('data-id');
+                let originalhtml = buyButton.innerText
+                buyButton.innerText = 'Processing...'
+                buyButton.disabled = true
                 console.log("Processing Razorpay order for Product:", productId);
 
                 fetch(`/initiate_razorpay_checkout/${productId}/`, {
@@ -462,12 +465,17 @@
                     },
                 })
                     .then((response) => {
+                        buyButton.innerText = originalhtml
+                        buyButton.disabled = false
                         if (!response.ok) {
                             throw new Error(`Server status ${response.status}: Failed to process purchase.!!`);
                         }
                         return response.json();
                     })
                     .then((order_data) => {
+
+                        buyButton.innerText = originalhtml
+                        buyButton.disabled = false
                         if (order_data) {
                             const options = {
                                 "key": order_data.key,
