@@ -307,7 +307,7 @@
         nav {
             width: 100%;
             background-color: var(--amazon-dark);
-
+          
             display: flex;
             flex-wrap: wrap;
             /* Allows rows to wrap perfectly on mobile */
@@ -397,23 +397,25 @@
 </head>
 
 <body>
-    <nav>
-        <a id="profile" href="#">profile</a>
-        <a id="cart" href="{% url 'show_user_cart_items' %}">your Cart</a>
-        <a href="{% url 'user_log_out' %}" style="color: #f51f1f;">Logout</a>
-        <select name="" id="" onchange="if (this.value) location.href = this.value;">
-            {% for category in categories %}
-            {% if category.slug %}
-            <option value="{% url 'category_products_view' category.slug %}">{{ category.name }}</option>
-            {% endif %}
-            {% endfor %}
-        </select>
+    <div id="nav-container">
+        <nav>
+            <a id="profile" href="#">profile</a>
+            <a id="cart" href="{% url 'show_user_cart_items' %}">your Cart</a>
+            <a href="{% url 'user_log_out' %}" style="color: #f51f1f;">Logout</a>
+            <select name="" id="" onchange="if (this.value) location.href = this.value;">
+                {% for category in categories %}
+                {% if category.slug %}
+                <option value="{% url 'category_products_view' category.slug %}">{{ category.name }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
 
-        <h1>Cheri Bon Bon</h1>
-        {% if user %}
-        <h4 class="welcome-msg">Welcome, {{ user }}</h4>
-        {% endif %}
-    </nav>
+            <h1>Cheri Bon Bon</h1>
+            {% if user %}
+            <h4 class="welcome-msg">Welcome, {{ user }}</h4>
+            {% endif %}
+        </nav>
+    </div>
 
     <!-- Location: bon_app/templates/main.html -->
 
