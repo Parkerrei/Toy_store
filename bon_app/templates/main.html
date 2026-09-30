@@ -513,6 +513,9 @@
                 event.preventDefault();
 
                 const productId = cartButton.getAttribute('data-id');
+                const originalhtml = cartButton.innerText
+                cartButton.innerText = 'Processing...'
+                cartButton.disabled = true
                 console.log("Adding product to cart:", productId);
 
                 fetch(`/add_to_cart/${productId}/`, {
@@ -529,6 +532,8 @@
                         return response.json();
                     })
                     .then(data => {
+                        cartButton.innerText = originalhtml
+                        cartButton.disabled = false
                         show_message.innerText = data.success
                         show_message.showModal()
                         setTimeout(() => {
@@ -537,6 +542,8 @@
 
                     })
                     .catch(error => {
+                        cartButton.innerText = originalhtml
+                        cartButton.disabled = false
                         show_message.innerText = error
                         show_message.showModal()
                         setTimeout(() => {
