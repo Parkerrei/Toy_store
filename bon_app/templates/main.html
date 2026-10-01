@@ -9,34 +9,30 @@
     <!-- Inside your main.html -->
     <style>
         /* ==========================================
-   1. GLOBAL RESET & OVERFLOW PREVENTION
+   1. GLOBAL SYSTEM RESET & DESIGN TOKENS
    ========================================== */
         :root {
-            --bg-main: #0F1111;
-            /* Amazon's iconic deep dark background */
-            --bg-nav: #131921;
-            /* Amazon's primary nav block color */
-            --bg-surface: #232F3E;
-            /* Amazon's secondary nav / card background */
-            --bg-card-hover: #2A3A4E;
+            --bg-main: #0F1115;
+            /* Sleek, modern obsidian black */
+            --bg-nav: #161B22;
+            /* Amazon dark-slate theme for high contrast */
+            --bg-surface: #21262D;
+            /* Card surfaces & secondary actions */
+            --bg-surface-hover: #2D333B;
+            /* Lightened slate for subtle hover states */
             --accent: #FF9900;
-            /* Premium Amazon Amber / Orange */
-            --text-white: #FFFFFF;
-            --text-muted: #A7B1C1;
+            /* Clean premium Amazon Amber accent */
+            --accent-hover: #FFB340;
+            /* Vibrant bright-orange hover feedback */
+            --text-primary: #F0F6FC;
+            /* Crisp off-white text for high legibility */
+            --text-muted: #8B949E;
+            /* Subdued gray for micro-copy and tags */
+            --border: #30363D;
+            /* Clean, thin charcoal segment borders */
             --radius: 8px;
-            --font: 'Inter', system-ui, sans-serif;
-        }
-
-        .buy {
-            cursor: pointer;
-            border-radius: 5px;
-            padding: 4px;
-        }
-
-        .add-to-cart {
-            cursor: pointer;
-            border-radius: 5px;
-            padding: 4px;
+            /* Contemporary soft rounded corners */
+            --font: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
         * {
@@ -45,129 +41,154 @@
             padding: 0;
         }
 
-        /* Drastically locks down the document viewport to prevent horizontal bleeding */
+        /* Hard shutdown of horizontal overflow bugs across the entire device line */
         html,
         body {
             max-width: 100vw;
             overflow-x: hidden;
-        }
-
-        body {
             background-color: var(--bg-main);
-            color: var(--text-white);
+            color: var(--text-primary);
             font-family: var(--font);
-            line-height: 1.4;
+            line-height: 1.5;
             min-height: 100vh;
         }
 
         a {
             color: inherit;
             text-decoration: none;
+            transition: all 0.2s ease;
         }
 
         /* ==========================================
-   2. MOBILE-FIRST NAVIGATION (Amazon Vibe)
+   2. DYNAMIC MOBILE-FIRST NAV BAR (< 768px)
    ========================================== */
         #nav-container {
             width: 100%;
             background-color: var(--bg-nav);
-            padding: 12px 8px;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+
+            /* Sticky behavior + hardware acceleration for smooth transform slides */
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+        }
+
+        /* Activated via JavaScript on scroll directions */
+        .nav-hidden {
+            transform: translateY(-100%);
         }
 
         nav {
             display: grid;
             grid-template-columns: 1fr auto;
-            /* Standard mobile layout split */
-            gap: 8px;
+            /* Clean split configuration on tight viewports */
+            gap: 12px;
             align-items: center;
-            max-width: 1400px;
+            max-width: 1300px;
             margin: 0 auto;
         }
 
-        /* Header/Branding */
+        /* Store Branding Title */
         nav h1 {
             font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--text-white);
-            letter-spacing: -0.03em;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, #FFFFFF 40%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             grid-column: 1;
         }
 
         nav h1::after {
             content: ".in";
-            color: var(--accent);
             font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            -webkit-text-fill-color: var(--accent);
+            /* Fix override for clipped text gradient */
         }
 
-        /* Welcome tag sitting beside or under the logo */
         .welcome-msg {
             font-size: 0.8rem;
             color: var(--text-muted);
             grid-column: 1;
-            margin-top: -4px;
+            margin-top: -8px;
+            font-weight: 400;
         }
 
-        /* Amazon-style Category Select Dropdown */
+        /* Amazon Style Select Dropdown Elements */
         nav select {
             grid-column: 1 / span 2;
-            /* Full width row below logo on small screens */
+            /* Spans full horizontal width on phone screen sizes */
             width: 100%;
-            height: 40px;
-            padding: 0 35px 0 12px;
+            height: 42px;
+            padding: 0 36px 0 14px;
             font-size: 0.9rem;
-            background-color: #FAFAFA;
-            color: #333333;
-            /* Dark text for the bright input box look */
+            font-weight: 500;
+            background-color: #F8F9FA;
+            color: #1F2328;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://w3.org' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23333333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://w3.org' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%231F2328' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
             background-repeat: no-repeat;
-            background-position: right 12px center;
+            background-position: right 14px center;
             background-size: 14px;
             cursor: pointer;
+            outline: none;
         }
 
         nav select:focus {
-            outline: 2px solid var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 153, 0, 0.4);
         }
 
-        /* Navigation Action Buttons */
+        /* Inline Navigation Action Links */
         nav a {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            height: 36px;
-            padding: 0 8px;
             font-size: 0.85rem;
             font-weight: 500;
-            border-radius: 3px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            height: 38px;
             border: 1px solid transparent;
         }
 
         nav a:hover {
-            border-color: var(--text-white);
+            border-color: var(--text-muted);
+            background-color: rgba(255, 255, 255, 0.05);
         }
 
-        /* Specific button placements on mobile layout grid */
+        /* Layout balancing for specific text options */
         nav a#profile {
             display: none;
         }
 
-        /* Kept clean or hidden on compact mobile viewports */
+        /* Hidden on mobile displays to maximize space */
 
         nav a#cart {
             grid-column: 2;
             grid-row: 1 / span 2;
-            /* Stands tall on the right side */
+            /* Stands vertically centered on the right grid track */
             color: var(--accent);
             font-weight: 700;
-            text-transform: uppercase;
+            border: 1px solid rgba(255, 153, 0, 0.2);
+            background-color: rgba(255, 153, 0, 0.05);
+        }
+
+        nav a#cart:hover {
+            background-color: rgba(255, 153, 0, 0.1);
+            border-color: var(--accent);
         }
 
         nav a#logout {
             grid-column: 2;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
         }
 
         /* ==========================================
@@ -175,51 +196,138 @@
    ========================================== */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            /* Auto-fluid packing */
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+            /* Adaptive auto-packing tracks */
+            gap: 16px;
             width: 100%;
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 12px;
+            max-width: 1300px;
+            margin: 24px auto;
+            padding: 0 14px;
         }
 
-        /* Core setup for the Django child cards inside the grid */
+        /* Product Card Items container */
         .product-grid>* {
             background-color: var(--bg-surface);
+            border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 12px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            /* Safe wrapper rule preventing image burst */
-            transition: transform 0.15s ease;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease;
         }
 
         .product-grid>*:hover {
-            transform: scale(1.015);
-            background-color: var(--bg-card-hover);
-        }
-
-        /* Utility Scroll Sentinel */
-        #scroll-sentinel {
-            width: 100%;
-            padding: 24px 0;
-            text-align: center;
-            color: var(--text-muted);
+            transform: translateY(-2px);
+            border-color: var(--border);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
 
         /* ==========================================
-   4. GRADUAL BREAKPOINT UPGRADES (Tablets >= 768px)
+   4. COMPONENT BUTTONS STYLING
+   ========================================== */
+        /* Generic buttons template inside the grid architecture */
+        .product-grid button,
+        dialog button {
+            width: 100%;
+            padding: 10px 16px;
+            font-family: var(--font);
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 20px;
+            /* Modern round capsule shape */
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.15s ease, transform 0.1s active;
+            outline: none;
+            margin-top: 8px;
+        }
+
+        /* Primary "Add to Cart" or Purchase Buttons (Amazon Style) */
+        .product-grid button:first-of-type,
+        .product-grid button.cart-btn,
+        .product-grid button.buy {
+            background-color: var(--accent);
+            color: #0F1115;
+        }
+
+        .product-grid button:first-of-type:hover,
+        .product-grid button.cart-btn:hover,
+        .product-grid button.buy:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Secondary Button handling if two exist on the card structure */
+        .product-grid button:nth-of-type(2) {
+            background-color: var(--bg-surface-hover);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .product-grid button:nth-of-type(2):hover {
+            background-color: #3B434D;
+        }
+
+        /* Loading/Processing State Style adjustments */
+        .product-grid button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: var(--bg-surface-hover) !important;
+            color: var(--text-muted) !important;
+            border: 1px solid var(--border) !important;
+        }
+
+        /* ==========================================
+   5. INFINITE SCROLL TARGET & SYSTEM WINDOWS
+   ========================================== */
+        #scroll-sentinel {
+            width: 100%;
+            padding: 32px 0;
+            text-align: center;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .infinite-spinner {
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Modal Dialog Window Background styling */
+        dialog {
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin: auto;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+        }
+
+        dialog::backdrop {
+            background-color: rgba(15, 17, 21, 0.85);
+        }
+
+        /* ==========================================
+   6. GRADUAL RESPONSIVE BREAKPOINTS (Tablets >= 768px)
    ========================================== */
         @media (min-width: 768px) {
             #nav-container {
-                padding: 12px 20px;
+                padding: 14px 24px;
             }
 
             nav {
                 display: flex;
-                /* Switch grid to a streamlined inline flex line */
+                /* Transforms structure into sleek inline line items */
                 flex-direction: row;
                 justify-content: flex-start;
                 gap: 16px;
@@ -234,29 +342,64 @@
                 font-size: 0.85rem;
             }
 
-            /* Amazon styling: The search/category input occupies all remaining middle ground space */
+            /* Dropdown search container morphs instantly to occupy maximum middle real estate */
             nav select {
                 width: auto;
                 flex-grow: 1;
-                max-width: 600px;
-                height: 40px;
+                max-width: 550px;
             }
 
             nav a {
-                padding: 0 12px;
-                height: 40px;
+                padding: 0 14px;
             }
 
             nav a#profile {
                 display: inline-flex;
+                /* Safely returns to screen layouts */
             }
 
             .product-grid {
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-                /* Larger responsive grid sizes */
-                gap: 16px;
-                padding: 0 20px;
+                /* Larger fluid cells */
+                gap: 20px;
+                padding: 0 24px;
             }
+        }
+
+        /* ==========================================
+   7. LARGE SCREEN CONFIGURATIONS (Desktop >= 1200px)
+   ========================================== */
+        @media (min-width: 1200px) {
+            nav select {
+                max-width: 700px;
+                /* Sweeping layout allocation across big screen monitors */
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(4, 1fr);
+                /* Locks cleanly into an aesthetic 4-column alignment */
+                gap: 24px;
+            }
+        }
+
+
+        dialog {
+            border: 1px solid grey;
+            border-radius: 5px;
+            margin-left: 45%;
+            margin-top: 40px;
+            padding: 8px;
+            background-color: #1f2937;
+            color: white;
+        }
+
+        dialog::backdrop {
+            background-color: rgba(0, 0, 0, 0.3);
+            /* Dim the background slightly */
+            backdrop-filter: blur(5px);
+            /* This blurs the background content */
+            transition: all 0.3s ease;
+            /* Smooth transition */
         }
 
         #nav-container {
@@ -292,45 +435,6 @@
                 margin-top: 100px;
                 /* Thinner navbar on desktop needs less top margin */
             }
-        }
-
-        /* ==========================================
-   5. BIGGER SCREEN LAYOUTS (Desktop >= 1200px)
-   ========================================== */
-        @media (min-width: 1200px) {
-            nav {
-                gap: 24px;
-            }
-
-            nav select {
-                max-width: 700px;
-                /* Expands search block significantly on modern ultra-wide formats */
-            }
-
-            .product-grid {
-                grid-template-columns: repeat(4, 1fr);
-                /* Snaps to 4 structured columns */
-                gap: 20px;
-            }
-        }
-
-        dialog {
-            border: 1px solid grey;
-            border-radius: 5px;
-            margin-left: 45%;
-            margin-top: 40px;
-            padding: 8px;
-            background-color: #1f2937;
-            color: white;
-        }
-
-        dialog::backdrop {
-            background-color: rgba(0, 0, 0, 0.3);
-            /* Dim the background slightly */
-            backdrop-filter: blur(5px);
-            /* This blurs the background content */
-            transition: all 0.3s ease;
-            /* Smooth transition */
         }
     </style>
 </head>
