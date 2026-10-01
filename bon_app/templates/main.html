@@ -95,7 +95,7 @@
 
         .welcome-msg {
             font-size: 0.8rem;
-            color: var(--text-muted);
+            color: var(--text-primary);
             grid-column: 1;
             margin-top: -8px;
             font-weight: 400;
@@ -437,7 +437,7 @@
 
             <h1>Cheri Bon Bon</h1>
             {% if user %}
-            <h4 class="welcome-msg">Welcome, {{ user }}</h4>
+            <h4 class="welcome-msg">Welcome, <big>{{user}}</big></h4>
             {% endif %}
         </nav>
     </div>
