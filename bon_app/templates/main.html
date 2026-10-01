@@ -62,25 +62,6 @@
         /* ==========================================
    2. DYNAMIC MOBILE-FIRST NAV BAR (< 768px)
    ========================================== */
-        #nav-container {
-            width: 100%;
-            background-color: var(--bg-nav);
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--border);
-
-            /* Sticky behavior + hardware acceleration for smooth transform slides */
-            position: sticky;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-            will-change: transform;
-        }
-
-        /* Activated via JavaScript on scroll directions */
-        .nav-hidden {
-            transform: translateY(-100%);
-        }
 
         nav {
             display: grid;
@@ -104,7 +85,7 @@
         }
 
         nav h1::after {
-            content: ".in";
+            content: ".com";
             font-size: 0.75rem;
             font-weight: 600;
             color: var(--accent);
