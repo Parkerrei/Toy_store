@@ -184,6 +184,7 @@
             max-width: 1300px;
             margin: 24px auto;
             padding: 0 14px;
+           
         }
 
         /* Product Card Items container */
@@ -387,34 +388,32 @@
             width: 100%;
             background-color: var(--bg-nav);
             padding: 12px 8px;
-
-            /* --- Add these lines below to enable the smart scroll effect --- */
+            /* Sticky settings */
             position: fixed;
             top: 0;
             left: 0;
             z-index: 1000;
             transition: transform 0.3s ease-in-out;
-            /* Creates the smooth slide effect */
         }
 
-        /* This class will be applied automatically by JavaScript when scrolling down */
+        /* FIX 1: Change from -200% to -100% so it clears exactly its own height */
         .nav-hidden {
             transform: translateY(-100%);
         }
 
         /* 
-   Crucial: Because the navbar is now 'fixed', it floats on top of the page.
-   We must add a top margin to the product grid so it doesn't get hidden underneath!
+   FIX 2: Remove the large 'margin-top: 80px' or '100px' on the grid!
+   Because position: sticky keeps the element in the normal page flow at the top,
+   large margins push the grid way down, leaving a massive empty gap.
 */
         .product-grid {
-            margin-top: 140px;
-            /* Adjust this value if your navbar height changes on desktop */
+            margin-top: 16px;
+            /* Just a clean, small gap now */
         }
 
         @media (min-width: 768px) {
             .product-grid {
-                margin-top: 100px;
-                /* Thinner navbar on desktop needs less top margin */
+                margin-top: 24px;
             }
         }
     </style>
@@ -469,16 +468,15 @@
         window.addEventListener("scroll", () => {
             const currentScrollY = window.scrollY;
 
-            // 1. User is scrolling DOWNWARDS -> Hide Navbar
-            if (currentScrollY > lastScrollY && currentScrollY > 80) {
+            // 1. User scrolls DOWN -> Hide Navbar
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
                 navbar.classList.add("nav-hidden");
             }
-            // 2. User is scrolling UPWARDS -> Reveal Navbar
-            else {
+            // 2. User scrolls UP -> Reveal Navbar
+            else if (currentScrollY < lastScrollY) {
                 navbar.classList.remove("nav-hidden");
             }
 
-            // Keep track of the current scroll point for the next movement calculation
             lastScrollY = currentScrollY;
         });
     });
