@@ -87,9 +87,17 @@ client.timeout = 200
 logger = logging.getLogger(__name__)
 
 def initiate_razorpay_checkout(request, productId):
+    # 1: Ensure user is authenticated before proceeding
+    if not request.user.is_authenticated:
+        next_target = f"/initiate_razorpay_checkout/{productId}/"
+        login_url = f"/logged/?next={next_target}"
+        # 2: Return a json response with 401 Unauthorized and the login url for the frontend to redirect the user
+        return JsonResponse({'authenticated':'false',
+                             'next_url':login_url},status = 401)
+    # 3: Ensure the request method is Post for checkout initiation
     if request.method != 'POST':
         return JsonResponse({'Error': 'Method not allowed'}, status=405)
-
+    
     # Phase 1: Verify and Secure Stock safely
     try:
         with transaction.atomic():
