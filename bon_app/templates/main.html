@@ -184,7 +184,7 @@
             max-width: 1300px;
             margin: 24px auto;
             padding: 0 14px;
-           
+
         }
 
         /* Product Card Items container */
@@ -345,6 +345,7 @@
                 /* Larger fluid cells */
                 gap: 20px;
                 padding: 0 24px;
+
             }
         }
 
@@ -361,6 +362,7 @@
                 grid-template-columns: repeat(4, 1fr);
                 /* Locks cleanly into an aesthetic 4-column alignment */
                 gap: 24px;
+
             }
         }
 
@@ -413,7 +415,7 @@
 
         @media (min-width: 768px) {
             .product-grid {
-                margin-top: 24px;
+                margin-top: 110px;
             }
         }
     </style>
@@ -516,6 +518,15 @@
                     },
                 })
                     .then((response) => {
+                        if (response.status === 401) {
+                            return response.json().then(data => {
+                                if (data.authenticated === 'false' && data.next_url) {
+                                    window.location.href = data.next_url;
+                                } else {
+                                    throw new Error('User not authenticated and no redirect URL provided.')
+                                }
+                            })
+                        }
                         if (!response.ok) {
                             throw new Error(`Server status ${response.status}: Failed to process purchase.!!`);
                         }
