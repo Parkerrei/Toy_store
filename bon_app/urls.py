@@ -14,6 +14,6 @@ urlpatterns = [
                 path('show_user_cart_items/',show_user_cart_items,name='show_user_cart_items'),
                 path('wipe_user_cart/',wipe_user_cart,name='wipe_user_cart'),
                 path('user_cart_order_payment/',user_cart_order_payment,name='user_cart_order_payment'),
-                path('increment_item/<int:id>/',increment_item,name='increment_item'),
-                path('decrement_item/<int:id>/',decrement_item,name='decrement_item')
+                path('increment_item/<int:productId>/',increment_item,name='increment_item'),
+                path('decrement_item/<int:productId>/',decrement_item,name='decrement_item')
 ]
