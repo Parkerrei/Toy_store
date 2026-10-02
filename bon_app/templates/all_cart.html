@@ -455,6 +455,8 @@
                 //  FIX: Moved inside the click event so 'id' is defined and specific to this button!
                 var container_remove = document.getElementById(`id-${id}`);
                 var quantity = document.getElementById(`qty-${id}`)
+                const number_of_quantity = parseInt(quantity.textContent, 10);
+                quantity.textContent = number_of_quantity > 0 ? number_of_quantity - 1 : 0;
 
                 fetch(`/decrement_item/${productId}/`, {
                     method: 'POST',
