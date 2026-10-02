@@ -446,23 +446,31 @@
     document.addEventListener('DOMContentLoaded', () => {
         const price_tag = document.getElementById('price');
         const decrementButtons = document.querySelectorAll('.decrement-btn');
-        const token = document.getElementById('token').value; // 🔑 Kept here because it's static
+        const token = document.getElementById('token').value;
 
         decrementButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
+
+                // 1. Get the correct product ID from the dataset
                 const productId = btn.dataset.id;
-                //  FIX: Moved inside the click event so 'id' is defined and specific to this button!
+
+                // 2. FIX: Use 'productId' here instead of the non-existent 'id'
                 var container_remove = document.getElementById(`id-${productId}`);
-                var quantity = document.getElementById(`qty-${productId}`)
-                const number_of_quantity = parseInt(quantity.textContent, 10);
-                quantity.textContent = number_of_quantity > 0 ? number_of_quantity - 1 : 0;
+                var quantity = document.getElementById(`qty-${productId}`);
+
+                // Safety check: Make sure the quantity element actually exists on the page
+                if (quantity) {
+                    const number_of_quantity = parseInt(quantity.textContent, 10);
+                    // 3. This will now run perfectly and change your number instantly!
+                    quantity.textContent = number_of_quantity > 0 ? number_of_quantity - 1 : 0;
+                }
 
                 fetch(`/decrement_item/${productId}/`, {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': token,
-                        'Content-Type':'application/json'
+                        'Content-Type': 'application/json'
                     },
                     keepalive: true
                 })
@@ -474,30 +482,31 @@
                     })
                     .then(data => {
                         if (data.success) {
-                            price_tag.innerText = `Grand Total: ₹ ${data.price}`;
+                            if (price_tag) price_tag.innerText = `Grand Total: ₹ ${data.price}`;
                             showToast(data.message || 'Removed from cart');
 
                             if (data.qty > 0) {
                                 if (quantity) {
-                                    quantity.textContent = data.qty
+                                    quantity.textContent = data.qty;
                                 }
                             }
                             else {
                                 if (container_remove) {
-                                    container_remove.remove(); // Removes the quantity text
+                                    container_remove.remove();
                                 }
                             }
                         }
                         else {
-                            showToast(data.error)
+                            showToast(data.error);
                         }
                     })
                     .catch(error => {
-                        showToast(error.message)
+                        showToast(error.message);
                     });
             });
         });
     });
+
     // initiate cart checkout
     document.addEventListener('DOMContentLoaded', () => {
         const key = document.getElementById('token').value
