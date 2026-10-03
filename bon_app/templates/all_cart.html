@@ -339,7 +339,7 @@
                     </div>
 
                     <div class="qty-controller">
-                        <button class="qty-btn decrement-btn" data-id="{{ detail.id }}" id="minus">−</button>
+                        <button class="qty-btn decrement-btn" data-id="{{ detail.id }}" id="minus"><big>-</big> </button>
                         <p id="qty-{{ detail.id }}" class="quantity-text">{{ detail.quantity }}</p>
                         <button class="qty-btn increment-btn" data-id="{{ detail.id }}" id="plus">+</button>
                     </div>
@@ -394,6 +394,7 @@
             toast.classList.add('toast-hidden');
         }, 3000);
     }
+    
     // increment handling
     document.addEventListener('DOMContentLoaded', () => {
         const token = document.getElementById('token').value
