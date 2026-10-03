@@ -282,26 +282,6 @@
             color: var(--primary);
             border-color: var(--primary);
         }
-
-        /* Modern Toast Pop-up Layout */
-        #toast-notification {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--dark);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            transform: translateY(150%);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1000;
-            font-weight: 500;
-        }
-
-        #toast-notification.toast-visible {
-            transform: translateY(0);
-        }
     </style>
 </head>
 
@@ -339,7 +319,8 @@
                     </div>
 
                     <div class="qty-controller">
-                        <button class="qty-btn decrement-btn" data-id="{{ detail.id }}" id="minus"><big>-</big> </button>
+                        <button class="qty-btn decrement-btn" data-id="{{ detail.id }}" id="minus"><big>-</big>
+                        </button>
                         <p id="qty-{{ detail.id }}" class="quantity-text">{{ detail.quantity }}</p>
                         <button class="qty-btn increment-btn" data-id="{{ detail.id }}" id="plus">+</button>
                     </div>
@@ -372,29 +353,12 @@
 
     <input type="hidden" name="csrfmiddlewaretoken" id="token" value="{{csrf_token}}">
     <div id="toast-notification" class="toast-hidden"></div>
-
+    <dialog></dialog>
 </body>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
-    // Add this helper function at the top of your DOMContentLoaded event
-
-    function showToast(message) {
-        const toast = document.getElementById('toast-notification');
-        if (!toast) return;
-
-        toast.innerText = message;
-        toast.classList.remove('toast-hidden');
-        toast.classList.add('toast-visible');
-
-        // Automatically hide it after 3 seconds without freezing the page
-        setTimeout(() => {
-            toast.classList.remove('toast-visible');
-            toast.classList.add('toast-hidden');
-        }, 3000);
-    }
-    
     // increment handling
     document.addEventListener('DOMContentLoaded', () => {
         const token = document.getElementById('token').value
@@ -405,7 +369,7 @@
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const productId = btn.dataset.id
-                var quantity = document.getElementById(`qty-${id}`)
+                var quantity = document.getElementById(`qty-${productId}`)
 
                 fetch(`/increment_item/${productId}/`, {
                     'method': 'POST',
@@ -426,18 +390,26 @@
                     .then(data => {
                         if (data.success) {
                             total.innerText = data.price
-                            showToast(data.message)
+
 
                             if (quantity) {
                                 quantity.textContent = data.qty
                             }
                         }
                         else {
-                            showToast(data.error)
+                            show_message.textContent = data.error
+                            show_message.showModal()
+                            setTimeout(() => {
+                                show_message.close()
+                            }, 3000)
                         }
                     })
                     .catch(error => {
-                        showToast(error)
+                        show_message.textContent = error
+                        show_message.showModal()
+                        setTimeout(() => {
+                            show_message.close()
+                        }, 3000)
                     });
             })
         })
@@ -448,7 +420,7 @@
         const price_tag = document.getElementById('price');
         const decrementButtons = document.querySelectorAll('.decrement-btn');
         const token = document.getElementById('token').value;
-
+        const show_dialog = document.querySelector('dialog');
         decrementButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -462,9 +434,20 @@
 
                 // Safety check: Make sure the quantity element actually exists on the page
                 if (quantity) {
-                    const number_of_quantity = parseInt(quantity.textContent, 10);
+                    let number_of_quantity = parseInt(quantity.textContent, 10);
                     // 3. This will now run perfectly and change your number instantly!
-                    quantity.textContent = number_of_quantity > 0 ? number_of_quantity - 1 : 0;
+                    // check if quantity is greater than 2 or equal to 2, then decrement it by 1
+
+                    if (number_of_quantity >= 2) {
+                        number_of_quantity -= 1;
+                        quantity.textContent = number_of_quantity;
+                        console.log(`Decremented quantity for product ${productId}: ${number_of_quantity}`);
+
+                        // 4. if quantity is not equal to 2 or greater than 2,then set the quantity to 0;
+                    } else {
+                        number_of_quantity = 0;
+                        number_of_quantity.textContent = number_of_quantity;
+                    }
                 }
 
                 fetch(`/decrement_item/${productId}/`, {
@@ -484,7 +467,6 @@
                     .then(data => {
                         if (data.success) {
                             if (price_tag) price_tag.innerText = `Grand Total: ₹ ${data.price}`;
-                            showToast(data.message || 'Removed from cart');
 
                             if (data.qty > 0) {
                                 if (quantity) {
@@ -498,11 +480,19 @@
                             }
                         }
                         else {
-                            showToast(data.error);
+                            show_dialog.textContent = data.error;
+                            show_dialog.showModal();
+                            setTimeout(() => {
+                                show_dialog.close();
+                            }, 3000)
                         }
                     })
                     .catch(error => {
-                        showToast(error.message);
+                        show_dialog.textContent = error;
+                        show_dialog.showModal();
+                        setTimeout(() => {
+                            show_dialog.close();
+                        }, 3000)
                     });
             });
         });
