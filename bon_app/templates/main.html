@@ -508,8 +508,12 @@
                 let originalhtml = buyButton.innerText
                 buyButton.innerText = 'Processing...'
                 buyButton.disabled = true
-                console.log("Processing Razorpay order for Product:", productId);
 
+
+                console.log("Processing Razorpay order for Product:", productId);
+                if (isloggedin === "false") {
+
+                }
                 fetch(`/initiate_razorpay_checkout/${productId}/`, {
                     method: 'POST',
                     headers: {
@@ -522,15 +526,15 @@
                             return response.json().then(data => {
                                 if (data.authenticated === 'false' && data.next_url) {
                                     window.location.href = data.next_url;
-                                } else {
-                                    throw new Error('User not authenticated and no redirect URL provided.')
                                 }
                             })
                         }
-                        if (!response.ok) {
+                        else if (!response.ok) {
                             throw new Error(`Server status ${response.status}: Failed to process purchase.!!`);
                         }
-                        return response.json();
+                        else {
+                            return response.json();
+                        }
                     })
                     .then((order_data) => {
                         if (!order_data) {
