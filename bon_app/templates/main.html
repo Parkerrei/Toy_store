@@ -511,9 +511,7 @@
 
 
                 console.log("Processing Razorpay order for Product:", productId);
-                if (isloggedin === "false") {
-
-                }
+              
                 fetch(`/initiate_razorpay_checkout/${productId}/`, {
                     method: 'POST',
                     headers: {
