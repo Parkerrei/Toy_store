@@ -89,7 +89,7 @@ logger = logging.getLogger(__name__)
 def initiate_razorpay_checkout(request, productId):
     # 1: Ensure user is authenticated before proceeding
     if not request.user.is_authenticated:
-        next_target = f"/initiate_razorpay_checkout/{productId}/"
+        next_target = f"/main_page/"
         login_url = f"/logged/?next={next_target}"
         # 2: Return a json response with 401 Unauthorized and the login url for the frontend to redirect the user
         return JsonResponse({'authenticated':'false',
