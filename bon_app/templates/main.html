@@ -509,8 +509,6 @@
                 buyButton.innerText = 'Processing...'
                 buyButton.disabled = true
 
-
-                console.log("Processing Razorpay order for Product:", productId);
               
                 fetch(`/initiate_razorpay_checkout/${productId}/`, {
                     method: 'POST',
