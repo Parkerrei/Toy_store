@@ -195,7 +195,7 @@ def user_log_out(request):
     # print('before logout:',list(request.session.items()))
     logout(request)
     # print('after logout:',list(request.session.items()))
-    return redirect('logged')
+    return redirect('main_page')
 
 @login_required
 @transaction.atomic  # Ensures database integrity
