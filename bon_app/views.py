@@ -394,3 +394,5 @@ def decrement_item(request, productId):
     except Exception as e:
         # Temporary tip: return str(e) during testing to see exact errors on screen
         return JsonResponse({'error': f'Internal server error: {str(e)}'}, status=500)
+
+
