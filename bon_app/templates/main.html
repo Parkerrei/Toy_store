@@ -463,6 +463,7 @@
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+   
     document.addEventListener("DOMContentLoaded", () => {
         const navbar = document.getElementById("nav-container");
         let lastScrollY = window.scrollY;
@@ -509,7 +510,7 @@
                 buyButton.innerText = 'Processing...'
                 buyButton.disabled = true
 
-              
+
                 fetch(`/initiate_razorpay_checkout/${productId}/`, {
                     method: 'POST',
                     headers: {
