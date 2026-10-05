@@ -398,4 +398,3 @@ def decrement_item(request, productId):
         return JsonResponse({'error': f'Internal server error: {str(e)}'}, status=500)
 
 
-
