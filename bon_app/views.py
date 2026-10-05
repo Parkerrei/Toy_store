@@ -86,6 +86,7 @@ client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORP
 client.timeout = 200
 logger = logging.getLogger(__name__)
 
+
 def initiate_razorpay_checkout(request, productId):
     # 1: Ensure user is authenticated before proceeding
     if not request.user.is_authenticated:
@@ -229,7 +230,8 @@ def add_to_cart(request, productId):
     toy.save(update_fields=['stock'])
 
     return JsonResponse({'success': 'Item added successfully'},status=200)
-                                                                    
+
+@login_required(login_url='/logged/')                                                                   
 def show_user_cart_items(request):
     user_items  = CartItem.objects.filter(user_cart=request.user)
     total_price = sum(item.get_subtotal() for item in user_items)
