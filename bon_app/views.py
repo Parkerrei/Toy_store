@@ -398,3 +398,15 @@ def decrement_item(request, productId):
         return JsonResponse({'error': f'Internal server error: {str(e)}'}, status=500)
 
 
+def add_to_cart(request, productId):
+    if not request.session.session_key:
+        request.session.create() 
+
+    cart = request.session.get('cart',[])
+
+    if productId not in cart:
+        cart.append(productId)
+
+    request.session['cart'] = cart 
+    request.session.modified = True 
+    return JsonResponse({'status':'added','count':len(cart)},status  = 200)
