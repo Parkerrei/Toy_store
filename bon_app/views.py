@@ -60,7 +60,7 @@ def main_page(request):
         try:
             page_number = max(int(request.GET.get('page', 1)), 1)
         except (TypeError, ValueError):
-            return JsonResponse({'error': 'Invalid page number.'}, status=400)
+           return JsonResponse({'error': 'Invalid page number.'}, status=400)
 
         offset = (page_number - 1) * PRODUCTS_PER_PAGE
         products = list(Product.objects.filter(stock__gt=0).order_by('-id').only('image', 'name', 'price')[offset:offset + PRODUCTS_PER_PAGE + 1])
@@ -98,7 +98,7 @@ def initiate_razorpay_checkout(request, productId):
     if request.method != 'POST':
         return JsonResponse({'Error': 'Method not allowed'}, status=405)
     
-    # Phase 1: Verify and Secure Stock safely
+    # Phase 1: -Verify and Secure Stock safely
     try:
         with transaction.atomic():
             try:
