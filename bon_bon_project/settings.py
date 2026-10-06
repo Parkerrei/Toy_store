@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 # from logging import config
 from pathlib import Path
 import os 
-from decouple import config 
 import dj_database_url
 from decouple import Config, RepositoryEnv
 
@@ -23,16 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 2. Force decouple to read the exact .env path
 ENV_PATH = os.path.join(BASE_DIR, '.env')
-config = Config(RepositoryEnv(ENV_PATH))
+env_config = Config(RepositoryEnv(ENV_PATH))
 
-RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID' )
-RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')
+RAZORPAY_KEY_ID = env_config('RAZORPAY_KEY_ID' )
+RAZORPAY_KEY_SECRET = env_config('RAZORPAY_KEY_SECRET')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY') 
+SECRET_KEY = Config('SECRET_KEY') 
 # SECURITY WARNING: don't run with debug turned on in production!
 
 DEBUG = False
@@ -92,7 +91,7 @@ if os.environ.get('PYTHONANYWHERE_DOMAIN'):
 else:
     DATABASES = {
     'default': dj_database_url.config(
-       default=config('DATABASE_URL'),
+       default=Config('DATABASE_URL'),
          # Reuse the hosted Postgres connection between scroll requests.
          conn_max_age=600,
          ssl_require=True # Forces SSL connection securely
