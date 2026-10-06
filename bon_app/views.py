@@ -1,5 +1,4 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from django.contrib.auth.models import User
 from .forms import UserForm,logged_in
 from django.contrib.auth import authenticate,login,logout
 import razorpay
@@ -8,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
 from .models import Category,Product,CartItem
-from django.db import transaction,models
+from django.db import transaction
 from django.db.models import F,Sum
 import json
 import logging
@@ -60,7 +59,7 @@ def main_page(request):
         try:
             page_number = max(int(request.GET.get('page', 1)), 1)
         except (TypeError, ValueError):
-           return JsonResponse({'error': 'Invalid page number.'}, status=400)
+            return JsonResponse({'error': 'Invalid page number.'}, status=400)
 
         offset = (page_number - 1) * PRODUCTS_PER_PAGE
         products = list(Product.objects.filter(stock__gt=0).order_by('-id').only('image', 'name', 'price')[offset:offset + PRODUCTS_PER_PAGE + 1])
@@ -396,17 +395,3 @@ def decrement_item(request, productId):
     except Exception as e:
         # Temporary tip: return str(e) during testing to see exact errors on screen
         return JsonResponse({'error': f'Internal server error: {str(e)}'}, status=500)
-
-
-def add_to_cart(request, productId):
-    if not request.session.session_key:
-        request.session.create() 
-
-    cart = request.session.get('cart',[])
-
-    if productId not in cart:
-        cart.append(productId)
-
-    request.session['cart'] = cart 
-    request.session.modified = True 
-    return JsonResponse({'status':'added','count':len(cart)},status  = 200)
