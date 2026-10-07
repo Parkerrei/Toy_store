@@ -197,7 +197,6 @@ def user_log_out(request):
     # print('after logout:',list(request.session.items()))
     return redirect('main_page')
 
- 
 @transaction.atomic  # Ensures database integrity
 def add_to_cart(request, productId):
     if request.method != 'POST':
