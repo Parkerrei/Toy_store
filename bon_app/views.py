@@ -197,37 +197,57 @@ def user_log_out(request):
     # print('after logout:',list(request.session.items()))
     return redirect('main_page')
 
-@transaction.atomic  # Ensures database integrity
+  # Ensures database integrity
 def add_to_cart(request, productId):
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
+    
+    product_id = str(productId)
+    try:
+        toy = Product.objects.get(id=productId)
+    except Product.DoesNotExist:
+        return JsonResponse({'error':'Item not found'},status=404)
+    
+    # handle anonymous users by storing cart in session
+    if not request.user.is_authenticated:
+        # 1. check the stock of the product
+        if toy.stock <= 0:
+            return JsonResponse({'error':'out of stock'},status=400)
+        cart = request.session.get('anonymous_cart',{})
+        cart[product_id] = cart.get(product_id,0) + 1
+        request.session['anonymous_cart'] = cart
+        request.session.modified = True
+        return JsonResponse({'success':'Item added to anonymous cart'},status = 200)
 
     # 1. Safely find the product
-    try:
-        toy = Product.objects.select_for_update().get(id=productId)
-    except Product.DoesNotExist:
-        return JsonResponse({'error': 'Item not found'}, status=404)
+    with transaction.atomic():
+        try:
+            try:
+                toy = Product.objects.select_for_update().get(id=productId)
+            except Product.DoesNotExist:
+                return JsonResponse({'error': 'Item not found'}, status=404)
 
-    # 2. Check if product is in stock
-    if toy.stock <= 0:
-        return JsonResponse({'error': 'out of stock'}, status=400)
+            # 2. Check if product is in stock
+            if toy.stock <= 0:
+                return JsonResponse({'error': 'out of stock'}, status=400)
 
-    # 3. Get or create the cart item
-    cart_item, created = CartItem.objects.get_or_create(
-        user_cart=request.user,
-        product=toy,
-        defaults={'quantity':1 }
-    )
-    if not created:
-        cart_item.quantity = F('quantity') + 1
-        cart_item.save(update_fields=['quantity'])
-        cart_item.refresh_from_db()
-    
-    # 5. Deduct exactly ONE from stock 
-    toy.stock = F('stock') - 1
-    toy.save(update_fields=['stock'])
-
-    return JsonResponse({'success': 'Item added successfully'},status=200)
+            # 3. Get or create the cart item
+            cart_item, created = CartItem.objects.get_or_create(
+                user_cart=request.user,
+                product=toy,
+                defaults={'quantity':1 }
+            )
+            if not created:
+                cart_item.quantity = F('quantity') + 1
+                cart_item.save(update_fields=['quantity'])
+                cart_item.refresh_from_db()
+            
+            # 5. Deduct exactly ONE from stock 
+            toy.stock = F('stock') - 1
+            toy.save(update_fields=['stock'])
+        except Exception as e:
+            return JsonResponse({'error':f'an error occurred:{str(e)}'},status = 500)
+        return JsonResponse({'success': 'Item added successfully'},status=200)
 
 @login_required(login_url='/logged/')                                                                   
 def show_user_cart_items(request):
