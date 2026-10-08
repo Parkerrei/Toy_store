@@ -220,11 +220,11 @@ def add_to_cart(request, productId):
         request.session['anonymous_cart'] = cart
         request.session.modified = True
         logger.info(f"Anonymous user added product {product_id} to session cart.Current cart: {cart}")
-        return JsonResponse({'success':'Item added to anonymous cart'},status = 200)
+        return JsonResponse({'success':'Item added'},status = 200)
 
     # 1. Safely find the product
-    with transaction.atomic():
-        try:
+    try:
+        with transaction.atomic():
             try:
                 toy = Product.objects.select_for_update().get(id=productId)
             except Product.DoesNotExist:
@@ -248,9 +248,10 @@ def add_to_cart(request, productId):
             # 5. Deduct exactly ONE from stock 
             toy.stock = F('stock') - 1
             toy.save(update_fields=['stock'])
-        except Exception as e:
-            return JsonResponse({'error':f'an error occurred:{str(e)}'},status = 500)
-        return JsonResponse({'success': 'Item added successfully'},status=200)
+    except Exception as e:
+        logger.error(f"Error adding product {productId} to cart for user {request.user.id} : {str(e)}")
+        return JsonResponse({'error':f'an error occurred:{str(e)}'},status = 500)
+    return JsonResponse({'success': 'Item added successfully'},status=200)
 
 @login_required(login_url='/logged/')                                                                   
 def show_user_cart_items(request):
