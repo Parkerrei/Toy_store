@@ -26,30 +26,81 @@ def signup_user(request):
     form = UserForm()
     return render(request,'user_creation.html',{'form':form})
 
+logger = logging.getLogger(__name__)
+
+
+def merge_cart(user, session_cart):
+    """Helper function to transfer session cart items to the database cart."""
+    if not session_cart:
+        return
+
+    try:
+        with transaction.atomic():
+            for product_id, session_qty in session_cart.items():
+                if session_qty <= 0:
+                    continue
+
+                try:
+                    product = Product.objects.get(id=product_id)
+                except Product.DoesNotExist:
+                    continue
+
+                # Fetch or create the item in the user's cart
+                # Replace user_cart=user with user=user depending on your CartItem definition
+                cart_item, created = CartItem.objects.get_or_create(
+                    user_cart=user,
+                    product=product,
+                    defaults={'quantity': session_qty}
+                )
+
+                if not created:
+                    # If product already exists in DB cart, sum the quantities
+                    cart_item.quantity = F('quantity') + session_qty
+                    cart_item.save(update_fields=['quantity'])
+
+    except Exception as e:
+        logger.error(f"Error merging cart for user {user.id}: {str(e)}", exc_info=True)
+
+
 def user_log_in(request):
-    # Support `next` parameter so users are redirected to the originally
-    # requested page after successful login.
     next_url = request.GET.get('next') or request.POST.get('next')
+
     if request.method == 'POST': 
         form = logged_in(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user_access = authenticate(request, username=username, password=password)
+
             if user_access is not None:
+                # 1. Grab the anonymous cart from the session before session flush/rotation
+                anonymous_cart = request.session.get('anonymous_cart', {})
+
+                # 2. Log in the user
                 login(request, user_access)
+
+                # 3. Merge the session items into the database
+                merge_cart(user_access, anonymous_cart)
+
+                # 4. Clean up the session cart key
+                if 'anonymous_cart' in request.session:
+                    del request.session['anonymous_cart']
+                    request.session.modified = True
+
+                # 5. Redirect user
                 if next_url and url_has_allowed_host_and_scheme(
                     url=next_url,
                     allowed_hosts={request.get_host()},
-                    require_https=request.is_secure()):
+                    require_https=request.is_secure()
+                ):
                     return redirect(next_url)
                 return redirect('main_page')
             else:
                 form.add_error(None, 'Invalid username or Password')
     else:
         form = logged_in()
-    return render(request, 'login.html', {'form': form, 'next': next_url})
 
+    return render(request, 'login.html', {'form': form, 'next': next_url})
 
 def main_page(request):       
     PRODUCTS_PER_PAGE = 10
