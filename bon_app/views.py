@@ -213,6 +213,8 @@ def add_to_cart(request, productId):
         # 1. check the stock of the product
         if toy.stock <= 0:
             return JsonResponse({'error':'out of stock'},status=400)
+
+        # save item in session cart for anonymous users
         cart = request.session.get('anonymous_cart',{})
         cart[product_id] = cart.get(product_id,0) + 1
         request.session['anonymous_cart'] = cart
