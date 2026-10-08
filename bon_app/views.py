@@ -219,6 +219,7 @@ def add_to_cart(request, productId):
         cart[product_id] = cart.get(product_id,0) + 1
         request.session['anonymous_cart'] = cart
         request.session.modified = True
+        logger.info(f"Anonymous user added product {product_id} to session cart.Current cart: {cart}")
         return JsonResponse({'success':'Item added to anonymous cart'},status = 200)
 
     # 1. Safely find the product
