@@ -463,7 +463,7 @@
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-   
+
     document.addEventListener("DOMContentLoaded", () => {
         const navbar = document.getElementById("nav-container");
         let lastScrollY = window.scrollY;
@@ -590,6 +590,11 @@
                 })
                     .then(response => {
                         if (!response.ok) {
+                            if (response.status === 400) {
+                                return response.json().then(data => {
+                                    throw new Error(data.error || 'Bad Request');
+                                });
+                            }
                             throw new Error(`unable to fetch: ${response.status}`)
                         }
                         return response.json();
@@ -597,11 +602,20 @@
                     .then(data => {
                         cartButton.innerText = originalhtml
                         cartButton.disabled = false
-                        show_message.innerText = data.success
-                        show_message.showModal()
-                        setTimeout(() => {
-                            show_message.close()
-                        }, 1000)
+                        if (data.success) {
+                            show_message.innerText = data.success
+                            show_message.showModal()
+                            setTimeout(() => {
+                                show_message.close()
+                            }, 1000)
+                        }
+                        else if (data.error) {
+                            show_message.innerText = data.error
+                            show_message.showModal()
+                            setTimeout(() => {
+                                show_message.close()
+                            }, 3000)
+                        }
 
                     })
                     .catch(error => {
