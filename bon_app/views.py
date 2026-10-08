@@ -304,16 +304,32 @@ def add_to_cart(request, productId):
         return JsonResponse({'error':f'an error occurred:{str(e)}'},status = 500)
     return JsonResponse({'success': 'Item added successfully'},status=200)
 
-@login_required(login_url='/logged/')                                                                   
+                                                                
 def show_user_cart_items(request):
-    user_items  = CartItem.objects.filter(user_cart=request.user)
-    total_price = sum(item.get_subtotal() for item in user_items)
-    category = Category.objects.all()
-    context = {
-        'cart_items':user_items,
-        'total_price':total_price,
-        'categories':category
-    } 
+    if not request.user.is_authenticated:
+        cart = request.session.get('anonymous_cart',{})
+        user_items = []
+        for product_id,quantity in cart.items():
+            try:
+                product = Product.objects.get(id=product_id)
+                user_items.append({
+                    'product': product,
+                    'quantity': quantity,
+                    'subtotal': product.price * quantity
+                })
+            except Product.DoesNotExist:
+                continue
+
+
+    else:
+        user_items  = CartItem.objects.filter(user_cart=request.user)
+        total_price = sum(item.get_subtotal() for item in user_items)
+        category = Category.objects.all()
+        context = {
+            'cart_items':user_items,
+            'total_price':total_price,
+            'categories':category
+        } 
     return render(request,'all_cart.html',context)
 
 def wipe_user_cart(request): 
