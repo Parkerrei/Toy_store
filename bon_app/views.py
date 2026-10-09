@@ -272,7 +272,7 @@ def show_user_cart_items(request):
                 price = productid.price * prod_quan
                 total_price += price
             
-                user_items.append({'name':productid,
+                user_items.append({'cart_items':productid,
                                    'quantity':prod_quan,
                                    'total_price':total_price})
             except Product.DoesNotExist:
