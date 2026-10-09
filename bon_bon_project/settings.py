@@ -48,6 +48,31 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bon_app',
 ]
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'INFO',  # <-- Allows INFO logs to pass through to the terminal
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        # This catches logs from your specific Django apps
+        '': {  
+            'handlers': ['console'],
+            'level': 'INFO',  # <-- Sets the minimum logging level for your project
+            'propagate': True,
+        },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware', 
