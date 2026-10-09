@@ -258,7 +258,7 @@ def add_to_cart(request, productId):
         return JsonResponse({'error':f'an error occurred:{str(e)}'},status = 500)
     return JsonResponse({'success': 'Item added successfully'},status=200)
 
-                                                                
+                                        
 def show_user_cart_items(request):
     category = Category.objects.all()
     if not request.user.is_authenticated:
