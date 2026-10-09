@@ -2,7 +2,6 @@ import logging
 from django.db import connection, transaction
 from django.dispatch import receiver
 from django.contrib.auth.signals import user_logged_in
-from django.contrib import User
 from .models import Product,CartItem
 from django.db.models import F
 def force_renumber(sender, **_kwargs):
