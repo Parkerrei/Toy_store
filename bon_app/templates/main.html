@@ -579,7 +579,6 @@
                 const originalhtml = cartButton.innerText
                 cartButton.innerText = 'Processing...'
                 cartButton.disabled = true
-                console.log("Adding product to cart:", productId);
 
                 fetch(`/add_to_cart/${productId}/`, {
                     method: 'POST',
