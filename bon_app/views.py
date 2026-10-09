@@ -202,6 +202,7 @@ def user_log_out(request):
     return redirect('main_page')
 
   # Ensures database integrity
+
 def add_to_cart(request, productId):
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
