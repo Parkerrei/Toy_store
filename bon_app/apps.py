@@ -9,6 +9,7 @@ class BonAppConfig(AppConfig):
     def ready(self):
         # 1. Import the function inside ready() to avoid circular imports
         from .signals import force_renumber
+        
 
         # 2. Safely get all models now that the registry is ready
         app_models = self.get_models() 
@@ -20,3 +21,5 @@ class BonAppConfig(AppConfig):
                 sender=model,
                 weak=False
             )
+        
+        import bon_app.signals
