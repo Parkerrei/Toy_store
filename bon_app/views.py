@@ -260,14 +260,37 @@ def add_to_cart(request, productId):
 
                                                                 
 def show_user_cart_items(request):
-    user_items  = CartItem.objects.filter(user_cart=request.user)
-    total_price = sum(item.get_subtotal() for item in user_items)
     category = Category.objects.all()
-    context = {
-            'cart_items':user_items,
-            'total_price':total_price,
-            'categories':category
-        } 
+    if not request.user.is_authenticated:
+        user_cart = request.session.get('anonymous_cart',{})
+        user_items = []
+        total_price = 0
+        
+        for prodid , prod_quan in user_cart.items():
+            try:
+                productid = Product.objects.get(id=prodid)
+                price = productid.price * prod_quan
+                total_price += price
+            
+                user_items.append({'name':productid,
+                                   'quantity':prod_quan,
+                                   'total_price':total_price})
+            except Product.DoesNotExist:
+                continue
+                
+        context = {
+                    'cart_items':user_items,
+                    'total_price':total_price,
+                    'categories':category
+                }       
+    else:        
+        user_items  = CartItem.objects.filter(user_cart=request.user)
+        total_price = sum(item.get_subtotal() for item in user_items)
+        context = {
+                'cart_items':user_items,
+                'total_price':total_price,
+                'categories':category
+            } 
     return render(request,'all_cart.html',context)
 
 def wipe_user_cart(request): 
