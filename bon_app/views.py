@@ -28,40 +28,6 @@ def signup_user(request):
 
 logger = logging.getLogger(__name__)
 
-
-def merge_cart(user, session_cart):
-    """Helper function to transfer session cart items to the database cart."""
-    if not session_cart:
-        return
-
-    try:
-        with transaction.atomic():
-            for product_id, session_qty in session_cart.items():
-                if session_qty <= 0:
-                    continue
-
-                try:
-                    product = Product.objects.get(id=product_id)
-                except Product.DoesNotExist:
-                    continue
-
-                # Fetch or create the item in the user's cart
-                # Replace user_cart=user with user=user depending on your CartItem definition
-                cart_item, created = CartItem.objects.get_or_create(
-                    user_cart=user,
-                    product=product,
-                    defaults={'quantity': session_qty}
-                )
-
-                if not created:
-                    # If product already exists in DB cart, sum the quantities
-                    cart_item.quantity = F('quantity') + session_qty
-                    cart_item.save(update_fields=['quantity'])
-
-    except Exception as e:
-        logger.error(f"Error merging cart for user {user.id}: {str(e)}", exc_info=True)
-
-
 def user_log_in(request):
     next_url = request.GET.get('next') or request.POST.get('next')
 
@@ -73,20 +39,7 @@ def user_log_in(request):
             user_access = authenticate(request, username=username, password=password)
 
             if user_access is not None:
-                # 1. Grab the anonymous cart from the session before session flush/rotation
-                anonymous_cart = request.session.get('anonymous_cart', {})
-
-                # 2. Log in the user
-                login(request, user_access)
-
-                # 3. Merge the session items into the database
-                merge_cart(user_access, anonymous_cart)
-
-                # 4. Clean up the session cart key
-                if 'anonymous_cart' in request.session:
-                    del request.session['anonymous_cart']
-                    request.session.modified = True
-
+                login(request,user_access)
                 # 5. Redirect user
                 if next_url and url_has_allowed_host_and_scheme(
                     url=next_url,
@@ -306,26 +259,10 @@ def add_to_cart(request, productId):
 
                                                                 
 def show_user_cart_items(request):
-    if not request.user.is_authenticated:
-        cart = request.session.get('anonymous_cart',{})
-        user_items = []
-        for product_id,quantity in cart.items():
-            try:
-                product = Product.objects.get(id=product_id)
-                user_items.append({
-                    'product': product,
-                    'quantity': quantity,
-                    'subtotal': product.price * quantity
-                })
-            except Product.DoesNotExist:
-                continue
-
-
-    else:
-        user_items  = CartItem.objects.filter(user_cart=request.user)
-        total_price = sum(item.get_subtotal() for item in user_items)
-        category = Category.objects.all()
-        context = {
+    user_items  = CartItem.objects.filter(user_cart=request.user)
+    total_price = sum(item.get_subtotal() for item in user_items)
+    category = Category.objects.all()
+    context = {
             'cart_items':user_items,
             'total_price':total_price,
             'categories':category
