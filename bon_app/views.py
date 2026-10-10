@@ -326,6 +326,10 @@ def wipe_user_cart(request):
 def user_cart_order_payment(request):
     if not request.method == 'POST':
         return JsonResponse({'error':'method not allowed'},status=405)
+    if not request.user.is_authenticated:
+        next_url = '/initiate_razorpay_checkout/'
+        login_url = f'/logged/?next={next_url}'
+        return JsonResponse({'error':'please login to order','authenticated':'false','next_url':login_url},status=401)
         
     user_cart = CartItem.objects.filter(user_cart = request.user)
     if not user_cart.exists():
