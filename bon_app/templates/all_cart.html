@@ -518,31 +518,44 @@
     });
 
     // initiate cart checkout
+    // initiate cart checkout
     document.addEventListener('DOMContentLoaded', () => {
         const key = document.getElementById('token').value
         const id = document.getElementById('buy-btn')
+
         id.addEventListener('click', () => {
             let originalContent = id.innerText
             id.innerText = 'processing...'
             id.disabled = true
-            fetch(`/user_cart_order_payment/`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': key,
-                        'Content-Type': 'application/json'
-                    }
+
+            fetch(`/user_cart_order_payment/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': key,
+                    'Content-Type': 'application/json'
                 }
-            )
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error(`error : ${request.error}`)
-                    }
-                    return response.json()
-                }).then((data) => {
+            })
+                .then(response => {
+                    // 1. MUST return this inner promise so the chain stays connected
+                    return response.json().then((data) => {
+                        if (!response.ok) {
+                            // 2. Check the HTTP status code from response, and values from data
+                            // 3. Fixed the typo (data.nex_url -> data.next_url)
+                            if (response.status === 401 && data.next_url) {
+                                location.href = data.next_url
+                                throw new Error('Redirecting to login page')
+                            }
+                            throw new Error(data.error || 'Something went wrong')
+                        }
+                        // 4. Return 'data' directly instead of trying to parse response.json() again
+                        return data
+                    })
+                })
+                .then((data) => {
                     id.innerText = originalContent
                     id.disabled = false
-                    if (data) {
+
+                    if (data && data.order_id) {
                         const option = {
                             'key': data.key,
                             'amount': data.amount,
@@ -553,7 +566,6 @@
                             'handler': function (response) {
                                 paymentverification(response)
                             },
-
                             "theme": {
                                 "color": "#3399cc"
                             }
@@ -564,13 +576,18 @@
                     else {
                         alert(data.error || 'an unknown error occurred')
                     }
-                }).catch(error => {
+                })
+                .catch(error => {
                     id.innerText = originalContent
                     id.disabled = false
-                    showToast(error)
+                    // Ignore the toast message if the page is currently redirecting
+                    if (error.message !== 'Redirecting to login page') {
+                        showToast(error.message || error)
+                    }
                 })
-        })
+        }) // The event listener now correctly closes cleanly here at the very end
     })
+
 
     // helper function to send transaction data back to django for verification
     function paymentverification(razorpay_response) {
