@@ -26,7 +26,6 @@ def signup_user(request):
     form = UserForm()
     return render(request,'user_creation.html',{'form':form})
 
-logger = logging.getLogger(__name__)
 
 def user_log_in(request):
     next_url = request.GET.get('next') or request.POST.get('next')
