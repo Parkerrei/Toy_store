@@ -327,7 +327,7 @@ def user_cart_order_payment(request):
     if not request.method == 'POST':
         return JsonResponse({'error':'method not allowed'},status=405)
     if not request.user.is_authenticated:
-        next_url = '/initiate_razorpay_checkout/'
+        next_url = '/show_user_cart_items/'
         login_url = f'/logged/?next={next_url}'
         return JsonResponse({'error':'please login to order','authenticated':'false','next_url':login_url},status=401)
         
