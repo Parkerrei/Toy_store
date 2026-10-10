@@ -33,7 +33,6 @@ def merge_anony_cart_once_logged_in(sender, request,user, **kwargs):
     session_cart = request.session.get('anonymous_cart',{})
     if not session_cart:
         return
-
     try:
         with transaction.atomic():
             for product_id, session_qty in session_cart.items():
