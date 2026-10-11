@@ -300,7 +300,7 @@ def wipe_user_cart(request):
     try:
         with transaction.atomic():
             # 1. Grab all cart items for the logged-in user
-            cart_items = CartItem.objects.filter(user_cart=request.user)
+            cart_items = CartItem.objects.filter(user_cart=request.user).select_related('product')
             
             # 2. Check if the cart is already empty cleanly
             if not cart_items.exists():
@@ -308,12 +308,8 @@ def wipe_user_cart(request):
 
             # 3. Direct Re-stock loop (No nested loop or Product.objects.all() needed)
             for item in cart_items:
-                product = item.product
-                product.stock += item.quantity # Add cart quantity back to store stock
-                
-                # ✅ Crucial! Save the change to the database
-                product.save()
-            
+                Product.objects.filter(id=item.product_id).update(stock=F('stock') + item.quantity)
+
             # 4. Wipe the user's entire cart items out at once
             cart_items.delete()
             
