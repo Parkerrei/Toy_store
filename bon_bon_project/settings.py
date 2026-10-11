@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bon_app',
+    'debug-toolbar',
 ]
 LOGGING = {
     'version': 1,
@@ -82,6 +83,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'bon_bon_project.urls'
@@ -101,6 +103,10 @@ TEMPLATES = [
     },
 ]
 
+# django debug toolbar need internal local computer ips to work
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 WSGI_APPLICATION = 'bon_bon_project.wsgi.application'
 
