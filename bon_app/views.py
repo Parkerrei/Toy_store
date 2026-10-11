@@ -313,6 +313,7 @@ def wipe_user_cart(request):
                 
                 # ✅ Crucial! Save the change to the database
                 product.save()
+            
             # 4. Wipe the user's entire cart items out at once
             cart_items.delete()
             
