@@ -310,8 +310,9 @@ def wipe_user_cart(request):
             for item in cart_items:
                 product = item.product
                 product.stock += item.quantity # Add cart quantity back to store stock
-                product.save()                 # ✅ Crucial! Save the change to the database
                 
+                # ✅ Crucial! Save the change to the database
+                product.save()
             # 4. Wipe the user's entire cart items out at once
             cart_items.delete()
             
