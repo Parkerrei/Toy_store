@@ -5,4 +5,5 @@ razorpay==2.0.1
 pillow==12.3.0
 psycopg==3.3.4
 psycopg-binary==3.3.4
+django-debug-toolbar==8.0.0
  
