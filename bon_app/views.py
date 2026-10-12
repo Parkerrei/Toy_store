@@ -303,7 +303,7 @@ def wipe_user_cart(request):
             cart_items = list(CartItem.objects.filter(user_cart=request.user).select_related('product'))
             
             # 2. Check if the cart is already empty cleanly
-            if not cart_items.exists():
+            if not cart_items:
                 return JsonResponse({'error': 'Your cart is already empty'}, status=404)
 
             # 3. Direct Re-stock loop (No nested loop or Product.objects.all() needed)
@@ -311,7 +311,7 @@ def wipe_user_cart(request):
                 Product.objects.filter(id=item.product_id).update(stock=F('stock') + item.quantity)
 
             # 4. Wipe the user's entire cart items out at once
-            cart_items.delete()
+            CartItem.objects.filter(user_cart=request.user).delete()
             
             return JsonResponse({'success': True, 'message': 'Cart emptied and items re-stocked successfully.'}, status=200)
             
