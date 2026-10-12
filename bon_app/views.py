@@ -300,7 +300,7 @@ def wipe_user_cart(request):
     try:
         with transaction.atomic():
             # 1. Grab all cart items for the logged-in user
-            cart_items = CartItem.objects.filter(user_cart=request.user).select_related('product')
+            cart_items = list(CartItem.objects.filter(user_cart=request.user).select_related('product'))
             
             # 2. Check if the cart is already empty cleanly
             if not cart_items.exists():
