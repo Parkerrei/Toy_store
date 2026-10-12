@@ -265,9 +265,12 @@ def add_to_cart(request, productId):
         return JsonResponse({'error': 'An error occurred during transaction processing.'}, status=500)
 
 
-                                        
+from django.core.cache import cache                                        
 def show_user_cart_items(request):
-    category = Category.objects.all()
+    category = cache.get('all_categories')
+    if not category:
+        categories = list(Category.objects.all())
+        cache.set('all_categories',categories,60*60)
     if not request.user.is_authenticated:
         user_cart = request.session.get('anonymous_cart',{})
         if not user_cart:
