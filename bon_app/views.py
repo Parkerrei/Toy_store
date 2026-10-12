@@ -232,7 +232,7 @@ def add_to_cart(request, productId):
             try:
                 # 1. Keeps your select_related optimization but gets a single object!
                 # This fetches the Product and its related Stock row in 1 single locked query.
-                toy = Product.objects.select_for_update().select_related('stock').get(id=productId)
+                toy = Product.objects.select_for_update().get(id=productId)
             except Product.DoesNotExist:
                 return JsonResponse({'error': 'item not found'}, status=404)
 
