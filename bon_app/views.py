@@ -270,21 +270,24 @@ def show_user_cart_items(request):
     category = Category.objects.all()
     if not request.user.is_authenticated:
         user_cart = request.session.get('anonymous_cart',{})
+        if not user_cart:
+            return render(request,'all_cart.html')
+
+        product_ids = list(user_cart.keys())
+        products = Product.objects.filter(id__in=product_ids).in_bulk()
+
         user_items = []
         total_price = 0
         
-        for prodid , prod_quan in user_cart.items():
-            try:
-                productid = Product.objects.get(id=prodid)
-                price = productid.price * prod_quan
-                total_price += price
-            
-                user_items.append({'product':productid,
-                                   'id':prodid,
-                                   'quantity':prod_quan,
-                                   'total_price':total_price})
-            except Product.DoesNotExist:
-                continue
+        for prodid , prod_quan in user_cart.items():            
+            product = products.get(int(prodid))
+            if product:
+                subtotal = product.price * prod_quan
+                total_price += subtotal
+                user_items.append({'product':product,
+                        'id':prodid,
+                        'quantity':prod_quan,
+                        'total_price':subtotal})
                 
         context = {
                     'cart_items':user_items,
@@ -292,8 +295,8 @@ def show_user_cart_items(request):
                     'categories':category
                 }       
     else:        
-        user_items  = CartItem.objects.filter(user_cart=request.user)
-        total_price = sum(item.get_subtotal() for item in user_items)
+        user_items  = CartItem.objects.filter(user_cart=request.user).select_related('product','product__category')
+        total_price = sum(item.product.price * item.quantity for item in user_items)
         context = {
                 'cart_items':user_items,
                 'total_price':total_price,
