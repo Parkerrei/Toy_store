@@ -250,11 +250,9 @@ def add_to_cart(request, productId):
                 cart_item.quantity = F('quantity') + 1
                 cart_item.save(update_fields=['quantity'])
             
-            # 5. Deduct exactly ONE from the related stock table safely
-            # We target the Stock model directly since it holds the actual quantity
             # Use the exact field name in your Stock model
             Product.objects.filter(id=toy.id).update(stock=F('stock'))-1    
-            return JsonResponse({'success': 'Item added successfully'}, status=200)
+        return JsonResponse({'success': 'Item added successfully'}, status=200)
        
     except Exception as e:
         logger.error(f"Error adding product {productId} to cart for user {request.user.id} : {str(e)}")
