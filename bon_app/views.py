@@ -249,9 +249,9 @@ def add_to_cart(request, productId):
             if not created:
                 cart_item.quantity = F('quantity') + 1
                 cart_item.save(update_fields=['quantity'])
-            
+          
             # Use the exact field name in your Stock model
-            Product.objects.filter(id=toy.id).update(stock=F('stock'))-1    
+            Product.objects.filter(id=toy.id).update(stock=F('stock')-1)    
         return JsonResponse({'success': 'Item added successfully'}, status=200)
        
     except Exception as e:
