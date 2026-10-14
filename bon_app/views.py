@@ -205,15 +205,15 @@ def user_log_out(request):
 def add_to_cart(request, productId):
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
-    
-    product_id = str(productId)
-    try:
-        toy = Product.objects.get(id=productId)
-    except Product.DoesNotExist:
-        return JsonResponse({'error':'Item not found'},status=404)
-    
+     
     # handle anonymous users by storing cart in session
     if not request.user.is_authenticated:
+        product_id = str(productId)
+        try:
+            toy = Product.objects.get(id=productId)
+        except Product.DoesNotExist:
+            return JsonResponse({'error':'Item not found'},status=404)
+        
         # 1. check the stock of the product
         if toy.stock <= 0:
             return JsonResponse({'error':'out of stock'},status=400)
@@ -230,12 +230,9 @@ def add_to_cart(request, productId):
     try:
         with transaction.atomic():
             try:
-                # 1. Keeps your select_related optimization but gets a single object!
-                # This fetches the Product and its related Stock row in 1 single locked query.
                 toy = Product.objects.select_for_update().get(id=productId)
             except Product.DoesNotExist:
-                return JsonResponse({'error': 'item not found'}, status=404)
-
+                return JsonResponse({'error':'Item not found'},status=404)
             # 2. Check if product is in stock using the pre-fetched related object
             # (Assuming your Stock model has a field called 'quantity')
             if toy.stock <= 0:
@@ -255,10 +252,9 @@ def add_to_cart(request, productId):
             
             # 5. Deduct exactly ONE from the related stock table safely
             # We target the Stock model directly since it holds the actual quantity
-            toy.stock = F('quantity') - 1 # Use the exact field name in your Stock model
+            # Use the exact field name in your Stock model
             Product.objects.filter(id=toy.id).update(stock=F('stock'))-1    
-
-        return JsonResponse({'success': 'Item added successfully'}, status=200)
+            return JsonResponse({'success': 'Item added successfully'}, status=200)
        
     except Exception as e:
         logger.error(f"Error adding product {productId} to cart for user {request.user.id} : {str(e)}")
