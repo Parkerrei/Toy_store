@@ -24,4 +24,7 @@ FRONTEND:
 - started with basic js,css and html
 - Used Html5 , internal js and internal Css
 - used fetch for asynchronous request
-- learned to send xmlhttp request to backend in order to perform operation automatically rather than user has to do it e.g when user scrolls and reach end of the page ,product will automatically load just like amazon and other ecommerce site do 
+- learned to send xmlhttp request to backend in order to perform operation automatically rather than user has to do it e.g when user scrolls and reach end of the page ,product will automatically load just like amazon and other ecommerce site do
+- though almost all css and js except html was ai generated but to some extent i try to understood how code the Ai has given me works , i mean i dint paste it blindly.
+- fully responsive site
+- i was much interested as well as busy in buidling backend and desing system and logic but i didnt blindly copy pasted Ai code 
