@@ -109,6 +109,11 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+# TO DEBUG API LATENCY 
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK':lambda request:True,
+}
+
 WSGI_APPLICATION = 'bon_bon_project.wsgi.application'
 
 # Database
