@@ -2,23 +2,23 @@
 Site Link : peter.pythonanywhere.com
 
 Backend:
-1)Solved race condition
-2)Solved n+1 problem
-3)Optimize query by using select related
-4)added login system
-5)added user singup system
-6)Used atomicity for operation rollback if code breaks in half way
-7)cart system for anonymous user as well as login user
-8)Integrated fully functional razorypay system 
-9)handled crytographic key sent by Razorpay for authentication
-10)handled user logout system 
-11)handled next parameter in login system to redirect anonymous user once they login
-12)Used pagination for per page reload inspired from amazon style ui
-13)Used django form for data validation
-14)wrote custom command line to automatically upload images from a folder
-15)Used Django signal to merge anonymous cart once they login
-16)practised by building using DRY principle
-17)Used LocMemcache for repeated queried unchangeable data just for testing and learning caching in django , later transition to redis once in deployment mode
+Solved race condition
+Solved n+1 problem
+Optimize query by using select related
+added login system
+added user singup system
+Used atomicity for operation rollback if code breaks in half way
+cart system for anonymous user as well as login user
+Integrated fully functional razorypay system 
+handled crytographic key sent by Razorpay for authentication
+handled user logout system 
+handled next parameter in login system to redirect anonymous user once they login
+Used pagination for per page reload inspired from amazon style ui
+Used django form for data validation
+wrote custom command line to automatically upload images from a folder
+Used Django signal to merge anonymous cart once they login
+practised by building using DRY principle
+Used LocMemcache for repeated queried unchangeable data just for testing and learning caching in django , later transition to redis once in deployment mode
 
 FRONTEND:
 1)started with basic js,css and html
