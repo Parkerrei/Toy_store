@@ -1,7 +1,7 @@
 # Django-Project-Toy_Store
 Site Link : peter.pythonanywhere.com
 
-Backend:-
+BACKEND:-
 - Solved race condition.
 - Solved n+1 problem.
 - Optimize query by using select related.
@@ -20,7 +20,8 @@ Backend:-
 - practised by building using DRY principle.
 - Used LocMemcache for repeated queried unchangeable data just for testing and learning caching in django , later transition to redis once in deployment mode.
 - Used bulk_update function for update instead of hitting db each time for each row minimising time/latency .
-FRONTEND:
+
+FRONTEND:-
 - started with basic js,css and html.
 - Used Html5 , internal js and internal Css.
 - used fetch for asynchronous request.
