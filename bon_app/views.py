@@ -320,7 +320,7 @@ def wipe_user_cart(request):
                 product = item.product
                 product.stock += item.quantity
                 products_to_update.append(product)
-                Product.objects.bulk_update(products_to_update,['stock'])
+            Product.objects.bulk_update(products_to_update,['stock'])
 
             # 4. Wipe the user's entire cart items out at once
             CartItem.objects.filter(user_cart=request.user).delete()
