@@ -640,7 +640,7 @@
                     return response.json()
                 })
                 .then(data => {
-                    if (data.success === true) {
+                    if (data.success) {
                         var cart_container = document.getElementById('cart')
                         if (cart_container) {
                             cart_container.innerHTML = '';
