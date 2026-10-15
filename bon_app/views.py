@@ -304,7 +304,17 @@ def show_user_cart_items(request):
 def wipe_user_cart(request): 
     if request.method != 'DELETE':
         return JsonResponse({'error': 'method not allowed'}, status=405)
-        
+    
+    # Delete anonymous session cart data
+    if not request.user.is_authenticated:
+        user_session = request.session.get('anonymous_cart',{})
+        if user_session:
+            # use flush to delete session data both from browser cookies and django session table
+            request.session.flush()
+            logger.info(f"session deleted")
+            return JsonResponse({'success':'cart deleted'},status = 200)
+        else:
+            return JsonResponse({'error':'session not found'},status =404 )
     try:
         with transaction.atomic():
             # 1. Grab all cart items for the logged-in user
