@@ -314,7 +314,7 @@ def wipe_user_cart(request):
             logger.info(f"session deleted")
             return JsonResponse({'success':'cart deleted'},status = 200)
         else:
-            return JsonResponse({'error':'session not found'},status =404 )
+            return JsonResponse({'error':'session not found'},status = 404)
     try:
         with transaction.atomic():
             # 1. Grab all cart items for the logged-in user
