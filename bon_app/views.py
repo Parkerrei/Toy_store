@@ -209,7 +209,7 @@ def add_to_cart(request, productId):
     # handle anonymous users by storing cart in session
     if not request.user.is_authenticated:
         product_id = str(productId)
-        try:
+        try:     
             toy = Product.objects.get(id=productId)
         except Product.DoesNotExist:
             return JsonResponse({'error':'Item not found'},status=404)
