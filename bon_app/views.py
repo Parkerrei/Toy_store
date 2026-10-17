@@ -258,7 +258,6 @@ def add_to_cart(request, productId):
         logger.error(f"Error adding product {productId} to cart for user {request.user.id} : {str(e)}")
         return JsonResponse({'error': 'An error occurred during transaction processing.'}, status=500)
 
-
 from django.core.cache import cache                                        
 def show_user_cart_items(request):
     category = cache.get('all_categories')
