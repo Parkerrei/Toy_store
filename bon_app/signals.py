@@ -5,7 +5,6 @@ from django.contrib.auth.signals import user_logged_in
 from .models import Product,CartItem
 from django.db.models import F
 from django.db import transaction, connection
-
 def force_renumber_fast(sender,**kwargs):
     table = sender._meta.db_table
     seq = f"{table}_id_seq"
@@ -30,7 +29,7 @@ def force_renumber_fast(sender,**kwargs):
             next_val = cursor.fetchone()[0]
             cursor.execute(f'ALTER SEQUENCE "{seq}" RESTART WITH {next_val};')
 
-
+logger = logging.getLogger(__name__)
 @receiver(user_logged_in)
 def merge_anony_cart_once_logged_in(sender, request,user, **kwargs):
     """signal function to transfer session cart items to the database cart."""
@@ -66,4 +65,4 @@ def merge_anony_cart_once_logged_in(sender, request,user, **kwargs):
         request.session.modified = True  # important otherwise django will never know session was updated
 
     except Exception as e:
-        logger = logging.getLogger(__name__) 
+        logger.error(f"Failed to clear anonymous cart from session: {e}", exc_info=True)
