@@ -305,10 +305,9 @@
 </head>
 
 <body>
-
     <header>
         <nav>
-            <a href="{% url 'main_page' %}">Cherri Bon Bon</a>
+            <a href="{% url 'main_page' %}">Cherri bonbon</a>
             <select onchange="if (this.value) location.href = this.value;">
                 <option value="" disabled selected>Explore Categories</option>
                 {% for category in categories %}
