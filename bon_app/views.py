@@ -55,6 +55,8 @@ def user_log_in(request):
 
 def main_page(request):       
     PRODUCTS_PER_PAGE = 10
+    if not request.session.session_key:
+        request.session.create()
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         # Avoid Paginator.count() on every scroll request. The extra row tells
         # us whether another page exists without a separate COUNT(*) query.
