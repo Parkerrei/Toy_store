@@ -264,8 +264,8 @@ from django.core.cache import cache
 def show_user_cart_items(request):
     category = cache.get('all_categories')
     if not category:
-        categories = list(Category.objects.all())
-        cache.set('all_categories',categories,60*60)
+        category = list(Category.objects.all())
+        cache.set('all_categories',category,60*60)
     if not request.user.is_authenticated:
         user_cart = request.session.get('anonymous_cart',{})
         if not user_cart:
