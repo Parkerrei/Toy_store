@@ -291,7 +291,7 @@ def show_user_cart_items(request):
                 total_price += subtotal
                 user_items.append({
                     'product':product,
-                        'id':prodid,
+                        'id':int(prodid),
                         'quantity':prod_quan,
                         'total_price':subtotal})
                 
