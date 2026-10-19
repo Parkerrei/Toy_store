@@ -205,6 +205,9 @@ def user_log_out(request):
   # Ensures database integrity
 
 def add_to_cart(request, productId):
+    # Add this line at the start of your views:
+    print("CURRENT SESSION ID:", request.session.session_key)
+
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
      
@@ -262,6 +265,9 @@ def add_to_cart(request, productId):
 
 from django.core.cache import cache                                        
 def show_user_cart_items(request):
+    # Add this line at the start of your views:
+    print("CURRENT SESSION ID:", request.session.session_key)
+
     category = cache.get('all_categories')
     if not category:
         category = list(Category.objects.all())
