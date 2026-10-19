@@ -275,6 +275,7 @@ def show_user_cart_items(request):
     if not request.user.is_authenticated:
         user_cart = request.session.get('anonymous_cart',{})
         if not user_cart:
+            context = {'cart_items':[],'prices':0,'categories':category}
             return render(request,'all_cart.html')
 
         product_ids = list(user_cart.keys())
@@ -288,7 +289,8 @@ def show_user_cart_items(request):
             if product:
                 subtotal = product.price * prod_quan
                 total_price += subtotal
-                user_items.append({'product':product,
+                user_items.append({
+                    'product':product,
                         'id':prodid,
                         'quantity':prod_quan,
                         'total_price':subtotal})
