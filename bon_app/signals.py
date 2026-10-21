@@ -61,8 +61,9 @@ def merge_anony_cart_once_logged_in(sender, request,user, **kwargs):
                     cart_item.save(update_fields=['quantity'])
         
         # delete parmanently anony session cart
-        del request.session.get['anonymous_cart']
-        request.session.modified = True  # important otherwise django will never know session was updated
+        if 'anonymous_cart' in request.session:
+            del request.session['anonymous_cart']
+            request.session.modified = True  # important otherwise django will never know session was updated
 
     except Exception as e:
         logger.error(f"Failed to clear anonymous cart from session: {e}", exc_info=True)
