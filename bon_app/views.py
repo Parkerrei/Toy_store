@@ -326,23 +326,24 @@ def wipe_user_cart(request):
             return JsonResponse({'error':'session not found'},status = 404)
     try:
         with transaction.atomic():
-            # 1. Grab all cart items for the logged-in user
-            cart_items = list(CartItem.objects.filter(user_cart=request.user).select_related('product'))
+            # 1. Target the user's cart items queryset
+            user_cart_items = CartItem.objects.filter(user_cart=request.user)
+
+            # 2. Get a raw dictionary of product_id -> quantity mapping (NO full models loaded!)
+            # This executes exactly 1 fast query.
+            cart_data = list(user_cart_items.values_list('product_id', 'quantity'))
             
-            # 2. Check if the cart is already empty cleanly
-            if not cart_items:
+            if not cart_data:
                 return JsonResponse({'error': 'Your cart is already empty'}, status=404)
 
-            # 4. Wipe the user's entire cart items out at once
-            CartItem.objects.filter(user_cart=request.user).delete()
-            
-            # 3. Direct Re-stock loop (No nested loop or Product.objects.all() needed)
-            products_to_update = [] 
-            for item in cart_items:
-                product = item.product
-                product.stock += item.quantity
-                products_to_update.append(product)
-            Product.objects.bulk_update(products_to_update,['stock'])
+            # 3. Direct DB Restock using F expressions (NO Python loops mutating models)
+            # This builds clean SQL updates per unique product using database-level addition.
+            for product_id, quantity in cart_data:
+                Product.objects.filter(id=product_id).update(stock=F('stock') + quantity)
+
+            # 4. Wipe the user's entire cart items out at once in the DB
+            # Because we didn't load full CartItem instances, Django can execute this cleanly.
+            user_cart_items.delete()
 
             return JsonResponse({'success': True, 'message': 'Cart emptied and items re-stocked successfully.'}, status=200)
             
