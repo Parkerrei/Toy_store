@@ -309,7 +309,7 @@ def show_user_cart_items(request):
                 'categories':category
             } 
     return render(request,'all_cart.html',context)
-
+from django.db.models import Case ,When,F,PositiveBigIntegerField,Value
 def wipe_user_cart(request): 
     if request.method != 'DELETE':
         return JsonResponse({'error': 'method not allowed'}, status=405)
@@ -327,19 +327,15 @@ def wipe_user_cart(request):
     try:
         with transaction.atomic():
             # 1. Grab all cart items for the logged-in user
-            cart_items = list(CartItem.objects.filter(user_cart=request.user).select_related('product'))
+            cart_items = list(CartItem.objects.filter(user_cart=request.user).values_list('product_id','quantity'))
             
             # 2. Check if the cart is already empty cleanly
             if not cart_items:
                 return JsonResponse({'error': 'Your cart is already empty'}, status=404)
 
-            # 3. Direct Re-stock loop (No nested loop or Product.objects.all() needed)
-            products_to_update = [] 
-            for item in cart_items:
-                product = item.product
-                product.stock = F('stock') + item.quantity
-                products_to_update.append(product)
-            Product.objects.bulk_update(products_to_update,['stock'])
+            product_ids = [pid for pid , qty in cart_items]
+            cases =  [When(id=pid,then=F('stock') + Value(qty , output_field = PositiveBigIntegerField())) for pid , qty in cart_items]
+            Product.objects.filter(id__in=product_ids).update(stock=Case(*cases , default=F('stock'),output_field=PositiveBigIntegerField()))
 
             # 4. Wipe the user's entire cart items out at once
             CartItem.objects.filter(user_cart=request.user).delete()
