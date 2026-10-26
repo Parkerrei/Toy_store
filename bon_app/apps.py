@@ -8,17 +8,17 @@ class BonAppConfig(AppConfig):
 
     def ready(self):
         # 1. Import the function inside ready() to avoid circular imports
-        from .signals import force_renumber_fast
+        # from .signals import force_renumber_fast
         
         # 2. Safely get all models now that the registry is ready
         app_models = self.get_models() 
         
         # 3. Connect the signal to all models
-        for model in app_models:
-            post_delete.connect(
-                force_renumber_fast, # Directly use function; lambda is no longer needed since force_renumber accepts **kwargs
-                sender=model,
-                weak=False
-            )
+        # for model in app_models:
+        #     post_delete.connect(
+        #         force_renumber_fast, # Directly use function; lambda is no longer needed since force_renumber accepts **kwargs
+        #         sender=model,
+        #         weak=False
+        #     )
         
         import bon_app.signals
