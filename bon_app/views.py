@@ -53,7 +53,7 @@ def user_log_in(request):
 
     return render(request, 'login.html', {'form': form, 'next': next_url})
 
-def main_page(request):       
+def main_page(request):
     PRODUCTS_PER_PAGE = 10
     if not request.session.session_key:
         request.session.create()
