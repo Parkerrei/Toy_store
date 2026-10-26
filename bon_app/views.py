@@ -309,12 +309,12 @@ def show_user_cart_items(request):
                 'categories':category
             } 
     return render(request,'all_cart.html',context)
-from django.db.models import Case ,When,F,PositiveBigIntegerField,Value
+
 def wipe_user_cart(request): 
     if request.method != 'DELETE':
         return JsonResponse({'error': 'method not allowed'}, status=405)
     
-    # Delete anonymous session cart data
+    # Delete anonymous session cart data  l
     if not request.user.is_authenticated:
         user_session = request.session.get('anonymous_cart',{})
         if user_session:
@@ -327,16 +327,17 @@ def wipe_user_cart(request):
     try:
         with transaction.atomic():
             # 1. Grab all cart items for the logged-in user
-            cart_items = list(CartItem.objects.filter(user_cart=request.user).values_list('product_id','quantity'))
+            cart_items = list(CartItem.objects.filter(user_cart=request.user).select_related('product'))
             
             # 2. Check if the cart is already empty cleanly
             if not cart_items:
                 return JsonResponse({'error': 'Your cart is already empty'}, status=404)
-
-            product_ids = [pid for pid , qty in cart_items]
-            cases =  [When(id=pid,then=F('stock') + Value(qty , output_field = PositiveBigIntegerField())) for pid , qty in cart_items]
-            Product.objects.filter(id__in=product_ids).update(stock=Case(*cases , default=F('stock'),output_field=PositiveBigIntegerField()))
-
+            
+            for i in cart_items:
+                i.product.stock = F('stock') + i.quantity
+                restock = Product.objects.filter(id=i.product.id).update(F('stock') + i.quantity)
+                restock.save()
+            
             # 4. Wipe the user's entire cart items out at once
             CartItem.objects.filter(user_cart=request.user).delete()
             return JsonResponse({'success': True, 'message': 'Cart emptied and items re-stocked successfully.'}, status=200)
