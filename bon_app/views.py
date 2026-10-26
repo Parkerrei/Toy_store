@@ -343,7 +343,6 @@ def wipe_user_cart(request):
 
             # 4. Wipe the user's entire cart items out at once
             CartItem.objects.filter(user_cart=request.user).delete()
-
             return JsonResponse({'success': True, 'message': 'Cart emptied and items re-stocked successfully.'}, status=200)
             
     except Exception as e:
