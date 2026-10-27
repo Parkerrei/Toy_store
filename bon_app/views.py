@@ -334,9 +334,7 @@ def wipe_user_cart(request):
                 return JsonResponse({'error': 'Your cart is already empty'}, status=404)
             
             for i in cart_items:
-                i.product.stock = F('stock') + i.quantity
-                restock = Product.objects.filter(id=i.product.id).update(F('stock') + i.quantity)
-                restock.save()
+                Product.objects.filter(id=i.product_id).update(stock=F('stock') + i.quantity)
             
             # 4. Wipe the user's entire cart items out at once
             CartItem.objects.filter(user_cart=request.user).delete()
