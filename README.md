@@ -20,6 +20,7 @@ BACKEND:-
 - practised by building using DRY principle.
 - Used LocMemcache for repeated queried unchangeable data just for testing and learning caching in django , later transition to redis once in deployment mode.
 - Used bulk_update function for update instead of hitting db each time for each row minimising time/latency .
+- Using Case , When for product restock
 
 FRONTEND:-
 - started with basic js,css and html.
