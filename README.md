@@ -1,5 +1,5 @@
 # Django-Project-Toy_Store
-Site Link : peter.pythonanywhere.com
+Site Link : https://peter.pythonanywhere.com
 
 BACKEND:-
 - Solved race condition.
