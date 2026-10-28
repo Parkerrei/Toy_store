@@ -315,7 +315,7 @@ def wipe_user_cart(request):
     if request.method != 'DELETE':
         return JsonResponse({'error': 'method not allowed'}, status=405)
     
-    # Delete anonymous session cart data  l
+    # Delete anonymous session cart data  
     if not request.user.is_authenticated:
         user_session = request.session.get('anonymous_cart',{})
         if user_session:
@@ -336,7 +336,7 @@ def wipe_user_cart(request):
             
             cases = [When(id=i.product_id , then=F('stock') + i.quantity) for i in cart_items]
             Product.objects.filter(id__in=[i.product_id for i in cart_items]).update(stock = Case(*cases , default=F('stock')))
-            
+
             # 4. Wipe the user's entire cart items out at once
             CartItem.objects.filter(user_cart=request.user).delete()
             return JsonResponse({'success': True, 'message': 'Cart emptied and items re-stocked successfully.'}, status=200)
