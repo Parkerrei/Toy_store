@@ -8,12 +8,13 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
 from .models import Category,Product,CartItem
 from django.db import transaction
-from django.db.models import F,Sum
+from django.db.models import F,Sum,When,Case
 import json
 import logging
 from django.core.paginator import Paginator
 import uuid
 import time
+
 def signup_user(request):
     if request.method == 'POST':
         form  = UserForm(request.POST)
@@ -328,13 +329,13 @@ def wipe_user_cart(request):
         with transaction.atomic():
             # 1. Grab all cart items for the logged-in user
             cart_items = list(CartItem.objects.filter(user_cart=request.user).values_list('product_id' , 'quantity'))
-            
+             
             # 2. Check if the cart is already empty cleanly
             if not cart_items:
                 return JsonResponse({'error': 'Your cart is already empty'}, status=404)
             
-            for i in cart_items:
-                Product.objects.filter(id=i.product_id).update(stock=F('stock') + i.quantity)
+            cases = [When(id=i.product_id , then=F('stock') + i.quantity) for i in cart_items]
+            Product.objects.filter(id__in=[i.product_id for i in cart_items]).update(stock = Case(*cases , default=F('stock')))
             
             # 4. Wipe the user's entire cart items out at once
             CartItem.objects.filter(user_cart=request.user).delete()
