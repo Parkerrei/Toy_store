@@ -436,37 +436,42 @@
     document.addEventListener('DOMContentLoaded', () => {
         const price_tag = document.querySelector('.total_price');
         const decrementButtons = document.querySelectorAll('.decrement-btn');
-        const token = document.getElementById('token').value;
+        const tokenElement = document.getElementById('token');
+        const token = tokenElement ? tokenElement.value : '';
         const show_dialog = document.querySelector('dialog');
+
         decrementButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
 
-                // 1. Get the correct product ID from the dataset
+                // 1. Get the correct item ID from your data-id attribute
                 const productId = btn.dataset.id;
+                if (!productId) return;
 
-                // 2. FIX: Use 'productId' here instead of the non-existent 'id'
+                // Matches your card id: id-{{ detail.id }} and paragraph id: qty-{{ detail.id }}
                 var container_remove = document.getElementById(`id-${productId}`);
                 var quantity = document.getElementById(`qty-${productId}`);
 
-                // Safety check: Make sure the quantity element actually exists on the page
+                // 2. Optimistic UI update
                 if (quantity) {
-                    let number_of_quantity = parseInt(quantity.textContent, 10);
-                    // 3. This will now run perfectly and change your number instantly!
-                    // check if quantity is greater than 2 or equal to 2, then decrement it by 1
+                    let number_of_quantity = parseInt(quantity.textContent, 10) || 0;
 
                     if (number_of_quantity >= 2) {
                         number_of_quantity -= 1;
                         quantity.textContent = number_of_quantity;
                         console.log(`Decremented quantity for product ${productId}: ${number_of_quantity}`);
-
-                        // 4. if quantity is not equal to 2 or greater than 2,then set the quantity to 0;
                     } else {
-                        number_of_quantity = 0;
-                        number_of_quantity.textContent = number_of_quantity;
+                        // FIX: Safely update the actual DOM element to 0, instead of the primitive integer variable
+                        quantity.textContent = '0';
+
+                        // Optional smooth fade out before the backend confirms deletion
+                        if (container_remove) {
+                            container_remove.style.opacity = '0.5';
+                        }
                     }
                 }
 
+                // 3. Network Request to Django Endpoint
                 fetch(`/decrement_item/${productId}/`, {
                     method: 'POST',
                     headers: {
@@ -483,39 +488,49 @@
                     })
                     .then(data => {
                         if (data.success) {
-                            if (price_tag) {
-                                price_tag.innerText = `Grand Total: ₹ ${data.price}`;
+                            // Update Grand Total summary
+                            if (price_tag && data.price !== undefined) {
+                                price_tag.innerText = `₹ ${data.price}`;
                             }
 
+                            // Final state sync matching database resolution
                             if (data.qty > 0) {
                                 if (quantity) {
                                     quantity.textContent = data.qty;
+                                    if (container_remove) container_remove.style.opacity = '1';
                                 }
-                            }
-                            else {
+                            } else {
+                                // Completely remove item element card from the DOM tree
                                 if (container_remove) {
                                     container_remove.remove();
                                 }
                             }
-                        }
-                        else {
-                            show_dialog.textContent = data.error;
-                            show_dialog.showModal();
-                            setTimeout(() => {
-                                show_dialog.close();
-                            }, 3000)
+                        } else {
+                            showError(data.error || 'Failed to update item.');
+                            if (container_remove) container_remove.style.opacity = '1';
                         }
                     })
                     .catch(error => {
-                        show_dialog.textContent = error;
-                        show_dialog.showModal();
-                        setTimeout(() => {
-                            show_dialog.close();
-                        }, 3000)
+                        showError(error.message || error);
+                        if (container_remove) container_remove.style.opacity = '1';
                     });
             });
         });
+
+        // Helper to safely render modal error states without breaking flow
+        function showError(msg) {
+            if (show_dialog) {
+                show_dialog.textContent = msg;
+                show_dialog.showModal();
+                setTimeout(() => {
+                    show_dialog.close();
+                }, 3000);
+            } else {
+                console.error(msg);
+            }
+        }
     });
+
 
     // initiate cart checkout
     // initiate cart checkout
