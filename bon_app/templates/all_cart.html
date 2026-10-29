@@ -434,7 +434,7 @@
 
     // 2. DECREMENT HANDLING
     document.addEventListener('DOMContentLoaded', () => {
-        const price_tag = document.getElementById('price');
+        const price_tag = document.querySelector('.total_price');
         const decrementButtons = document.querySelectorAll('.decrement-btn');
         const token = document.getElementById('token').value;
         const show_dialog = document.querySelector('dialog');
