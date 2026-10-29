@@ -483,7 +483,9 @@
                     })
                     .then(data => {
                         if (data.success) {
-                            if (price_tag) price_tag.innerText = `Grand Total: ₹ ${data.price}`;
+                            if (price_tag) {
+                                price_tag.innerText = `Grand Total: ₹ ${data.price}`;
+                            }
 
                             if (data.qty > 0) {
                                 if (quantity) {
