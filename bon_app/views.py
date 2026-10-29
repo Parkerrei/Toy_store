@@ -441,7 +441,7 @@ def decrement_item(request, productId):
                 return JsonResponse({'error': 'item not in cart'}, status=404)
             
             # No row locking because we are performing a blind write below
-            item_in_product = Product.objects.filter(id=item_in_cart.product.productId).first()
+            item_in_product = Product.objects.filter(id=item_in_cart.product_id).first()
 
             if not item_in_product:
                 return JsonResponse({'error': 'item not in product'}, status=404)
@@ -473,4 +473,6 @@ def decrement_item(request, productId):
             
     except Exception as e:
         # Temporary tip: return str(e) during testing to see exact errors on screen
+        import traceback
+        print(traceback.format_exc()) 
         return JsonResponse({'error': f'Internal server error: {str(e)}'}, status=500)
