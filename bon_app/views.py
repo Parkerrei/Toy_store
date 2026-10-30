@@ -443,7 +443,7 @@ def decrement_item(request, productId):
                 return JsonResponse({'error': 'item not in cart'}, status=404)
             
             if item_in_cart.product.stock < 1:
-                return JsonResponse({'error': 'item not in product'}, status=404)
+                return JsonResponse({'error': 'out of stock'}, status=404)
 
             if item_in_cart.quantity > 1:
                 CartItem.objects.filter(id=item_in_cart.id).update(quantity=F('quantity') - 1)
