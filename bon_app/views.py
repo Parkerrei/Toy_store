@@ -436,34 +436,28 @@ def decrement_item(request, productId):
     try:
         with transaction.atomic():
             # Lock row because we will read, modify, and update on condition
-            item_in_cart = CartItem.objects.select_for_update().filter(id=productId, user_cart=request.user).first()
+            item_in_cart = CartItem.objects.filter(id=productId, user_cart=request.user).select_related('product').select_for_update().first()
 
             if not item_in_cart:
                 return JsonResponse({'error': 'item not in cart'}, status=404)
             
-            # No row locking because we are performing a blind write below
-            item_in_product = Product.objects.filter(id=item_in_cart.product_id).first()
-
-            if not item_in_product:
+            if item_in_cart.product.stock < 1:
                 return JsonResponse({'error': 'item not in product'}, status=404)
 
             if item_in_cart.quantity > 1:
-                item_in_cart.quantity = F('quantity') - 1
-                item_in_cart.save(update_fields=['quantity'])
-                item_in_cart.refresh_from_db()
-                new_quantity = item_in_cart.quantity
+                CartItem.objects.filter(id=item_in_cart.id).update(quantity=F('quantity') - 1)
+                Product.objects.filter(id=item_in_cart.product_id).update(stock=F('stock') + 1)
+                new_quantity = item_in_cart.quantity - 1
             else:
+                Product.objects.filter(id=item_in_cart.product_id).update(stock=F('stock') + 1)
                 item_in_cart.delete()
-                new_quantity = 0  # Let the execution flow down naturally!
-            
-            # This runs seamlessly for BOTH paths now
-            item_in_product.stock = F('stock') + 1
-            item_in_product.save(update_fields=['stock'])
+                new_quantity = 0  # Let the execution flow down naturally! 
 
             # Calculate total remaining price
             total_price_agg = CartItem.objects.filter(user_cart=request.user).aggregate(
-                total=Sum(F('quantity') * F('product__price'))
+                total=Sum(F('quantity') * F('product__price'))['total'] or 0
             )
+            
             user_cart_total_price = int(total_price_agg['total'] if total_price_agg['total'] is not None else 0)
             return JsonResponse({
                 'success': True,
