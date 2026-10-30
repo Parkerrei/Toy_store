@@ -417,11 +417,9 @@ def increment_item(request,productId):
                         total_price=Sum(F('quantity') * F('product__price'))
                     )['total_price'] or 0
 
-                user_cart_total_price = total_cart_item['total_price']
-
                 return JsonResponse({'success':True,
                                          'message':'item added succesfully',
-                                         'price':user_cart_total_price,
+                                         'price':int(total_cart_item),
                                          'qty':new_quantity},
                                           status = 200)
             
@@ -458,14 +456,13 @@ def decrement_item(request, productId):
 
             # Calculate total remaining price
             total_price_agg = CartItem.objects.filter(user_cart=request.user).aggregate(
-                total=Sum(F('quantity') * F('product__price'))['total'] or 0
-            )
+                total=Sum(F('quantity') * F('product__price'))
+            )['total'] or 0
 
-            user_cart_total_price = int(total_price_agg['total'] if total_price_agg['total'] is not None else 0)
             return JsonResponse({
                 'success': True,
                 'qty': new_quantity,
-                'price': user_cart_total_price,
+                'price': int(total_price_agg),
                 'message': 'Cart updated successfully' # Added message to support your frontend toast!
             }, status=200)
             
