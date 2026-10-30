@@ -397,24 +397,25 @@ def increment_item(request,productId):
     if request.method == 'POST':
         try:
             with transaction.atomic():
-                cart_item = CartItem.objects.select_for_update().filter(id=productId,user_cart=request.user).first() 
+                # query both the cartItem and its related product at one trip
+                cart_item = CartItem.objects.filter(id=productId,user_cart=request.user).select_related('product').select_for_update().first() 
+                
                 if not cart_item:
                     return JsonResponse({'error':'item dnt exists'},status=404)
-                product = Product.objects.select_for_update().filter(id=cart_item.product_id).first()
-                if not product:
+                
+                if cart_item.product.stock < 1:
                     return JsonResponse({'error':'out of stock'},status = 403)
 
-                cart_item.quantity = F('quantity') + 1
-                cart_item.save(update_fields=['quantity'])
-                cart_item.refresh_from_db()
-                new_quantity = cart_item.quantity
-                    
-                product.stock = F('stock') - 1
-                product.save(update_fields=['stock'])
-
+                #update in the db level
+                CartItem.objects.filter(id=cart_item.id).update(quantity=F('quantity') + 1)    
+                Product.objects.filter(id=cart_item.product_id).update(stock=F('stock') - 1)
+                
+                #update the quantity object
+                new_quantity = cart_item.quantity + 1
+                
                 total_cart_item = CartItem.objects.filter(user_cart=request.user).aggregate(
                         total_price=Sum(F('quantity') * F('product__price'))
-                    )
+                    )['total_price'] or 0
 
                 user_cart_total_price = total_cart_item['total_price']
 
