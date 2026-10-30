@@ -397,13 +397,13 @@ def increment_item(request,productId):
     if request.method == 'POST':
         try:
             with transaction.atomic():
-                cart_item = CartItem.objects.select_for_update().filter(id=productId).first() 
+                cart_item = CartItem.objects.select_for_update().filter(id=productId,user=request.user).first() 
                 if not cart_item:
                     return JsonResponse({'error':'item dnt exists'},status=404)
                 product = Product.objects.select_for_update().filter(id=cart_item.product_id).first()
                 if not product:
                     return JsonResponse({'error':'out of stock'},status = 403)
-              
+
                 cart_item.quantity = F('quantity') + 1
                 cart_item.save(update_fields=['quantity'])
                 cart_item.refresh_from_db()
