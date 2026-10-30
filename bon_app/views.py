@@ -426,6 +426,9 @@ def increment_item(request,productId):
                                           status = 200)
             
         except Exception as e:
+            # Temporary tip: return str(e) during testing to see exact errors on screen
+            import traceback
+            print(traceback.format_exc()) 
             return JsonResponse({'error':'something wrong'},status=500)   
     return JsonResponse({'error':'method not allowed'},status=405)
 
@@ -457,7 +460,7 @@ def decrement_item(request, productId):
             total_price_agg = CartItem.objects.filter(user_cart=request.user).aggregate(
                 total=Sum(F('quantity') * F('product__price'))['total'] or 0
             )
-            
+
             user_cart_total_price = int(total_price_agg['total'] if total_price_agg['total'] is not None else 0)
             return JsonResponse({
                 'success': True,
