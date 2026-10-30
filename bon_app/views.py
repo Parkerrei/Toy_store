@@ -448,7 +448,10 @@ def decrement_item(request, productId):
             if item_in_cart.quantity > 1:
                 CartItem.objects.filter(id=item_in_cart.id).update(quantity=F('quantity') - 1)
                 Product.objects.filter(id=item_in_cart.product_id).update(stock=F('stock') + 1)
-                new_quantity = item_in_cart.quantity - 1
+
+                # update the python object so aggregate function can see the updated value
+                new_quantity  = item_in_cart.quantity - 1
+                 
             else:
                 Product.objects.filter(id=item_in_cart.product_id).update(stock=F('stock') + 1)
                 item_in_cart.delete()
