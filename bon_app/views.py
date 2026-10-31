@@ -114,9 +114,6 @@ def initiate_razorpay_checkout(request, productId):
 
             if toy_to_buy.stock <= 0:
                 return JsonResponse({'Error': 'Out of stock'}, status=409)
-
-            toy_to_buy.stock -= 1
-            toy_to_buy.save()
             
             # Cache values needed for the API call before leaving transaction context
             amount_paise = toy_to_buy.round_to_paise()
@@ -174,6 +171,9 @@ def cryptographic_signature_check(request):
     try:
         data = json.loads(request.body)
         client.utility.verify_payment_signature(data)
+        product_id = data['notes']['item_id']
+        Product.objects.filter(id=product_id).update(stock=F('stock') - 1)
+        CartItem.objects.filter(user_cart=request.user,product_id=product_id).delete()
     except razorpay.errors.SignatureVerificationError:
         return JsonResponse({'error':'signature verification failed'},status=400)
     return JsonResponse({'success':'signature verified successfullt'},status=200)
