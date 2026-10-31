@@ -141,6 +141,8 @@ def initiate_razorpay_checkout(request, productId):
 
     except Exception as api_err:
         # Log the exact Razorpay API failure to your terminal console
+        import traceback
+        print(traceback.format_exc())
         logger.error(f"Razorpay API failure: {api_err}")
         
         # Phase 3: Rollback stock cleanly if API failed
