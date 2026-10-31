@@ -177,6 +177,8 @@ def cryptographic_signature_check(request):
         Product.objects.filter(id=product_id).update(stock=F('stock') - 1)
         CartItem.objects.filter(user_cart=request.user,product_id=product_id).delete()
     except razorpay.errors.SignatureVerificationError:
+        import traceback
+        print(traceback.format_exc())
         return JsonResponse({'error':'signature verification failed'},status=400)
     return JsonResponse({'success':'signature verified successfullt'},status=200)
 
