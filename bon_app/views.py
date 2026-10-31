@@ -118,7 +118,7 @@ def initiate_razorpay_checkout(request, productId):
             # Cache values needed for the API call before leaving transaction context
             amount_paise = toy_to_buy.round_to_paise()
             item_name = toy_to_buy.name
-            item_id_str = str(toy_to_buy.id)
+            item_id_in_str = str(toy_to_buy.id)
 
     except Exception as db_err:
         logger.error(f"Database error during stock deduction: {db_err}")
@@ -134,9 +134,9 @@ def initiate_razorpay_checkout(request, productId):
                 'email':request.user.email,
                 'user': request.user.username,
                 'item': item_name,
-                'item_id':item_id_str,
+                'item_id':item_id_in_str,
             },
-            'receipt': f'rcpt_{item_id_str}',
+            'receipt': f'rcpt_{item_id_in_str}',
         })
 
     except Exception as api_err:
