@@ -269,10 +269,13 @@ def show_user_cart_items(request):
     # Add this line at the start of your views:
     print("CURRENT SESSION ID:", request.session.session_key)
 
+    # cache the category for dropdown menu
     category = cache.get('all_categories')
     if not category:
         category = list(Category.objects.all())
         cache.set('all_categories',category,60*60)
+
+    # check if user not authenticated to Show anonymous user cart
     if not request.user.is_authenticated:
         user_cart = request.session.get('anonymous_cart',{})
         if not user_cart:
