@@ -173,9 +173,6 @@ def cryptographic_signature_check(request):
     try:
         data = json.loads(request.body)
         client.utility.verify_payment_signature(data)
-        product_id = data['notes']['item_id']
-        Product.objects.filter(id=product_id).update(stock=F('stock') - 1)
-        CartItem.objects.filter(user_cart=request.user,product_id=product_id).delete()
     except razorpay.errors.SignatureVerificationError:
         import traceback
         print(traceback.format_exc())
