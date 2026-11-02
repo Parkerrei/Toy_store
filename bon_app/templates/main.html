@@ -539,7 +539,7 @@
                         buyButton.innerText = originalhtml
                         buyButton.disabled = false
                         if (order_data) {
-                            console.log('Razorpay order data received:',order_data.order_id);
+                            console.log('Razorpay order data received:',order_data);
                             const options = {
                                 "notes":order_data.notes,
                                 "key": order_data.key,
@@ -549,7 +549,7 @@
                                 "description": "thanks visit again",
                                 "order_id": order_data.order_id,
                                 "handler": function (razorpayResponse) {
-                                    paymentVerification(razorpayResponse);
+                                    paymentVerification({razorpayresponse:razorpayResponse , order_data:productId});
                                 },
                                 "theme": {
                                     "color": "#3399cc"
