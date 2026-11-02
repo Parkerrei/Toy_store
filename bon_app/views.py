@@ -165,7 +165,7 @@ def initiate_razorpay_checkout(request, productId):
         'order_id': order['id'],
         'receipt': order['receipt']
     })
-
+ 
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
 def cryptographic_signature_check(request):
     if request.method != 'POST':
