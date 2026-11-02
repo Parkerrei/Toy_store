@@ -172,7 +172,19 @@ def cryptographic_signature_check(request):
         return JsonResponse({'error':'method not allowed'},status=405)
     try:
         data = json.loads(request.body)
-        client.utility.verify_payment_signature(data)
+        verify = {
+            'razorpay_order_id':data['razorpay_order_id'],
+            'razorpay_payment_id':data['razorpay_payment_id'],
+            'razorpay_signature':data['razorpay_signature']
+        }
+        client.utility.verify_payment_signature(verify)
+
+        # get product id to deduct the stock after signature verification
+        product_to_deduct = data.get('product_id')
+        if product_to_deduct:
+            with transaction.atomic():
+                Product.objects.filter(id=data['product_id']).select_for_update().update(stock=F('stock') - 1)
+                
     except razorpay.errors.SignatureVerificationError:
         import traceback
         print(traceback.format_exc())
