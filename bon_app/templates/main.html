@@ -539,8 +539,9 @@
                         buyButton.innerText = originalhtml
                         buyButton.disabled = false
                         if (order_data) {
-                            console.log('Razorpay order data received:', order_data);
+                            console.log('Razorpay order data received:',order_data.order_id);
                             const options = {
+                                "notes":order_data.notes,
                                 "key": order_data.key,
                                 "amount": order_data.amount,
                                 "currency": order_data.currency,
