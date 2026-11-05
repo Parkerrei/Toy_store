@@ -363,7 +363,6 @@ def wipe_user_cart(request):
         print(f"Error emptying cart: {str(e)}") # Keep this for terminal debugging
         return JsonResponse({'error': 'Something went wrong while processing your request.'}, status=500)
 
-# Add this to the top of your views.py file
 
 def user_cart_order_payment(request):
     if not request.method == 'POST':
