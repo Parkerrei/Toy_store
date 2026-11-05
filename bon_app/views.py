@@ -184,6 +184,7 @@ def cryptographic_signature_check(request):
         product_to_deduct = data.get('productId')
         if product_to_deduct:
             with transaction.atomic():
+                # Safely decrement stock using select_for_update to prevent race conditions
                 Product.objects.filter(id=data['productId']).select_for_update().update(stock=F('stock') - 1)
                 
     except razorpay.errors.SignatureVerificationError:
