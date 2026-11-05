@@ -539,7 +539,6 @@
                         buyButton.innerText = originalhtml
                         buyButton.disabled = false
                         if (order_data) {
-                            console.log('Razorpay order data received:',order_data);
                             const options = {
                                 "notes":order_data.notes,
                                 "key": order_data.key,
