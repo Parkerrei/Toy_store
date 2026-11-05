@@ -14,6 +14,7 @@ import logging
 from django.core.paginator import Paginator
 import uuid
 import time
+from django.core.cache import cache
 
 def signup_user(request):
     if request.method == 'POST':
@@ -279,7 +280,7 @@ def add_to_cart(request, productId):
         logger.error(f"Error adding product {productId} to cart for user {request.user.id} : {str(e)}")
         return JsonResponse({'error': 'An error occurred during transaction processing.'}, status=500)
 
-from django.core.cache import cache                                        
+                                    
 def show_user_cart_items(request):
     # Add this line at the start of your views:
     print("CURRENT SESSION ID:", request.session.session_key)
