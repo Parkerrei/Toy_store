@@ -165,15 +165,17 @@ def cryptographic_signature_check(request):
             'razorpay_payment_id':data['razorpayResponse']['razorpay_payment_id'],
             'razorpay_signature':data['razorpayResponse']['razorpay_signature']
         }
-
+        # Verify the signature
         client.utility.verify_payment_signature(verify_this_data)
-        # get product id to deduct the stock after signature verification
-        product_to_deduct = data.get('productId')
+
+        # get product id to deduct the stock after signature verification 
+        razorpay_order = client.order.fetch(verify_this_data['razorpay_order_id'])
+        product_to_deduct = razorpay_order['notes']['item_id']
         if product_to_deduct:
             with transaction.atomic():
                 # Safely decrement stock using select_for_update to prevent race conditions
                 # convert id to integer for safety 
-                Product.objects.filter(id=int(product_to_deduct)).select_for_update().update(stock=F('stock') - 1)
+                Product.objects.filter(id=int(product_to_deduct),stock__gt = 0).select_for_update().update(stock=F('stock') - 1)
                 
     except razorpay.errors.SignatureVerificationError:
         import traceback
