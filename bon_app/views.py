@@ -488,3 +488,4 @@ def decrement_item(request, productId):
         import traceback
         print(traceback.format_exc()) 
         return JsonResponse({'error': f'Internal server error: {str(e)}'}, status=500)
+
