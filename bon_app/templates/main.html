@@ -548,7 +548,7 @@
                                 "description": "thanks visit again",
                                 "order_id": order_data.order_id,
                                 "handler": function (razorpayResponse) {
-                                    paymentVerification({razorpayResponse:razorpayResponse , productId:order_data.notes.item_id});
+                                    paymentVerification(razorpayResponse);
                                 },
                                 "theme": {
                                     "color": "#3399cc"
