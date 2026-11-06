@@ -158,13 +158,13 @@ def cryptographic_signature_check(request):
         data = json.loads(request.body)
 
         # Unpack the data object send from razorpay server
-        verify = {
+        verify_this_data = {
             'razorpay_order_id':data['razorpayResponse']['razorpay_order_id'],
             'razorpay_payment_id':data['razorpayResponse']['razorpay_payment_id'],
             'razorpay_signature':data['razorpayResponse']['razorpay_signature']
         }
 
-        client.utility.verify_payment_signature(verify)
+        client.utility.verify_payment_signature(verify_this_data)
         # get product id to deduct the stock after signature verification
         product_to_deduct = data.get('productId')
         if product_to_deduct:
