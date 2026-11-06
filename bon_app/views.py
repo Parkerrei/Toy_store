@@ -156,7 +156,8 @@ def cryptographic_signature_check(request):
         return JsonResponse({'error':'method not allowed'},status=405)
     try:
         data = json.loads(request.body)
-        
+
+        # Unpack the data object send from razorpay server
         verify = {
             'razorpay_order_id':data['razorpayResponse']['razorpay_order_id'],
             'razorpay_payment_id':data['razorpayResponse']['razorpay_payment_id'],
