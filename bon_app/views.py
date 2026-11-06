@@ -262,7 +262,6 @@ def add_to_cart(request, productId):
     except Exception as e:
         logger.error(f"Error adding product {productId} to cart for user {request.user.id} : {str(e)}")
         return JsonResponse({'error': 'An error occurred during transaction processing.'}, status=500)
-
                                     
 def show_user_cart_items(request):
     # Add this line at the start of your views:
@@ -347,7 +346,6 @@ def wipe_user_cart(request):
         print(f"Error emptying cart: {str(e)}") # Keep this for terminal debugging
         return JsonResponse({'error': 'Something went wrong while processing your request.'}, status=500)
 
-
 def user_cart_order_payment(request):
     if not request.method == 'POST':
         return JsonResponse({'error':'method not allowed'},status=405)
@@ -430,7 +428,6 @@ def increment_item(request,productId):
             print(traceback.format_exc()) 
             return JsonResponse({'error':'something wrong'},status=500)   
     return JsonResponse({'error':'method not allowed'},status=405)
-
 
 def decrement_item(request, productId):
     if request.method != 'POST':
