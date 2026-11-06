@@ -92,7 +92,6 @@ client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORP
 client.timeout = 200
 logger = logging.getLogger(__name__)
 
-
 def initiate_razorpay_checkout(request, productId):
     # 1: Ensure user is authenticated before proceeding
     if not request.user.is_authenticated:
