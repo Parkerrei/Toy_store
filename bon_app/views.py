@@ -97,24 +97,26 @@ def initiate_razorpay_checkout(request, productId):
     if not request.user.is_authenticated:
         next_url = '/'
         login_url = f"/logged/?next={next_url}"
+        
         # 2: Return a json response with 401 Unauthorized and the login url for the frontend to redirect the user
         return JsonResponse({'authenticated':'false',
                              'next_url':login_url},status = 401)
+    
     # 3: Ensure the request method is Post for checkout initiation
     if request.method != 'POST':
         return JsonResponse({'Error': 'Method not allowed'}, status=405)
     
-    # Phase 1: -Verify and Secure Stock safely
-    
+    # Phase 1: extract only column we need for RazorPay order creation
     try:
         toy_to_buy = Product.objects.only('id','price','stock','name').get(id=productId)
     except Product.DoesNotExist:
         return JsonResponse({'Error':'Item not found'}, status=404)
 
+    # Check product stock before proceeding to Razorpay order creation
     if toy_to_buy.stock <= 0:
         return JsonResponse({'Error': 'Out of stock'}, status=409)
             
-    # Cache values needed for the API call before leaving transaction context
+    # cache the data before we call razorPay api for order
     amount_paise = toy_to_buy.round_to_paise()
     item_name = toy_to_buy.name
     item_id_in_str = str(toy_to_buy.id)
