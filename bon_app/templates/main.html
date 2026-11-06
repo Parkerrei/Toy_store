@@ -538,7 +538,7 @@
                         }
                         buyButton.innerText = originalhtml
                         buyButton.disabled = false
-                        if (order_data) {
+                        if (order_data) { 
                             const options = {
                                 "notes":order_data.notes,
                                 "key": order_data.key,
@@ -548,7 +548,7 @@
                                 "description": "thanks visit again",
                                 "order_id": order_data.order_id,
                                 "handler": function (razorpayResponse) {
-                                    paymentVerification({razorpayResponse:razorpayResponse , productId:productId});
+                                    paymentVerification({razorpayResponse:razorpayResponse , productId:order_data.notes.item_id});
                                 },
                                 "theme": {
                                     "color": "#3399cc"
@@ -730,7 +730,7 @@
     });
 
     // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
-    function paymentVerification(razorpayResponse) {
+    function    paymentVerification(razorpayResponse) {
         const id = document.getElementById('token').value
         const show_message = document.querySelector('dialog')
         fetch('cryptographic_signature_check/', {
