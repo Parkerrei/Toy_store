@@ -105,25 +105,19 @@ def initiate_razorpay_checkout(request, productId):
         return JsonResponse({'Error': 'Method not allowed'}, status=405)
     
     # Phase 1: -Verify and Secure Stock safely
+    
     try:
-        with transaction.atomic():
-            try:
-                toy_to_buy = Product.objects.select_for_update().get(id=productId)
-            except Product.DoesNotExist:
-                return JsonResponse({'Error':'Item not found'}, status=404)
+        toy_to_buy = Product.objects.only('id','price','stock','name').get(id=productId)
+    except Product.DoesNotExist:
+        return JsonResponse({'Error':'Item not found'}, status=404)
 
-            if toy_to_buy.stock <= 0:
-                return JsonResponse({'Error': 'Out of stock'}, status=409)
+    if toy_to_buy.stock <= 0:
+        return JsonResponse({'Error': 'Out of stock'}, status=409)
             
-            # Cache values needed for the API call before leaving transaction context
-            amount_paise = toy_to_buy.round_to_paise()
-            item_name = toy_to_buy.name
-            item_id_in_str = str(toy_to_buy.id)
-
-    except Exception as db_err:
-        logger.error(f"Database error during stock deduction: {db_err}")
-        return JsonResponse({'Error':'Database transaction failed'}, status=500)
-
+    # Cache values needed for the API call before leaving transaction context
+    amount_paise = toy_to_buy.round_to_paise()
+    item_name = toy_to_buy.name
+    item_id_in_str = str(toy_to_buy.id)
 
     # Phase 2: Create Razorpay Order outside database lock
     try:
@@ -144,17 +138,7 @@ def initiate_razorpay_checkout(request, productId):
         import traceback
         print(traceback.format_exc())
         logger.error(f"Razorpay API failure: {api_err}")
-        
-        # Phase 3: Rollback stock cleanly if API failed
-        try:
-            with transaction.atomic():
-                # Avoid select_for_update here to prevent deadlocks during failure recovery
-                product_rollback = Product.objects.get(id=productId)
-                product_rollback.stock += 1
-                product_rollback.save()
-        except Exception as rollback_err:
-            logger.critical(f"CRITICAL: Stock rollback failed for product {id}: {rollback_err}")
-        return JsonResponse({'error':f'Payment gateway initialization failed: {str(api_err)}'}, status=500)
+        return JsonResponse({'error': 'Failed to create Razorpay order. Please try again later.'}, status=500)
  
     # Phase 4: Return success data
     return JsonResponse({
