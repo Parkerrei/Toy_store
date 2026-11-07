@@ -175,7 +175,7 @@ def cryptographic_signature_check(request):
             with transaction.atomic():
                 # Safely decrement stock using select_for_update to prevent race conditions
                 # convert id to integer for safety 
-                Product.objects.filter(id=int(product_to_deduct),stock__gt = 0).select_for_update().update(stock=F('stock') - 1)
+                Product.objects.filter(id=int(product_to_deduct)).select_for_update().update(stock=F('stock') - 1)
                 
     except razorpay.errors.SignatureVerificationError:
         import traceback
