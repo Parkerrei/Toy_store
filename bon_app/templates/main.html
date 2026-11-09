@@ -413,6 +413,12 @@
             /* Just a clean, small gap now */
         }
 
+        h5 {
+            background-color: red;
+            color: white;
+            border: none;
+        }
+
         @media (min-width: 768px) {
             .product-grid {
                 margin-top: 110px;
@@ -538,9 +544,9 @@
                         }
                         buyButton.innerText = originalhtml
                         buyButton.disabled = false
-                        if (order_data) { 
+                        if (order_data) {
                             const options = {
-                                "notes":order_data.notes,
+                                "notes": order_data.notes,
                                 "key": order_data.key,
                                 "amount": order_data.amount,
                                 "currency": order_data.currency,
@@ -730,7 +736,7 @@
     });
 
     // HELPER FUNCTION TO SEND TRANSACTION DATA BACK TO DJANGO FOR VERIFICATION //
-    function    paymentVerification(razorpayResponse) {
+    function paymentVerification(razorpayResponse) {
         const id = document.getElementById('token').value
         const show_message = document.querySelector('dialog')
         fetch('cryptographic_signature_check/', {
@@ -739,7 +745,7 @@
                 'X-CSRFToken': id,
                 'Content-Type': 'application/json'
             },
-            body:JSON.stringify(razorpayResponse)
+            body: JSON.stringify(razorpayResponse)
         }
 
         ).then((response) => {
