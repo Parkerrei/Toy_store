@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
-from .models import Category,Product,CartItem
+from .models import Category,Product,CartItem,Payment
 from django.db import transaction
 from django.db.models import F,Sum,When,Case,PositiveBigIntegerField
 import json
@@ -161,6 +161,11 @@ def cryptographic_signature_check(request):
 
         # Verify the signature using razorpay's utility function. This will raise an exception if the signature is invalid.
         client.utility.verify_payment_signature(data)
+        Payment.objects.create(user=request.user,
+                               order_id=data['razorpay_order_id'],
+                               amount=data['razorpay_amount'],
+                               status=data['razorpay_payment_id'],
+                               )
     except razorpay.errors.SignatureVerificationError:
         import traceback
         print(traceback.format_exc())
