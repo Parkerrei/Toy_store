@@ -141,7 +141,7 @@ def initiate_razorpay_checkout(request, productId):
         print(traceback.format_exc())
         logger.error(f"Razorpay API failure: {api_err}")
         return JsonResponse({'error': 'Failed to create Razorpay order. Please try again later.'}, status=500)
- 
+   
     # Phase 4: Return success data
     return JsonResponse({
         'key': settings.RAZORPAY_KEY_ID,
