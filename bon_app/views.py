@@ -89,7 +89,7 @@ def main_page(request):
 
 # payments/views.py
 client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-client.timeout = 200
+client.timeout = 10  # Set a timeout of 10 seconds for Razorpay API requests
 logger = logging.getLogger(__name__)
 
 def initiate_razorpay_checkout(request, productId):
@@ -152,7 +152,6 @@ def initiate_razorpay_checkout(request, productId):
         'receipt': order['receipt']
     })
  
-client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
 def cryptographic_signature_check(request):
     if request.method != 'POST':
         return JsonResponse({'error':'method not allowed'},status=405)
