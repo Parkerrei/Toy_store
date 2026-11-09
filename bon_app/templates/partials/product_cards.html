@@ -3,6 +3,10 @@
     <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
     <div class="product-info">
         <p class="price">₹{{ product.price }}</p>
+
+        {% if product.stock <= 1 %} <h5>hurry! only 1 stock left</h5>
+            {% endif %}
+            
     </div>
     <button class="add-to-cart" data-id="{{ product.id }}">Add to Cart</button>
     <button class="buy" data-id="{{ product.id }}">
