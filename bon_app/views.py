@@ -244,8 +244,8 @@ def add_to_cart(request, productId):
                 toy = Product.objects.select_for_update().get(id=productId)
             except Product.DoesNotExist:
                 return JsonResponse({'error':'Item not found'},status=404)
-            # 2. Check if product is in stock using the pre-fetched related object
-            # (Assuming your Stock model has a field called 'quantity')
+
+            # 2. Check stock before adding to cart
             if toy.stock <= 0:
                 return JsonResponse({'error': 'out of stock'}, status=400)
 
