@@ -161,11 +161,7 @@ def cryptographic_signature_check(request):
 
         # Verify the signature using razorpay's utility function. This will raise an exception if the signature is invalid.
         client.utility.verify_payment_signature(data)
-        Payment.objects.create(user=request.user,
-                               order_id=data['razorpay_order_id'],
-                               amount=data['razorpay_amount'],
-                               status=data['razorpay_payment_id'],
-                               )
+        
     except razorpay.errors.SignatureVerificationError:
         import traceback
         print(traceback.format_exc())
