@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
-from .models import Category,Product,CartItem,Order
+from .models import Category,Product,CartItem,Order,OrderItems
 from django.db import transaction
 from django.db.models import F,Sum,When,Case,PositiveBigIntegerField
 import json
@@ -134,12 +134,21 @@ def initiate_razorpay_checkout(request, productId):
             },
             'receipt': f'rcpt_{item_id_in_str}',
         })
+
         # Phase 3: Save the Razorpay order details in your database for future reference
-        Order.objects.create(
+        user_order = Order.objects.create(
             user=request.user,
             order_id=order['id'],
             amount = order['amount'],
             status='PENDING',
+        )
+
+        # create order item right after order is created 
+        OrderItems.objects.create(
+            order = user_order,
+            product = toy_to_buy,
+            price = toy_to_buy.price,
+            quantity = 1
         )
 
     except Exception as api_err:
@@ -167,6 +176,7 @@ def cryptographic_signature_check(request):
 
         # Verify the signature using razorpay's utility function. This will raise an exception if the signature is invalid.
         client.utility.verify_payment_signature(data)
+        
         
     except razorpay.errors.SignatureVerificationError:
         import traceback
