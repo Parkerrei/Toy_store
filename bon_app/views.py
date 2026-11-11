@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
-from .models import Category,Product,CartItem,Payment
+from .models import Category,Product,CartItem,Order
 from django.db import transaction
 from django.db.models import F,Sum,When,Case,PositiveBigIntegerField
 import json
