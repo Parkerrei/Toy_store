@@ -134,6 +134,7 @@ def initiate_razorpay_checkout(request, productId):
             },
             'receipt': f'rcpt_{item_id_in_str}',
         })
+        # Phase 3: Save the Razorpay order details in your database for future reference
         Order.objects.create(
             user=request.user,
             order_id=order['id'],
