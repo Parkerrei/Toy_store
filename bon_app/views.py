@@ -134,10 +134,9 @@ def initiate_razorpay_checkout(request, productId):
             },
             'receipt': f'rcpt_{item_id_in_str}',
         })
-        Payment.objects.create(
+        Order.objects.create(
             user=request.user,
             order_id=order['id'],
-            payment_id=None,
             amount = order['amount'],
             status='PENDING',
         )
