@@ -12,6 +12,12 @@ class Order(models.Model):
     status = models.CharField(max_length=20, default="pending")
     created_at = models.DateTimeField(auto_now_add=True)
 
+class OrderItems(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    price = models.PositiveIntegerField()
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=400,null=True)   
