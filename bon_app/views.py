@@ -134,22 +134,26 @@ def initiate_razorpay_checkout(request, productId):
             },
             'receipt': f'rcpt_{item_id_in_str}',
         })
+        try:
+            with transaction.atomic():
+                # Phase 3: Save the Razorpay order details in your database for future reference
+                user_order = Order.objects.create(
+                    user=request.user,
+                    order_id=order['id'],
+                    amount = order['amount'],
+                    status='PENDING',
+                )
 
-        # Phase 3: Save the Razorpay order details in your database for future reference
-        user_order = Order.objects.create(
-            user=request.user,
-            order_id=order['id'],
-            amount = order['amount'],
-            status='PENDING',
-        )
-
-        # create order item right after order is created 
-        OrderItems.objects.create(
-            order = user_order,
-            product = toy_to_buy,
-            price = toy_to_buy.price,
-            quantity = 1
-        )
+                # create order item right after order is created 
+                OrderItems.objects.create(
+                    order = user_order,
+                    product = toy_to_buy,
+                    price = toy_to_buy.price,
+                    quantity = 1
+                )
+        except Exception as db_err:
+            logger.error(f"Database error while saving Razorpay order: {db_err}")
+            return JsonResponse({'error': 'Failed to save order details. Please try again later.'}, status=500)
 
     except Exception as api_err:
         # Log the exact Razorpay API failure to your terminal console
