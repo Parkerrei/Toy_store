@@ -172,6 +172,8 @@ def initiate_razorpay_checkout(request, productId):
         'receipt': order['receipt']
     })
 
+
+# Razorpay signature verification endpoint
 def cryptographic_signature_check(request):
     if request.method != 'POST':
         return JsonResponse({'error':'method not allowed'},status=405)
