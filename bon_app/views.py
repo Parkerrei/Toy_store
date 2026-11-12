@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import JsonResponse
-from .models import Category,Product,CartItem,Order,OrderItems
+from .models import Category,Product,CartItem,Order,OrderItems,Payment
 from django.db import transaction
 from django.db.models import F,Sum,When,Case,PositiveBigIntegerField
 import json
@@ -171,7 +171,7 @@ def initiate_razorpay_checkout(request, productId):
         'order_id': order['id'],
         'receipt': order['receipt']
     })
- 
+
 def cryptographic_signature_check(request):
     if request.method != 'POST':
         return JsonResponse({'error':'method not allowed'},status=405)
@@ -181,6 +181,13 @@ def cryptographic_signature_check(request):
         # Verify the signature using razorpay's utility function. This will raise an exception if the signature is invalid.
         client.utility.verify_payment_signature(data)
         
+        # Update the Payment status in your database to 'PAID' if the signature is valid
+        Payment.objects.create(
+            order = Order.objects.get(order_id=data['razorpay_order_id']),
+            payment_id = data['razorpay_payment_id'],
+            amount = Order.amount,
+            status = 'PAID'
+        )
         
     except razorpay.errors.SignatureVerificationError:
         import traceback
