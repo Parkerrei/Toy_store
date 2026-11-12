@@ -16,6 +16,7 @@ import uuid
 import time
 from django.core.cache import cache
 
+# User signup view
 def signup_user(request):
     if request.method == 'POST':
         form  = UserForm(request.POST)
@@ -28,6 +29,7 @@ def signup_user(request):
     form = UserForm()
     return render(request,'user_creation.html',{'form':form})
 
+# User login view with next parameter handling
 def user_log_in(request):
     next_url = request.GET.get('next') or request.POST.get('next')
 
@@ -55,6 +57,7 @@ def user_log_in(request):
 
     return render(request, 'login.html', {'form': form, 'next': next_url})
 
+# Main page view with AJAX-based infinite scrolling
 def main_page(request):
     PRODUCTS_PER_PAGE = 10
     if not request.session.session_key:
@@ -92,6 +95,7 @@ client         = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORP
 client.timeout = 10  # Set a timeout of 10 seconds for Razorpay API requests
 logger = logging.getLogger(__name__)
 
+# Razorpay checkout initiation endpoint
 def initiate_razorpay_checkout(request, productId):
     # 1: Ensure the request method is Post for checkout initiation
     if request.method != 'POST':
@@ -197,6 +201,7 @@ def cryptographic_signature_check(request):
         return JsonResponse({'error':'signature verification failed'},status=400)
     return JsonResponse({'success':'signature verified successfullt'},status=200)
 
+# Category products view with optimization
 def category_products_view(request, slug):
     # 1. OPTIMIZATION: Fetch category AND all its related products in ONE database query
     # Note: Use quotes around 'products' (the related_name on your Product model)
@@ -216,6 +221,7 @@ def category_products_view(request, slug):
         'category_list':category_list
     })
 
+# User logout view
 def user_log_out(request):
     # print('before logout:',list(request.session.items()))
     logout(request)
@@ -224,6 +230,7 @@ def user_log_out(request):
 
   # Ensures database integrity
 
+# Add to cart view with session handling for anonymous users
 def add_to_cart(request, productId):
     # Add this line at the start of your views:
     print("CURRENT SESSION ID:", request.session.session_key)
@@ -282,7 +289,8 @@ def add_to_cart(request, productId):
     except Exception as e:
         logger.error(f"Error adding product {productId} to cart for user {request.user.id} : {str(e)}")
         return JsonResponse({'error': 'An error occurred during transaction processing.'}, status=500)
-                                    
+
+# Show user cart items view with session handling for anonymous users                              
 def show_user_cart_items(request):
     # Add this line at the start of your views:
     print("CURRENT SESSION ID:", request.session.session_key)
@@ -332,6 +340,7 @@ def show_user_cart_items(request):
             } 
     return render(request,'all_cart.html',context)
 
+# Wipe user cart view with session handling for anonymous users
 def wipe_user_cart(request): 
     if request.method != 'DELETE':
         return JsonResponse({'error': 'method not allowed'}, status=405)
@@ -366,6 +375,7 @@ def wipe_user_cart(request):
         print(f"Error emptying cart: {str(e)}") # Keep this for terminal debugging
         return JsonResponse({'error': 'Something went wrong while processing your request.'}, status=500)
 
+# User cart order payment view with Razorpay integration
 def user_cart_order_payment(request):
     if not request.method == 'POST':
         return JsonResponse({'error':'method not allowed'},status=405)
@@ -412,6 +422,7 @@ def user_cart_order_payment(request):
         'receipt': order['receipt']
     })
 
+# Increment item quantity in cart view with database-level locking
 def increment_item(request,productId):
     if request.method == 'POST':
         try:
@@ -449,6 +460,7 @@ def increment_item(request,productId):
             return JsonResponse({'error':'something wrong'},status=500)   
     return JsonResponse({'error':'method not allowed'},status=405)
 
+# Decrement item quantity in cart view with database-level locking
 def decrement_item(request, productId):
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)    
