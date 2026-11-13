@@ -189,7 +189,8 @@ def cryptographic_signature_check(request):
         
         # wrap the database operations in a transaction to ensure atomicity
         try:
-            # Safely retrieve the order associated with the Razorpay order ID , so we can link the payment to the correct order in our database
+            # Safely retrieve the order associated with the Razorpay order ID ,
+            #  so we can link the payment to the correct order in our database
             user_order = Order.objects.select_for_update().filter(order_id=data['razorpay_order_id']).first()
             
             with transaction.atomic():
