@@ -110,20 +110,23 @@ def initiate_razorpay_checkout(request, productId):
         return JsonResponse({'authenticated':'false',
                              'next_url':login_url},status = 401)
     
-    # Phase 1: extract only column we need for RazorPay order creation
+    # Phase 1: extract only column we need for RazorPay order creation while locking the row to prevent race conditions
     try:
-        toy_to_buy = Product.objects.only('id','price','stock','name').get(id=productId)
-    except Product.DoesNotExist:
-        return JsonResponse({'Error':'Item not found'}, status=404)
 
-    # Check product stock before proceeding to Razorpay order creation
-    if toy_to_buy.stock <= 0:
-        return JsonResponse({'Error': 'Out of stock'}, status=409)
+        with transaction.atomic():
+            toy_to_buy = Product.objects.select_for_update().filter(id=productId).only('id','price','stock','name')
             
-    # cache the data before we call razorPay api for order
-    amount_paise = toy_to_buy.round_to_paise()
-    item_name = toy_to_buy.name
-    item_id_in_str = str(toy_to_buy.id)
+        # Check product stock before proceeding to Razorpay order creation
+        if toy_to_buy.stock <= 0:
+            return JsonResponse({'Error': 'Out of stock'}, status=409)
+                
+        # cache the data before we call razorPay api for order
+        amount_paise = toy_to_buy.round_to_paise()
+        item_name = toy_to_buy.name
+        item_id_in_str = str(toy_to_buy.id)
+
+    except Product.DoesNotExist:
+        return JsonResponse({'Error': 'Product not found'}, status=404)
 
     # Phase 2: Create Razorpay Order outside database lock
     try:
