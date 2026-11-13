@@ -140,7 +140,7 @@ def initiate_razorpay_checkout(request, productId):
         })
         try:
             with transaction.atomic():
-                # Phase 3: Save the Razorpay order details in your database for future reference
+                # Phase 3: Save the Razorpay order details with pending status 
                 user_order = Order.objects.create(
                     user=request.user,
                     order_id=order['id'],
@@ -155,6 +155,7 @@ def initiate_razorpay_checkout(request, productId):
                     price = toy_to_buy.price,
                     quantity = 1
                 )
+
         except Exception as db_err:
             logger.error(f"Database error while saving Razorpay order: {db_err}")
             return JsonResponse({'error': 'Failed to save order details. Please try again later.'}, status=500)
@@ -185,16 +186,28 @@ def cryptographic_signature_check(request):
 
         # Verify the signature using razorpay's utility function. This will raise an exception if the signature is invalid.
         client.utility.verify_payment_signature(data)
-
-        user_order = Order.objects.get(order_id=data['razorpay_order_id']),
-        # Update the Payment status in your database to 'PAID' if the signature is valid
-        Payment.objects.create(
-            order = user_order,
-            payment_id = data['razorpay_payment_id'],
-            amount = user_order.amount,
-            status = 'PAID'
-        )
         
+        # wrap the database operations in a transaction to ensure atomicity
+        try:
+            # Safely retrieve the order associated with the Razorpay order ID , so we can link the payment to the correct order in our database
+            user_order = Order.objects.get(order_id=data['razorpay_order_id'])
+            
+            with transaction.atomic():
+                # Update the Payment status in your database to 'PAID' if the signature is valid
+                Payment.objects.create(
+                    order = user_order,
+                    payment_id = data['razorpay_payment_id'],
+                    amount = user_order.amount,
+                    status = 'PAID'
+                )
+                # Update the Order status to 'PAID' as well
+                user_order.status = 'PAID'
+                user_order.save()
+                
+        except Order.DoesNotExist:
+            logger.error(f"Order with Razorpay order ID : {data['razorpay_order_id']} not found in database.")
+            return JsonResponse({'error': 'Order not found'}, status=404)
+            
     except razorpay.errors.SignatureVerificationError:
         import traceback
         print(traceback.format_exc())
