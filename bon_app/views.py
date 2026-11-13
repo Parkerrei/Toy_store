@@ -190,7 +190,7 @@ def cryptographic_signature_check(request):
         # wrap the database operations in a transaction to ensure atomicity
         try:
             # Safely retrieve the order associated with the Razorpay order ID , so we can link the payment to the correct order in our database
-            user_order = Order.objects.get(order_id=data['razorpay_order_id'])
+            user_order = Order.objects.select_for_update().filter(order_id=data['razorpay_order_id']).first()
             
             with transaction.atomic():
                 # Update the Payment status in your database to 'PAID' if the signature is valid
@@ -203,7 +203,7 @@ def cryptographic_signature_check(request):
                 # Update the Order status to 'PAID' as well
                 user_order.status = 'PAID'
                 user_order.save()
-                
+
         except Order.DoesNotExist:
             logger.error(f"Order with Razorpay order ID : {data['razorpay_order_id']} not found in database.")
             return JsonResponse({'error': 'Order not found'}, status=404)
