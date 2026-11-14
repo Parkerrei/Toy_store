@@ -158,7 +158,7 @@ def initiate_razorpay_checkout(request, productId):
                     price = toy_to_buy.price,
                     quantity = 1
                 )
-
+                           
         except Exception as db_err:
             logger.error(f"Database error while saving Razorpay order: {db_err}")
             return JsonResponse({'error': 'Failed to save order details. Please try again later.'}, status=500)
