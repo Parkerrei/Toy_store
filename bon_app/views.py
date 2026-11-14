@@ -154,7 +154,7 @@ def initiate_razorpay_checkout(request, productId):
                 # create order item right after order is created 
                 OrderItems.objects.create(
                     order = user_order,
-                    product = toy_to_buy.id,
+                    product_id = toy_to_buy.id,
                     price = toy_to_buy.price,
                     quantity = 1
                 )
