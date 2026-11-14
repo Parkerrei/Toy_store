@@ -121,7 +121,7 @@ def initiate_razorpay_checkout(request, productId):
                 return JsonResponse({'Error': 'Out of stock'}, status=409)
 
             # cache the data before we call razorPay api for order
-            amount_paise = toy_to_buy.round_to_paise()
+            amount_paise = toy_to_buy.round_to_paise()     
             item_name = toy_to_buy.name
             item_id_in_str = str(toy_to_buy.id)
 
