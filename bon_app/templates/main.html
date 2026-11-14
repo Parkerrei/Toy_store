@@ -526,7 +526,7 @@
                     .then((response) => {
                         if (response.status === 401) {
                             return response.json().then(data => {
-                                if (data.authenticated === 'false' && data.next_url) {
+                                if (data.authenticated === false && data.next_url) {
                                     window.location.href = data.next_url;
                                 }
                             })
