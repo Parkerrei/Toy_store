@@ -107,7 +107,7 @@ def initiate_razorpay_checkout(request, productId):
         login_url = f"/logged/?next={next_url}"
         
         # 2: Return a json response with 401 Unauthorized and the login url for the frontend to redirect the user
-        return JsonResponse({'authenticated':'false',
+        return JsonResponse({'authenticated':False,
                              'next_url':login_url},status = 401)
     
     # Phase 1: extract only column we need for RazorPay order creation while locking the row to prevent race conditions
