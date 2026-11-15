@@ -18,16 +18,22 @@ from django.core.cache import cache
 
 # User signup view
 def signup_user(request):
+    next_url = request.GET.get('next') or request.POST.get('next')
     if request.method == 'POST':
         form  = UserForm(request.POST)
         if form.is_valid():
             user = form.save(commit= True)
             login(request,user)
+            if next_url and url_has_allowed_host_and_scheme(
+                next_url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure()):
+                return redirect(next_url)
             return redirect('main_page')
         else:
-            return render(request,'user_creation.html',{'form':form})
+            return render(request,'user_creation.html',{'form':form,'next': next_url})
     form = UserForm()
-    return render(request,'user_creation.html',{'form':form})
+    return render(request,'user_creation.html',{'form':form,'next': next_url})
 
 # User login view with next parameter handling
 def user_log_in(request):
