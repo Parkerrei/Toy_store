@@ -52,10 +52,9 @@ def user_log_in(request):
                 if next_url and url_has_allowed_host_and_scheme(
                     url=next_url,
                     allowed_hosts={request.get_host()},
-                    require_https=request.is_secure()
-                ):
+                    require_https=request.is_secure()):
                     return redirect(next_url)
-                return redirect('main_page')
+                return redirect('/')
             else:
                 form.add_error(None, 'Invalid username or Password')
     else:
