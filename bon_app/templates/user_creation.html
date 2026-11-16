@@ -176,7 +176,7 @@
                     </div>
                     {{ form.confirm_password }}
                 </div>
-                <input type="hidden" name="next" id="id_next" value="{{ request.GET.next }}">
+                <input type="hidden" name="next" id="id_next" value="{{ next|default }}">
                 <button type="submit" class="btn-primary">Sign Up</button>
             </form>
 
