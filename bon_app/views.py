@@ -255,8 +255,6 @@ def user_log_out(request):
 
 # Add to cart view with session handling for anonymous users
 def add_to_cart(request, productId):
-    # Add this line at the start of your views:
-    print("CURRENT SESSION ID:", request.session.session_key)
 
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
