@@ -12,7 +12,7 @@ from django.db.models import F,Sum,When,Case,PositiveBigIntegerField
 import json
 import logging
 from django.core.paginator import Paginator
-import uuid
+import uuid # universal unique identifier for generating unique receipt IDs
 import time
 from django.core.cache import cache
 
