@@ -65,28 +65,42 @@ def user_log_in(request):
 # Main page view with AJAX-based infinite scrolling
 def main_page(request):
     PRODUCTS_PER_PAGE = 10
-    if not request.session.session_key:
+    
+    # 1. Initialize Anonymous Session Safely
+    if not request.user.is_authenticated and not request.session.session_key:
         request.session.create()
-        request.session.modified = True
+        # NOTE: request.session.create() automatically saves to the backend. 
+        # You do not need "request.session.modified = True" here.
+
+    # 2. Handle AJAX Infinite Scroll requests
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        # Avoid Paginator.count() on every scroll request. The extra row tells
-        # us whether another page exists without a separate COUNT(*) query.
         try:
             page_number = max(int(request.GET.get('page', 1)), 1)
         except (TypeError, ValueError):
             return JsonResponse({'error': 'Invalid page number.'}, status=400)
 
         offset = (page_number - 1) * PRODUCTS_PER_PAGE
-        products = list(Product.objects.filter(stock__gt=0).order_by('-id').only('image', 'name', 'price')[offset:offset + PRODUCTS_PER_PAGE + 1])
+        
+        # Fetch 11 items instead of 10 to check if a next page exists
+        products_queryset = Product.objects.filter(stock__gt=0).order_by('-id').only('image', 'name', 'price')
+        products = list(products_queryset[offset:offset + PRODUCTS_PER_PAGE + 1])
 
-        if len(products) > PRODUCTS_PER_PAGE:
+        # FIX: Check if there are more items, set the flag, then slice back to 10
+        has_next = len(products) > PRODUCTS_PER_PAGE
+        if has_next:
             products = products[:PRODUCTS_PER_PAGE]
 
-        return render(request, 'partials/product_cards.html', {'products': products})
+        # Pass 'has_next' to your partial template so JS knows whether to keep scrolling
+        return render(request, 'partials/product_cards.html', {
+            'products': products,
+            'has_next': has_next  
+        })
 
+    # 3. Handle Initial Page Load (Standard GET)
     categories = Category.objects.all()
-    all_product = Product.objects.filter(stock__gt=0).order_by('-id').only('image','name','price')
-    paginator = Paginator(all_product, PRODUCTS_PER_PAGE)
+    all_products = Product.objects.filter(stock__gt=0).order_by('-id').only('image', 'name', 'price')
+    
+    paginator = Paginator(all_products, PRODUCTS_PER_PAGE)
     page_number = request.GET.get('page', 1)
     products = paginator.get_page(page_number)
 
