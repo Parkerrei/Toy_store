@@ -281,11 +281,11 @@ def add_to_cart(request, productId):
             return JsonResponse({'error':'out of stock'},status=400)
 
         # save item in session cart for anonymous users
-        cart = request.session.get('anonymous_cart',{})
-        cart[product_id] = cart.get(product_id,0) + 1
-        request.session['anonymous_cart'] = cart
+        anonymous_cart = request.session.get('anonymous_cart',{})
+        anonymous_cart[product_id] = anonymous_cart.get(product_id,0) + 1
+        request.session['anonymous_cart'] = anonymous_cart
         request.session.modified = True
-        logger.info(f"Anonymous user added product {product_id} to session cart.\nCurrent cart contains: {cart}")
+        logger.info(f"Anonymous user added product {product_id} to session cart.\nCurrent cart contains: {anonymous_cart}")
         return JsonResponse({'success':'Item added'},status = 200)
 
     # 1. Safely find the product
