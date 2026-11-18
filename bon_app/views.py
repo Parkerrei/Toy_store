@@ -75,7 +75,6 @@ def main_page(request):
     # 2. Handle AJAX Infinite Scroll requests
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         try:  
-            
             page_number = max(int(request.GET.get('page', 1)), 1)
         except (TypeError, ValueError):
             return JsonResponse({'error': 'Invalid page number.'}, status=400)
