@@ -64,7 +64,6 @@ def user_log_in(request):
 
 # Main page view with AJAX-based infinite scrolling
 def main_page(request):
-    print('session created :',request.session.session_key)
     PRODUCTS_PER_PAGE = 10
     
     # 1. Initialize Anonymous Session Safely
