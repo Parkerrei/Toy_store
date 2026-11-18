@@ -18,7 +18,6 @@ def merge_anony_cart_once_logged_in(sender, request,user, **kwargs):
             for product_id, session_qty in session_cart.items():
                 if session_qty <= 0:
                     continue
-
                 try:
                     product = Product.objects.get(id=product_id)
                 except Product.DoesNotExist:
