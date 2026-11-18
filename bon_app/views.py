@@ -269,11 +269,7 @@ def add_to_cart(request, productId):
     # 1. Initialize Anonymous Session Safely
     if not request.user.is_authenticated and not request.session.session_key:
         request.session.create()
-        # NOTE: request.session.create() automatically saves to the backend. 
-        # You do not need "request.session.modified = True" here.
     
-    # handle anonymous users by storing cart in session
-    if not request.user.is_authenticated:
         product_id = str(productId)
         try:     
             toy = Product.objects.get(id=productId)
