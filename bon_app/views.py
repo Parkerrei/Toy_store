@@ -66,12 +66,6 @@ def user_log_in(request):
 def main_page(request):
     PRODUCTS_PER_PAGE = 10
     
-    # 1. Initialize Anonymous Session Safely
-    if not request.user.is_authenticated and not request.session.session_key:
-        request.session.create()
-        # NOTE: request.session.create() automatically saves to the backend. 
-        # You do not need "request.session.modified = True" here.
-
     # 2. Handle AJAX Infinite Scroll requests
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         try:  
@@ -271,7 +265,13 @@ def add_to_cart(request, productId):
 
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
-     
+
+    # 1. Initialize Anonymous Session Safely
+    if not request.user.is_authenticated and not request.session.session_key:
+        request.session.create()
+        # NOTE: request.session.create() automatically saves to the backend. 
+        # You do not need "request.session.modified = True" here.
+    
     # handle anonymous users by storing cart in session
     if not request.user.is_authenticated:
         product_id = str(productId)
