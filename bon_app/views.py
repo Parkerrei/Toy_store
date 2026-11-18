@@ -267,10 +267,7 @@ def add_to_cart(request, productId):
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
     # 1. Initialize Anonymous Session Safely
-    if not request.user.is_authenticated and not request.session.session_key:
-        request.session.create()
-    
-        product_id = str(productId)
+    if not request.user.is_authenticated:
         try:     
             toy = Product.objects.get(id=productId)
         except Product.DoesNotExist:
@@ -279,6 +276,11 @@ def add_to_cart(request, productId):
         # 1. check the stock of the product
         if toy.stock <= 0:
             return JsonResponse({'error':'out of stock'},status=400)
+
+        product_id = str(productId)
+
+        if not request.session.session_key:
+            request.session.create()    
 
         # save item in session cart for anonymous users
         anonymous_cart = request.session.get('anonymous_cart',{})
