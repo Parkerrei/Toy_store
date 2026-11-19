@@ -361,6 +361,7 @@ def show_user_cart_items(request):
                     'total_price':total_price,
                     'categories':category
                 }       
+        return render(request,'all_cart.html',context)
     else:        
         user_items  = CartItem.objects.filter(user_cart=request.user).select_related('product','product__category')
         total_price = sum(item.product.price * item.quantity for item in user_items)
