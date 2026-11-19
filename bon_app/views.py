@@ -15,6 +15,7 @@ from django.core.paginator import Paginator
 import uuid # universal unique identifier for generating unique receipt IDs
 import time
 from django.core.cache import cache
+from django.views.decorators.http import require_POST
 
 # User signup view
 def signup_user(request):
@@ -261,10 +262,8 @@ def user_log_out(request):
   # Ensures database integrity
 
 # Add to cart view with session handling for anonymous users
+@require_POST
 def add_to_cart(request, productId):
-
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
     # 1. Initialize Anonymous Session Safely
     if not request.user.is_authenticated:
