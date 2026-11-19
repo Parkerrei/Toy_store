@@ -337,7 +337,7 @@ def show_user_cart_items(request):
         user_cart = request.session.get('anonymous_cart',{})
         if not user_cart:
             context = {'cart_items':[],'total_price':0,'categories':category}
-            return render(request,'all_cart.html')
+            return render(request,'all_cart.html',context)
 
         product_ids = list(user_cart.keys())
         products = Product.objects.filter(id__in=product_ids).in_bulk()
