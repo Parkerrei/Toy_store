@@ -268,7 +268,7 @@ def add_to_cart(request, productId):
 
     # 1. Initialize Anonymous Session Safely
     if not request.user.is_authenticated:
-        try:     
+        try:
             toy = Product.objects.get(id=productId)
         except Product.DoesNotExist:
             return JsonResponse({'error':'Item not found'},status=404)
