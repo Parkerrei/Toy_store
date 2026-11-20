@@ -585,6 +585,7 @@
 
                 fetch(`/add_to_cart/${productId}/`, {
                     method: 'POST',
+                    credentials:'same-origin',
                     headers: {
                         'X-CSRFToken': token,
                         'Content-Type': 'application/json'
