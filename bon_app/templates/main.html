@@ -585,7 +585,7 @@
                 cartButton.innerText = 'Processing...'
                 cartButton.disabled = true
                 cartrequestque = cartrequestque.then(() => {
-                    fetch(`/add_to_cart/${productId}/`, {
+                    return fetch(`/add_to_cart/${productId}/`, {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: {
