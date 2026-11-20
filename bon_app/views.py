@@ -271,15 +271,12 @@ def add_to_cart(request, productId):
             toy = Product.objects.get(id=productId)
         except Product.DoesNotExist:
             return JsonResponse({'error':'Item not found'},status=404)
-        
+         
         # 1. check the stock of the product
         if toy.stock <= 0:
             return JsonResponse({'error':'out of stock'},status=400)
  
         product_id = str(productId)
-
-        if not request.session.session_key:
-            request.session.create()    
 
         # save item in session cart for anonymous users
         anonymous_cart = request.session.get('anonymous_cart',{})
