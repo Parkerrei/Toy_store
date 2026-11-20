@@ -490,6 +490,7 @@
         });
     });
 
+    let cartrequestque = Promise.resolve()
     document.addEventListener('DOMContentLoaded', () => {
         const sentinel = document.getElementById('scroll-sentinel');
         const grid = document.getElementById('product-grid');
@@ -575,6 +576,7 @@
             // ==========================================
             // CASE 2: CHECK IF ADD TO CART BUTTON WAS CLICKED
             // ==========================================
+
             else if (cartButton) { // FIX: Removed the blocking 'return;' statement
                 event.preventDefault();
 
@@ -582,14 +584,15 @@
                 const originalhtml = cartButton.innerText
                 cartButton.innerText = 'Processing...'
                 cartButton.disabled = true
-
-                fetch(`/add_to_cart/${productId}/`, {
-                    method: 'POST',
-                    credentials:'same-origin',
-                    headers: {
-                        'X-CSRFToken': token,
-                        'Content-Type': 'application/json'
-                    }
+                cartrequestque = cartrequestque.then(() => {
+                    fetch(`/add_to_cart/${productId}/`, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'X-CSRFToken': token,
+                            'Content-Type': 'application/json'
+                        }
+                    })
                 })
                     .then(response => {
                         if (!response.ok) {
