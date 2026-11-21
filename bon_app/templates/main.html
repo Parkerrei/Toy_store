@@ -490,7 +490,8 @@
         });
     });
 
-    let cartrequestque = Promise.resolve()
+
+    let cart_request_que = Promise.resolve() // que the request to preventing overlapping request
     document.addEventListener('DOMContentLoaded', () => {
         const sentinel = document.getElementById('scroll-sentinel');
         const grid = document.getElementById('product-grid');
@@ -584,7 +585,7 @@
                 const originalhtml = cartButton.innerText
                 cartButton.innerText = 'Processing...'
                 cartButton.disabled = true
-                cartrequestque = cartrequestque.then(() => {
+                cart_request_que = cart_request_que.then(() => {
                     return fetch(`/add_to_cart/${productId}/`, {
                         method: 'POST',
                         credentials: 'same-origin',
