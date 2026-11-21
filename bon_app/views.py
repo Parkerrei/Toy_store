@@ -55,7 +55,7 @@ def user_log_in(request):
                     allowed_hosts={request.get_host()},
                     require_https=request.is_secure()):
                     return redirect(next_url)
-                return redirect('/')
+                return redirect('main_page')
             else:
                 form.add_error(None, 'Invalid username or Password')
     else:
