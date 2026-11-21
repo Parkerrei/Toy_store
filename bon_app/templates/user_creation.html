@@ -181,7 +181,8 @@
             </form>
 
             <p class="login-link">
-                Already have an account? <a href="{% url 'logged' %}">Log in</a>
+                Already have an account? <a href="{% url 'logged' %}?next={{ request.GET.next | default:'' }}">Log
+                    in</a>
             </p>
         </div>
     </div>
