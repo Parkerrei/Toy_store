@@ -389,6 +389,23 @@
                 const productId = btn.dataset.id
                 var quantity = document.getElementById(`qty-${productId}`)
 
+                if (quantity) {
+                    let number_of_quantity = parseInt(quantity.textContent, 10) || 0;
+
+                    if (number_of_quantity <= 1) {
+                        number_of_quantity += 1;
+                        quantity.textContent = number_of_quantity;
+                    } else {
+                        // FIX: Safely update the actual DOM element to 0, instead of the primitive integer variable
+                        quantity.textContent = '0';
+
+                        // Optional smooth fade out before the backend confirms deletion
+                        if (container_remove) {
+                            container_remove.style.opacity = '0.5';
+                        }
+                    }
+                }
+
                 fetch(`/increment_item/${productId}/`, {
                     'method': 'POST',
                     headers: {
