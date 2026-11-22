@@ -49,6 +49,7 @@ def user_log_in(request):
 
             if user_access is not None:
                 login(request,user_access)
+                print(request.session.session_key)
                
                 # 5. Redirect user
                 if  next_url and next_url != 'None' and url_has_allowed_host_and_scheme(
@@ -268,6 +269,7 @@ def add_to_cart(request, productId):
 
     # 1. Initialize Anonymous Session Safely
     if not request.user.is_authenticated:
+        print(request.session.session_key)
         try:
             toy = Product.objects.get(id=productId)
         except Product.DoesNotExist:
