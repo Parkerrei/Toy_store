@@ -39,7 +39,8 @@ def signup_user(request):
 # User login view with next parameter handling
 def user_log_in(request):
     next_url = request.GET.get('next') or request.POST.get('next')
-
+    print(f"next_url : {request.GET.get('next')}")
+    print(f"next_url : {request.POST.get('next')}")
     if request.method == 'POST': 
         form = logged_in(request.POST)
         if form.is_valid():
