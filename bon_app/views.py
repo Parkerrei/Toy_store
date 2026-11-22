@@ -49,8 +49,7 @@ def user_log_in(request):
 
             if user_access is not None:
                 login(request,user_access)
-                print("GET next:", repr(request.GET.get("next")))
-                print("POST next:", repr(request.POST.get("next")))
+               
                 # 5. Redirect user
                 if next_url and url_has_allowed_host_and_scheme(
                     url=next_url,
