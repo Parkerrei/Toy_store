@@ -394,10 +394,9 @@
 
                     if (number_of_quantity <= 1) {
                         number_of_quantity += 1;
-                        quantity.textContent = number_of_quantity;
                     } else {
                         // FIX: Safely update the actual DOM element to 0, instead of the primitive integer variable
-                        quantity.textContent = '0';
+                        quantity.textContent = number_of_quantity;
 
                         // Optional smooth fade out before the backend confirms deletion
                         if (container_remove) {
