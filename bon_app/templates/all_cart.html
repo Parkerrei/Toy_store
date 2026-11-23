@@ -391,14 +391,8 @@
 
                 if (quantity) {
                     let number_of_quantity = parseInt(quantity.textContent, 10) || 0;
-
-                    if (number_of_quantity <= 1) {
                         number_of_quantity += 1;
-                    } else {
-                        // FIX: Safely update the actual DOM element to 0, instead of the primitive integer variable
-                        quantity.textContent = number_of_quantity;
-
-                    }
+                        quantity.textContent = number_of_quantity; 
                 }
 
                 fetch(`/increment_item/${productId}/`, {
