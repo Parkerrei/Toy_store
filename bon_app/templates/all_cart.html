@@ -381,13 +381,13 @@
     document.addEventListener('DOMContentLoaded', () => {
         const token = document.getElementById('token').value
         const increm_btn = document.querySelectorAll('.increment-btn')
-        var total = document.querySelector('.total_price')
+        let total = document.querySelector('.total_price')
         const show_message = document.querySelector('dialog')
         increm_btn.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const productId = btn.dataset.id
-                var quantity = document.getElementById(`qty-${productId}`)
+                let quantity = document.getElementById(`qty-${productId}`)
 
                 if (quantity) {
                     let number_of_quantity = parseInt(quantity.textContent, 10) || 0;
@@ -452,8 +452,8 @@
                 if (!productId) return;
 
                 // Matches your card id: id-{{ detail.id }} and paragraph id: qty-{{ detail.id }}
-                var container_remove = document.getElementById(`id-${productId}`);
-                var quantity = document.getElementById(`qty-${productId}`);
+                let container_remove = document.getElementById(`id-${productId}`);
+                let quantity = document.getElementById(`qty-${productId}`);
 
                 // 2. Optimistic UI update
                 if (quantity) {
@@ -638,7 +638,7 @@
         const buttons = document.getElementById('cart-btn')
         const total_price_tag = document.getElementById('price')
         buttons.addEventListener('click', () => {
-            var originalContent = buttons.innerHTML
+            let originalContent = buttons.innerHTML
             buttons.disabled = true
             buttons.innerText = "removing ...."
 
