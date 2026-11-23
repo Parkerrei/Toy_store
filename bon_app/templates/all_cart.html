@@ -377,6 +377,11 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
+    // modal function 
+    function btn_disable() {
+        btn.disabled = false
+        btn.style.opacity = '1'
+    }
     // increment handling
     document.addEventListener('DOMContentLoaded', () => {
         const token = document.getElementById('token').value
@@ -384,6 +389,12 @@
         let total = document.querySelector('.total_price')
         const show_message = document.querySelector('dialog')
         increm_btn.forEach(btn => {
+
+            // helper function 
+            function btn_disable() {
+                btn.disabled = false
+                btn.style.opacity = '1'
+            }
 
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -417,12 +428,10 @@
                             if (quantity) {
                                 quantity.textContent = data.qty
                             }
-                            btn.style.opacity = '1'
-                            btn.disabled = false
+                            btn_disable()
                         }
                         else {
-                            btn.style.opacity = '1'
-                            btn.disabled = false
+                            btn_disable()
                             show_message.textContent = data.error
                             show_message.showModal()
                             setTimeout(() => {
@@ -432,8 +441,7 @@
                     })
                     .catch(error => {
                         show_message.textContent = error
-                        btn.style.opacity = '1'
-                        btn.disabled = false
+                        btn_disable()
                         show_message.showModal()
                         setTimeout(() => {
                             show_message.close()
@@ -455,9 +463,21 @@
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
 
+                // helper function to disable back the button to false
+                function btn_disable() {
+                    btn.disabled = false
+                    btn.style.opacity = '1'
+                }
+
+                btn.disabled = true
+                btn.style.opacity = '0.5'
+
                 // 1. Get the correct item ID from your data-id attribute
                 const productId = btn.dataset.id;
-                if (!productId) return;
+                if (!productId) {
+                    btn_disable()
+                    return
+                }
 
                 // Matches your card id: id-{{ detail.id }} and paragraph id: qty-{{ detail.id }}
                 let container_remove = document.getElementById(`id-${productId}`);
@@ -509,7 +529,7 @@
                                 if (quantity) {
                                     quantity.textContent = data.qty;
                                     if (container_remove) container_remove.style.opacity = '1';
-                                }
+                                } btn_disable()
                             } else {
                                 // Completely remove item element card from the DOM tree
                                 if (container_remove) {
@@ -518,11 +538,13 @@
                             }
                         } else {
                             showError(data.error || 'Failed to update item.');
+                            btn_disable()
                             if (container_remove) container_remove.style.opacity = '1';
                         }
                     })
                     .catch(error => {
                         showError(error.message || error);
+                        btn_disable()
                         if (container_remove) container_remove.style.opacity = '1';
                     });
             });
