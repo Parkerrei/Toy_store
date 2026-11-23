@@ -542,7 +542,7 @@
 
         id.addEventListener('click', () => {
             let originalContent = id.innerText
-            id.innerText = 'processing...'
+            id.textContent = 'processing...'
             id.disabled = true
 
             fetch(`/user_cart_order_payment/`, {
@@ -569,7 +569,7 @@
                     })
                 })
                 .then((data) => {
-                    id.innerText = originalContent
+                    id.textContent = originalContent
                     id.disabled = false
 
                     if (data && data.order_id) {
@@ -640,7 +640,7 @@
         buttons.addEventListener('click', () => {
             let originalContent = buttons.innerHTML
             buttons.disabled = true
-            buttons.innerText = "removing ...."
+            buttons.textContent = "removing ...."
 
             fetch('/wipe_user_cart/',
                 {
@@ -662,18 +662,18 @@
                         if (cart_container) {
                             cart_container.innerHTML = '';
                         } if (total_price_tag) {
-                            total_price_tag.innerText = 'Grand Total: ₹ 0'
+                            total_price_tag.textContent = 'Grand Total: ₹ 0'
                         }
                     }
                     else {
                         alert('Error:' + data.error)
                     }
                     buttons.disabled = false
-                    buttons.innerText = originalContent
+                    buttons.textContent= originalContent
                 })
                 .catch(error => {
                     buttons.disabled = false
-                    buttons.innerText = originalContent
+                    buttons.textContent = originalContent
                     alert('error:' + error)
                 })
         })
