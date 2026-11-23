@@ -384,8 +384,11 @@
         let total = document.querySelector('.total_price')
         const show_message = document.querySelector('dialog')
         increm_btn.forEach(btn => {
+
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
+                btn.disabled = true
+                btn.style.opacity = '0.5'
                 const productId = btn.dataset.id
                 let quantity = document.getElementById(`qty-${productId}`)
 
@@ -414,8 +417,12 @@
                             if (quantity) {
                                 quantity.textContent = data.qty
                             }
+                            btn.style.opacity = '1'
+                            btn.disabled = false
                         }
                         else {
+                            btn.style.opacity = '1'
+                            btn.disabled = false
                             show_message.textContent = data.error
                             show_message.showModal()
                             setTimeout(() => {
@@ -425,6 +432,8 @@
                     })
                     .catch(error => {
                         show_message.textContent = error
+                        btn.style.opacity = '1'
+                        btn.disabled = false
                         show_message.showModal()
                         setTimeout(() => {
                             show_message.close()
