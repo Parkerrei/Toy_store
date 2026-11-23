@@ -410,7 +410,7 @@
                 })
                     .then(data => {
                         if (data.success) {
-                            total.innerText = data.price
+                            total.innerText = `₹ ${data.price}`
 
                             if (quantity) {
                                 quantity.textContent = data.qty
