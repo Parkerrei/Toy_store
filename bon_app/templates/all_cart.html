@@ -490,7 +490,6 @@
                     if (number_of_quantity >= 2) {
                         number_of_quantity -= 1;
                         quantity.textContent = number_of_quantity;
-                        console.log(`Decremented quantity for product ${productId}: ${number_of_quantity}`);
                     } else {
                         // FIX: Safely update the actual DOM element to 0, instead of the primitive integer variable
                         quantity.textContent = '0';
