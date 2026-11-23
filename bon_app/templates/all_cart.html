@@ -391,8 +391,8 @@
 
                 if (quantity) {
                     let number_of_quantity = parseInt(quantity.textContent, 10) || 0;
-                        number_of_quantity += 1;
-                        quantity.textContent = number_of_quantity; 
+                    number_of_quantity += 1;
+                    quantity.textContent = number_of_quantity;
                 }
 
                 fetch(`/increment_item/${productId}/`, {
@@ -411,10 +411,10 @@
                     .then(data => {
                         if (data.success) {
                             total.textContent = `₹ ${data.price}`
-
                             if (quantity) {
                                 quantity.textContent = data.qty
                             }
+
                         }
                         else {
                             show_message.textContent = data.error
@@ -669,7 +669,7 @@
                         alert('Error:' + data.error)
                     }
                     buttons.disabled = false
-                    buttons.textContent= originalContent
+                    buttons.textContent = originalContent
                 })
                 .catch(error => {
                     buttons.disabled = false
