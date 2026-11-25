@@ -526,7 +526,7 @@
                                 if (quantity) {
                                     quantity.textContent = data.qty;
                                     if (container_remove) container_remove.style.opacity = '1';
-                                } btn_enable()
+                                }
                             } else {
                                 // Completely remove item element card from the DOM tree
                                 if (container_remove) {
@@ -535,14 +535,15 @@
                             }
                         } else {
                             showError(data.error || 'Failed to update item.');
-                            btn_enable()
                             if (container_remove) container_remove.style.opacity = '1';
                         }
                     })
                     .catch(error => {
                         showError(error.message || error);
-                        btn_enable()
                         if (container_remove) container_remove.style.opacity = '1';
+                    })
+                    .finally(() => {
+                        btn_enable()
                     });
             });
         });
