@@ -534,12 +534,18 @@
                                 }
                             }
                         } else {
-                            showError(data.error || 'Failed to update item.');
+                            show_dialog.showModal()
+                            setTimeout(() => {
+                                show_dialog.close()
+                            }, 3000);
                             if (container_remove) container_remove.style.opacity = '1';
                         }
                     })
                     .catch(error => {
-                        showError(error.message || error);
+                        show_dialog.showModal()
+                        setTimeout(() => {
+                            show_dialog.close()
+                        }, 3000);
                         if (container_remove) container_remove.style.opacity = '1';
                     })
                     .finally(() => {
