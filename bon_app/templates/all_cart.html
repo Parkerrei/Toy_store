@@ -377,7 +377,6 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
-   
     // increment handling
     document.addEventListener('DOMContentLoaded', () => {
         const token = document.getElementById('token').value
@@ -386,7 +385,14 @@
         const show_message = document.querySelector('dialog')
         increm_btn.forEach(btn => {
 
-            // helper function 
+            // helper function to show error message for a few seconds
+            function error_message() {
+                show_message.showModal()
+                setTimeout(() => {
+                    show_message.close()
+                }, 3000)
+            }
+            // helper function to enable the locked button back
             function btn_enable() {
                 btn.disabled = false
                 btn.style.opacity = '1'
@@ -418,31 +424,27 @@
                         throw new Error('error' + response.status)
                     } return response.json()
                 })
+
                     .then(data => {
                         if (data.success) {
                             total.textContent = `₹ ${data.price}`
                             if (quantity) {
                                 quantity.textContent = data.qty
                             }
-                            btn_enable()
                         }
                         else {
                             btn_enable()
                             show_message.textContent = data.error
-                            show_message.showModal()
-                            setTimeout(() => {
-                                show_message.close()
-                            }, 3000)
+                            error_message()
                         }
                     })
                     .catch(error => {
                         show_message.textContent = error
+                        error_message()
+                    })
+                    .finally(() => {
                         btn_enable()
-                        show_message.showModal()
-                        setTimeout(() => {
-                            show_message.close()
-                        }, 3000)
-                    });
+                    })
             })
         })
     })
