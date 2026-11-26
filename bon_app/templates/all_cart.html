@@ -456,26 +456,26 @@
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
 
-                // helper function to enable back the button 
+                // Helper function to re-enable the button
                 function btn_enable() {
-                    btn.disabled = false
-                    btn.style.opacity = '1'
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
                 }
 
-                btn.disabled = true
-                btn.style.opacity = '0.5'
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
 
-                // 1. Get the correct item ID from your data-id attribute
+                // 1. Get the item ID from the data-id attribute
                 const productId = btn.dataset.id;
                 if (!productId) {
-                    btn_enable()
-                    return
+                    btn_enable();
+                    return;
                 }
 
-                // Matches your card id: id-{{ detail.id }} and paragraph id: qty-{{ detail.id }}
+                // Matches card id: id-{{ detail.id }} and quantity id: qty-{{ detail.id }}
                 let container_remove = document.getElementById(`id-${productId}`);
                 let quantity = document.getElementById(`qty-${productId}`);
-                let previous_quantity = quantity.textContent
+                let previous_quantity = quantity ? quantity.textContent : '0';
 
                 // 2. Optimistic UI update
                 if (quantity) {
@@ -485,10 +485,8 @@
                         number_of_quantity -= 1;
                         quantity.textContent = number_of_quantity;
                     } else {
-                        // FIX: Safely update the actual DOM element to 0, instead of the primitive integer variable
                         quantity.textContent = '0';
 
-                        // Optional smooth fade out before the backend confirms deletion
                         if (container_remove) {
                             container_remove.style.opacity = '0.5';
                         }
@@ -506,7 +504,7 @@
                 })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('error' + response.status);
+                            throw new Error('error ' + response.status);
                         }
                         return response.json();
                     })
@@ -526,40 +524,50 @@
                                     }
                                 }
                             } else {
-                                // Completely remove item element card from the DOM tree
+                                // Completely remove item card from the DOM
                                 if (container_remove) {
                                     container_remove.remove();
                                 }
                             }
+                        } else {
+                            throw new Error('Server returned success: false');
                         }
                     })
                     .catch(error => {
-                        quantity.textContent = previous_quantity
-                        show_dialog.showModal()
-                        setTimeout(() => {
-                            show_dialog.close()
-                        }, 3000);
-
-                        if (container_remove) container_remove.style.opacity = '1';
+                        // Rollback UI on network or server error
+                        if (quantity) {
+                            quantity.textContent = previous_quantity;
+                        }
+                        if (container_remove) {
+                            container_remove.style.opacity = '1';
+                        }
+                        if (show_dialog) {
+                            show_dialog.showModal();
+                            setTimeout(() => {
+                                show_dialog.close();
+                            }, 3000);
+                        }
                     })
                     .finally(() => {
-                        btn_enable()
+                        btn_enable();
                     });
             });
         });
+    });
 
-        // Helper to safely render modal error states without breaking flow
-        function showError(msg) {
-            if (show_dialog) {
-                show_dialog.textContent = msg;
-                show_dialog.showModal();
-                setTimeout(() => {
-                    show_dialog.close();
-                }, 3000);
-            } else {
-                console.error(msg);
-            }
+
+    // Helper to safely render modal error states without breaking flow
+    function showError(msg) {
+        if (show_dialog) {
+            show_dialog.textContent = msg;
+            show_dialog.showModal();
+            setTimeout(() => {
+                show_dialog.close();
+            }, 3000);
+        } else {
+            console.error(msg);
         }
+    }
     });
 
 
