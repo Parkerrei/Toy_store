@@ -588,7 +588,8 @@
                 const originalhtml = cartButton.innerText
                 cartButton.innerText = 'Processing...'
                 cartButton.disabled = true
-
+                
+                // Que the request object in multiple click scenario
                 cart_request_que = cart_request_que.then(() => {
                     return fetch(`/add_to_cart/${productId}/`, {
                         method: 'POST',
@@ -632,6 +633,7 @@
                     })
             }
         });
+
 
         // 1. Quietly fetch the next page data in the background
         const prefetchNextPageSilent = () => {
