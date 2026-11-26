@@ -526,7 +526,9 @@
                             if (data.qty > 0) {
                                 if (quantity) {
                                     quantity.textContent = data.qty;
-                                    if (container_remove) container_remove.style.opacity = '1';
+                                    if (container_remove) {
+                                        container_remove.style.opacity = '1';
+                                    }
                                 }
                             } else {
                                 // Completely remove item element card from the DOM tree
@@ -539,7 +541,9 @@
                             setTimeout(() => {
                                 show_dialog.close()
                             }, 3000);
-                            if (container_remove) container_remove.style.opacity = '1';
+                            if (container_remove) {
+                                container_remove.style.opacity = '1';
+                            }
                         }
                     })
                     .catch(error => {
