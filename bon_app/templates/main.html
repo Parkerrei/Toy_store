@@ -580,7 +580,8 @@
             // CASE 2: CHECK IF ADD TO CART BUTTON WAS CLICKED
             // ==========================================
 
-            else if (cartButton) { // FIX: Removed the blocking 'return;' statement
+            else if (cartButton) { 
+                // prevent the default behaviour
                 event.preventDefault();
 
                 const productId = cartButton.getAttribute('data-id');
