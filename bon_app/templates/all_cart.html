@@ -555,22 +555,6 @@
         });
     });
 
-
-    // Helper to safely render modal error states without breaking flow
-    function showError(msg) {
-        if (show_dialog) {
-            show_dialog.textContent = msg;
-            show_dialog.showModal();
-            setTimeout(() => {
-                show_dialog.close();
-            }, 3000);
-        } else {
-            console.error(msg);
-        }
-    }
-    });
-
-
     // initiate cart checkout
     document.addEventListener('DOMContentLoaded', () => {
         const key = document.getElementById('token').value
@@ -640,7 +624,6 @@
                 })
         }) // The event listener now correctly closes cleanly here at the very end
     })
-
 
     // helper function to send transaction data back to django for verification
     function paymentverification(razorpay_response) {
