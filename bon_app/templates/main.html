@@ -580,7 +580,7 @@
             // CASE 2: CHECK IF ADD TO CART BUTTON WAS CLICKED
             // ==========================================
 
-            else if (cartButton) { 
+            else if (cartButton) {
                 // prevent the default behaviour
                 event.preventDefault();
 
@@ -588,6 +588,7 @@
                 const originalhtml = cartButton.innerText
                 cartButton.innerText = 'Processing...'
                 cartButton.disabled = true
+
                 cart_request_que = cart_request_que.then(() => {
                     return fetch(`/add_to_cart/${productId}/`, {
                         method: 'POST',
@@ -610,8 +611,6 @@
                         return response.json();
                     })
                     .then(data => {
-                        cartButton.innerText = originalhtml
-                        cartButton.disabled = false
                         if (data.success) {
                             show_message.innerText = data.success
                             show_message.showModal()
@@ -619,24 +618,18 @@
                                 show_message.close()
                             }, 1000)
                         }
-                        else if (data.error) {
-                            show_message.innerText = data.error
-                            show_message.showModal()
-                            setTimeout(() => {
-                                show_message.close()
-                            }, 3000)
-                        }
-
                     })
                     .catch(error => {
-                        cartButton.innerText = originalhtml
-                        cartButton.disabled = false
                         show_message.innerText = error.message
                         show_message.showModal()
                         setTimeout(() => {
                             show_message.close()
                         }, 3000)
-                    });
+                    })
+                    .finally(() => {
+                        cartButton.innerText = originalhtml
+                        cartButton.disabled = false
+                    })
             }
         });
 
