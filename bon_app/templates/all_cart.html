@@ -480,6 +480,7 @@
                 // Matches your card id: id-{{ detail.id }} and paragraph id: qty-{{ detail.id }}
                 let container_remove = document.getElementById(`id-${productId}`);
                 let quantity = document.getElementById(`qty-${productId}`);
+                let previous_quantity = quantity.textContent
 
                 // 2. Optimistic UI update
                 if (quantity) {
@@ -542,10 +543,12 @@
                         }
                     })
                     .catch(error => {
+                        quantity.textContent = previous_quantity
                         show_dialog.showModal()
                         setTimeout(() => {
                             show_dialog.close()
                         }, 3000);
+
                         if (container_remove) container_remove.style.opacity = '1';
                     })
                     .finally(() => {
