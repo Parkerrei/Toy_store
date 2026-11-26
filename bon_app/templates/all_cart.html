@@ -432,11 +432,6 @@
                                 quantity.textContent = data.qty
                             }
                         }
-                        else {
-                            btn_enable()
-                            show_message.textContent = data.error
-                            error_message()
-                        }
                     })
                     .catch(error => {
                         show_message.textContent = error
@@ -535,14 +530,6 @@
                                 if (container_remove) {
                                     container_remove.remove();
                                 }
-                            }
-                        } else {
-                            show_dialog.showModal()
-                            setTimeout(() => {
-                                show_dialog.close()
-                            }, 3000);
-                            if (container_remove) {
-                                container_remove.style.opacity = '1';
                             }
                         }
                     })
