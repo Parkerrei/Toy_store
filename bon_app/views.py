@@ -77,6 +77,156 @@ def main_page(request):
 
         offset = (page_number - 1) * PRODUCTS_PER_PAGE
         
+        # Fetch 11 items instead of 10 to check if a next page exists
+        products_queryset = Product.objects.filter(stock__gt=0).order_by('-id').only('image', 'name', 'price')
+        products = list(products_queryset[offset:offset + PRODUCTS_PER_PAGE + 1])
+
+        # FIX: Check if there are more items, set the flag, then slice back to 10
+        has_next = len(products) > PRODUCTS_PER_PAGE
+        if has_next:
+            products = products[:PRODUCTS_PER_PAGE]
+
+        # Pass 'has_next' to your partial template so JS knows whether to keep scrolling
+        return render(request, 'partials/product_cards.html', {
+            'products': products,
+            'has_next': has_next  
+        })
+
+    # 3. Handle Initial Page Load (Standard GET)
+    categories = Category.objects.all()
+    all_products = Product.objects.filter(stock__gt=0).order_by('-id').only('image', 'name', 'price')
+    
+    paginator = Paginator(all_products, PRODUCTS_PER_PAGE)
+    page_number = request.GET.get('page', 1)
+    products = paginator.get_page(page_number)
+
+    return render(request, 'main.html', {
+        'categories': categories,
+        'products': products
+    })
+def main_page(request):
+    PRODUCTS_PER_PAGE = 10
+    
+    # 2. Handle AJAX Infinite Scroll requests
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        try:  
+            page_number = max(int(request.GET.get('page', 1)), 1)
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'Invalid page number.'}, status=400)
+
+        offset = (page_number - 1) * PRODUCTS_PER_PAGE
+        
+        # Removed .only() so Django fetches all columns in 1 single trip!
+        products_queryset = Product.objects.filter(stock__gt=0).order_by('-id')
+        products = list(products_queryset[offset:offset + PRODUCTS_PER_PAGE + 1])
+
+        has_next = len(products) > PRODUCTS_PER_PAGE
+        if has_next:
+            products = products[:PRODUCTS_PER_PAGE]
+
+        return render(request, 'partials/product_cards.html', {
+            'products': products,
+            'has_next': has_next  
+        })
+
+    # 3. Handle Initial Page Load (Standard GET)
+    categories = Category.objects.all()
+    all_products = Product.objects.filter(stock__gt=0).order_by('-id')
+    
+    paginator = Paginator(all_products, PRODUCTS_PER_PAGE)
+    page_number = request.GET.get('page', 1)
+    products = paginator.get_page(page_number)
+
+    return render(request, 'main.html', {
+        'categories': categories,
+        'products': products
+    })
+def main_page(request):
+    PRODUCTS_PER_PAGE = 10
+    
+    # 2. Handle AJAX Infinite Scroll requests
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        try:  
+            page_number = max(int(request.GET.get('page', 1)), 1)
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'Invalid page number.'}, status=400)
+
+        offset = (page_number - 1) * PRODUCTS_PER_PAGE
+        
+        # Removed .only() so Django fetches all columns in 1 single trip!
+        products_queryset = Product.objects.filter(stock__gt=0).order_by('-id')
+        products = list(products_queryset[offset:offset + PRODUCTS_PER_PAGE + 1])
+
+        has_next = len(products) > PRODUCTS_PER_PAGE
+        if has_next:
+            products = products[:PRODUCTS_PER_PAGE]
+
+        return render(request, 'partials/product_cards.html', {
+            'products': products,
+            'has_next': has_next  
+        })
+
+    # 3. Handle Initial Page Load (Standard GET)
+    categories = Category.objects.all()
+    all_products = Product.objects.filter(stock__gt=0).order_by('-id')
+    
+    paginator = Paginator(all_products, PRODUCTS_PER_PAGE)
+    page_number = request.GET.get('page', 1)
+    products = paginator.get_page(page_number)
+
+    return render(request, 'main.html', {
+        'categories': categories,
+        'products': products
+    })
+def main_page(request):
+    PRODUCTS_PER_PAGE = 10
+    
+    # 2. Handle AJAX Infinite Scroll requests
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        try:  
+            page_number = max(int(request.GET.get('page', 1)), 1)
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'Invalid page number.'}, status=400)
+
+        offset = (page_number - 1) * PRODUCTS_PER_PAGE
+        
+        # Removed .only() so Django fetches all columns in 1 single trip!
+        products_queryset = Product.objects.filter(stock__gt=0).order_by('-id')
+        products = list(products_queryset[offset:offset + PRODUCTS_PER_PAGE + 1])
+
+        has_next = len(products) > PRODUCTS_PER_PAGE
+        if has_next:
+            products = products[:PRODUCTS_PER_PAGE]
+
+        return render(request, 'partials/product_cards.html', {
+            'products': products,
+            'has_next': has_next  
+        })
+
+    # 3. Handle Initial Page Load (Standard GET)
+    categories = Category.objects.all()
+    all_products = Product.objects.filter(stock__gt=0).order_by('-id')
+    
+    paginator = Paginator(all_products, PRODUCTS_PER_PAGE)
+    page_number = request.GET.get('page', 1)
+    products = paginator.get_page(page_number)
+
+    return render(request, 'main.html', {
+        'categories': categories,
+        'products': products
+    })
+def main_page(request):
+    PRODUCTS_PER_PAGE = 10
+    
+    # 2. Handle AJAX Infinite Scroll requests
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        try:  
+            page_number = max(int(request.GET.get('page', 1)), 1)
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'Invalid page number.'}, status=400)
+
+        offset = (page_number - 1) * PRODUCTS_PER_PAGE
+        
         # Removed .only() so Django fetches all columns in 1 single trip!
         products_queryset = Product.objects.filter(stock__gt=0).order_by('-id')
         products = list(products_queryset[offset:offset + PRODUCTS_PER_PAGE + 1])
