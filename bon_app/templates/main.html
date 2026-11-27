@@ -146,7 +146,11 @@
         }
 
         /* Layout balancing for specific text options */
-        nav a#profile {
+        nav a#log-in {
+            display: none;
+        }
+
+        nav a#sign-up {
             display: none;
         }
 
@@ -335,7 +339,12 @@
                 padding: 0 14px;
             }
 
-            nav a#profile {
+            nav a#sign-up {
+                display: inline-flex;
+                /* Safely returns to screen layouts */
+            }
+
+            nav a#log-in {
                 display: inline-flex;
                 /* Safely returns to screen layouts */
             }
@@ -430,8 +439,13 @@
 <body>
     <div id="nav-container">
         <nav>
-            <a id="profile" href="{% url 'logged' %}">log in</a>
-            <a id="profile" href="{% url 'signup_user' %}">sign up</a>
+            {% if not user.is_authenticated %}
+            <h4 class="welcome-msg">Welcome, <strong>{{user}}</strong></h4>
+            <a id="log-in" href="{% url 'logged' %}">log in</a>
+            <a id="sign-up" href="{% url 'signup_user' %}">sign up</a>
+            {% else %}
+            <h4 class="welcome-msg">Welcome, <strong>{{user.username}}</strong></h4>
+            {% endif %}
             <a id="cart" href="{% url 'show_user_cart_items' %}">your Cart</a>
             <a id="logout" href="{% url 'user_log_out' %}" style="color: #f51f1f;">Logout</a>
             <select name="" id="" onchange="if (this.value) location.href = this.value;">
@@ -443,9 +457,8 @@
             </select>
 
             <h1>Cheri BonBon</h1>
-            {% if user %}
-            <h4 class="welcome-msg">Welcome, <big>{{user}}</big></h4>
-            {% endif %}
+
+
         </nav>
     </div>
 
@@ -470,7 +483,6 @@
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-
     document.addEventListener("DOMContentLoaded", () => {
         const navbar = document.getElementById("nav-container");
         let lastScrollY = window.scrollY;
@@ -490,7 +502,6 @@
             lastScrollY = currentScrollY;
         });
     });
-
 
     let cart_request_que = Promise.resolve() // que the request to preventing overlapping request
     document.addEventListener('DOMContentLoaded', () => {
@@ -588,7 +599,7 @@
                 const originalhtml = cartButton.innerText
                 cartButton.innerText = 'Processing...'
                 cartButton.disabled = true
-                
+
                 // Que the request object in multiple click scenario
                 cart_request_que = cart_request_que.then(() => {
                     return fetch(`/add_to_cart/${productId}/`, {
