@@ -1,6 +1,6 @@
 {% for product in products %}
 <div class="product-card">
-    <!-- <a href="#"> -->
+    <a href="#">
         <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
         <div class="product-info">
             <p class="price">₹{{ product.price }}</p>
@@ -8,11 +8,11 @@
             {% if product.stock <= 1 %} <h5>hurry! only 1 stock left</h5>
                 {% endif %}
         </div>
-    <!-- </a> -->
-    <button class="add-to-cart" data-id="{{ product.id }}">Add to Cart</button>
+    </a>
+    <!-- <button class="add-to-cart" data-id="{{ product.id }}">Add to Cart</button>
     <button class="buy" data-id="{{ product.id }}">
         <span class="btn-text">Buy</span>
         <span class="btn-spinner hidden"></span>
-    </button>
+    </button> -->
 </div>
 {% endfor %}
