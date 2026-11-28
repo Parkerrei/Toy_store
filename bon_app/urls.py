@@ -6,7 +6,7 @@ urlpatterns = [
                 path('signup_user',signup_user,name='signup_user'),
                 path('logged/',user_log_in,name='logged'),
                 path('',main_page,name='main_page'),
-                path('initiate_razorpay_checkout_for_sigle_item/<int:productId>/',initiate_razorpay_checkout_for_single_item,name='initiate_razorpay_checkout_for_single_item'),
+                path('initiate_razorpay_checkout_for_single_item/<int:productId>/',initiate_razorpay_checkout_for_single_item,name='initiate_razorpay_checkout_for_single_item'),
                 path('user_log_out/',user_log_out,name='user_log_out'),
                 # This single line handles category 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, etc.
                 path('category_products_view/<slug:slug>/',category_products_view, name='category_products_view'),
