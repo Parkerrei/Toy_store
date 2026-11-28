@@ -151,7 +151,7 @@ logger = logging.getLogger(__name__)
 def initiate_razorpay_checkout(request, productId):
     # 1: Ensure the request method is Post for checkout initiation
     if request.method != 'POST':
-        return JsonResponse({'Error': 'Method not allowed'}, status=405)
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
     
     # 2: Ensure user is authenticated before proceeding
     if not request.user.is_authenticated:
@@ -170,7 +170,7 @@ def initiate_razorpay_checkout(request, productId):
 
             # Check product stock before proceeding to Razorpay order creation
             if toy_to_buy.stock <= 0:
-                return JsonResponse({'Error': 'Out of stock'}, status=409)
+                return JsonResponse({'error': 'Out of stock'}, status=409)
 
             # cache the data before we call razorPay api for order
             amount_paise = toy_to_buy.round_to_paise()     
@@ -178,7 +178,7 @@ def initiate_razorpay_checkout(request, productId):
             item_id_in_str = str(toy_to_buy.id)
 
     except Product.DoesNotExist:
-        return JsonResponse({'Error': 'Product not found'}, status=404)
+        return JsonResponse({'error': 'Product not found'}, status=404)
 
     # Phase 2: Create Razorpay Order outside database lock
     try:
