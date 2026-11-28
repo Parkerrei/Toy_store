@@ -436,11 +436,11 @@
     <div id="nav-container">
         <nav>
             {% if not user.is_authenticated %}
-            <h4 class="welcome-msg">Hello , <strong><big>{{ user }}</strong></h4></big>
+            <h4 class="welcome-msg">Hello, <strong><big>{{ user }}</strong></h4></big>
             <a id="log-in" href="{% url 'logged' %}">log in</a>
             <a id="sign-up" href="{% url 'signup_user' %}">sign up</a>
             {% else %}
-            <h4 class="welcome-msg">Hello , <strong><big>{{ user.username }}</strong></h4></big>
+            <h4 class="welcome-msg">Hello, <strong><big>{{ user.username }}</strong></h4></big>
             {% endif %}
             <a id="cart" href="{% url 'show_user_cart_items' %}" aria-label="View Shopping Cart">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
