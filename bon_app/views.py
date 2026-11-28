@@ -148,7 +148,7 @@ client.timeout = 10  # Set a timeout of 10 seconds for Razorpay API requests
 logger = logging.getLogger(__name__)
 
 # Razorpay checkout initiation endpoint
-def initiate_razorpay_checkout(request, productId):
+def initiate_razorpay_checkout_for_single_item(request, productId):
     # 1: Ensure the request method is Post for checkout initiation
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
@@ -193,6 +193,7 @@ def initiate_razorpay_checkout(request, productId):
             },
             'receipt': f'rcpt_{item_id_in_str}',
         })
+        print(f'User Order created : {order} ')
         try:
             with transaction.atomic():
                 # Phase 3: Save the Razorpay order details with pending status 
