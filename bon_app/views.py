@@ -178,6 +178,7 @@ def main_page(request):
         'categories': categories,
         'products': products
     })
+
 def main_page(request):
     PRODUCTS_PER_PAGE = 10
     
