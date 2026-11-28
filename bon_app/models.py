@@ -24,6 +24,7 @@ class Product(models.Model):
     name     = models.CharField(max_length=100)
     stock    = models.PositiveIntegerField(default=0)
     price    = models.PositiveIntegerField()
+    product_description = models.CharField(max_length=400,null=True)
 
     class Meta:
         indexes = [
