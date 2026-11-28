@@ -532,7 +532,7 @@
                 buyButton.innerText = 'Processing...'
                 buyButton.disabled = true
 
-                fetch(`/initiate_razorpay_checkout/${productId}/`, {
+                fetch(`/initiate_razorpay_checkout_for_single_item/${productId}/`, {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': token,
