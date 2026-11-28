@@ -479,6 +479,7 @@ def user_cart_order_payment(request):
         },
         'receipt': receipt_id # Now strictly unique and short (approx 20-25 characters)
     })
+   
 
     # return success order data
     return JsonResponse({
