@@ -193,7 +193,7 @@ def initiate_razorpay_checkout_for_single_item(request, productId):
             },
             'receipt': f'rcpt_{item_id_in_str}',
         })
-        print(f'User Order created : {order} ')
+       
         try:
             with transaction.atomic():
                 # Phase 3: Save the Razorpay order details with pending status 
