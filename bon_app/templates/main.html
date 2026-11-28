@@ -447,8 +447,17 @@
             {% else %}
             <h4 class="welcome-msg">Welcome, <strong>{{user.username}}</strong></h4>
             {% endif %}
-            <a id="cart" href="{% url 'show_user_cart_items' %}">Cart</a>
-            <a id="logout" href="{% url 'user_log_out' %}" style="color: #f51f1f;">Logout</a>
+            <a id="cart" href="{% url 'show_user_cart_items' %}" aria-label="View Shopping Cart">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-shopping-cart">
+                    <path d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18" />
+                    <path d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25" />
+                    <circle cx="18" cy="20" r="2" />
+                    <circle cx="8" cy="20" r="2" />
+                </svg>
+            </a>
+            <a id="logout" href="{% url 'user_log_out' %}" style="color: #f51f1f;">Sign Out</a>
             <select name="" id="" onchange="if (this.value) location.href = this.value;">
                 {% for category in categories %}
                 {% if category.slug %}
