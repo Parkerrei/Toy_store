@@ -446,7 +446,7 @@
             {% else %}
             <h4 class="welcome-msg">Welcome, <strong>{{user.username}}</strong></h4>
             {% endif %}
-            <a id="cart" href="{% url 'show_user_cart_items' %}">your Cart</a>
+            <a id="cart" href="{% url 'show_user_cart_items' %}">Cart</a>
             <a id="logout" href="{% url 'user_log_out' %}" style="color: #f51f1f;">Logout</a>
             <select name="" id="" onchange="if (this.value) location.href = this.value;">
                 {% for category in categories %}
